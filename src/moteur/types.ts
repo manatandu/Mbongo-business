@@ -16,15 +16,10 @@ export type TypeOperation = 'recette' | 'depense' | 'transfert';
 export type GenreTiers = 'creance' | 'dette';
 export type CategorieImmobilisation = 'materiel' | 'mobilier' | 'caution';
 
-/** Entreprenant (AUDCG, art. 30 : déclaration d'activité, sans RCCM), commerçant immatriculé, ou société. */
-export type StatutJuridique = 'entreprenant' | 'commercant' | 'societe';
-
 export interface Entreprise {
   nom: string;
   secteur: SecteurSMT;
   nif?: string;
-  /** Commerçant par défaut. */
-  statut?: StatutJuridique;
 }
 
 export interface Exercice {
@@ -59,7 +54,7 @@ export interface Operation {
   piece: boolean;
   /** D5 : id de l'opération que celle-ci contre-passe. */
   annule?: string;
-  /** N° de la facture ou du reçu, pour le registre des achats de l'entreprenant (AUDCG, art. 32). */
+  /** N° de la facture ou du reçu, repris dans le registre des achats. */
   reference?: string;
   /** Report d'un cahier de caisse tenu avant l'entrée dans Mbongo. */
   reprise?: boolean;
@@ -129,6 +124,4 @@ export interface DossierExercice {
   stockFinal: Montant | null;
   lignesStock?: LigneStock[];
   tauxCloture: number | null;
-  /** Chiffre d'affaires de l'exercice précédent, s'il est connu : l'entreprenant garde son statut sauf deux années de suite au-dessus du seuil. */
-  chiffreAffairesPrecedent?: Montant | null;
 }

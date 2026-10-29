@@ -1,26 +1,15 @@
 /**
- * Livres de l'entreprenant (AUDCG, art. 31 et 32), tirés des saisies : rien de plus à noter.
  * Livre des recettes et des dépenses, mois par mois ; registre des achats de l'année, récapitulé par mois.
+ * Tirés des saisies : rien de plus à noter.
  */
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'wouter';
-import { livreEntreprenant, registreAchats } from '../../moteur';
+import { livreRecettesDepenses, registreAchats } from '../../moteur';
 import { moisEntre } from '../../moteur/dates';
 import { useLangue } from '../../i18n';
 import { fmt, fmtDate } from '../../ui/format';
 import { Montant, Pastille } from '../composants';
 import { useDossier } from '../session';
-
-function Mention() {
-  const { t } = useLangue();
-  const { entreprise } = useDossier();
-  return (
-    <p className="aide">
-      {t('livre.mention')}
-      {entreprise.immatriculation ? ` ${t('livre.declaration', { numero: entreprise.immatriculation })}` : ''}
-    </p>
-  );
-}
 
 export function Livre() {
   const { chargement, dateRef } = useDossier();
@@ -30,7 +19,7 @@ export function Livre() {
   const { dossier, exercice } = chargement;
   const tousMois = moisEntre(exercice.debut.slice(0, 7), dateRef.slice(0, 7));
   const mois = params.mois && tousMois.includes(params.mois) ? params.mois : (tousMois[tousMois.length - 1] ?? exercice.debut.slice(0, 7));
-  const livre = useMemo(() => livreEntreprenant(dossier, `${mois}-01`, `${mois}-31`), [dossier, mois]);
+  const livre = useMemo(() => livreRecettesDepenses(dossier, `${mois}-01`, `${mois}-31`), [dossier, mois]);
 
   return (
     <>
@@ -80,7 +69,7 @@ export function Livre() {
           </div>
         )}
       </div>
-      <Mention />
+      <p className="aide">{t('livre.mention')}</p>
     </>
   );
 }

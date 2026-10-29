@@ -14,5 +14,5 @@ export { calculerEtats, MENTION_ETATS, type Etats, type CompteDeResultat, type B
 export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';
 export { PART_ALERTE_SEUIL, evaluerSeuil, chiffreAffairesEstime, type NiveauSeuil, type SeuilsSMT } from './seuils';
 export { cloturer, dossierSuivant, type OuvertureSuivante } from './cloture';
-export { livreEntreprenant, registreAchats, NATURES_ACHAT, type LivreEntreprenant, type LigneLivre, type RegistreAchats, type LigneAchat, type ModeReglement } from './entreprenant';
+export { livreRecettesDepenses, registreAchats, NATURES_ACHAT, type LivreRecettesDepenses, type LigneLivre, type RegistreAchats, type LigneAchat, type ModeReglement } from './livres';
 export { VERSION_MOTEUR } from './version';

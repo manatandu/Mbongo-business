@@ -1,10 +1,8 @@
 /**
- * Livres de l'entreprenant (AUDCG révisé, art. 30 à 32).
- * L'entreprenant est une personne physique dispensée d'immatriculation au RCCM, sur simple déclaration d'activité.
- * Art. 31 : un livre, tenu au jour le jour, des ressources (origine, montant, espèces ou autre mode) et des emplois.
- * Art. 32 : s'il vend des marchandises, un registre des achats récapitulé par année, avec le mode de règlement
- * et la référence des pièces.
- * Les deux se tirent des saisies existantes : rien de plus à saisir pour le commerçant.
+ * Livre des recettes et des dépenses, registre des achats.
+ * Format repris de l'AUDCG révisé (art. 31 et 32) : un livre chronologique des ressources (espèces distinguées
+ * des autres modes) et des emplois ; un registre des achats avec mode de règlement et référence des pièces,
+ * récapitulé par mois et par année. Proposés à tout commerçant, tirés des saisies : rien de plus à noter.
  */
 import { compte, preparer, signe, valeurFC } from './contexte';
 import { versFC } from './montants';
@@ -31,7 +29,7 @@ export interface LigneLivre {
   montantFC: Montant;
 }
 
-export interface LivreEntreprenant {
+export interface LivreRecettesDepenses {
   du: DateISO;
   au: DateISO;
   lignes: LigneLivre[];
@@ -41,8 +39,8 @@ export interface LivreEntreprenant {
   emplois: Montant;
 }
 
-/** Livre des ressources et des emplois (art. 31), du `du` au `au` inclus. Les transferts entre ses propres comptes n'y figurent pas. */
-export function livreEntreprenant(dossier: DossierExercice, du: DateISO, au: DateISO): LivreEntreprenant {
+/** Livre des recettes et des dépenses, du `du` au `au` inclus. Les transferts entre ses propres comptes n'y figurent pas. */
+export function livreRecettesDepenses(dossier: DossierExercice, du: DateISO, au: DateISO): LivreRecettesDepenses {
   verifierDossier(dossier);
   const ctx = preparer(dossier);
   const lignes: LigneLivre[] = [];
@@ -104,7 +102,7 @@ export interface RegistreAchats {
 }
 
 /**
- * Registre des achats de l'exercice (art. 32). Un achat payé comptant y entre à la date du paiement ;
+ * Registre des achats de l'exercice. Un achat payé comptant y entre à la date du paiement ;
  * un achat à crédit, à la date de la facture, avec le mode « à crédit ». Son règlement plus tard n'est pas un nouvel achat.
  */
 export function registreAchats(dossier: DossierExercice): RegistreAchats {

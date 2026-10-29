@@ -49,7 +49,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 2. **Tiers et stocks** : créances et dettes, règlements en une ou plusieurs fois ; inventaire fait par le commerçant ; registre du matériel avec amortissement linéaire sans prorata temporis.
 3. **Contrôle** : opérations sans pièce, jours ouvrés sans vente, mois sans saisie, solde négatif, créances de plus de 30 jours, seuils SMT, inventaire et taux de clôture manquants.
 4. **Sorties** : journal de trésorerie mensuel par compte, compte de résultat, bilan, notes 1 à 3, tableau de bord du commerçant ; au bureau, impression PDF et export Excel.
-5. **Entreprenant** (AUDCG, art. 30 à 32) : statut de l'entreprise ; livre des recettes et des dépenses, registre des achats, tirés des saisies ; alerte de seuil sur deux ans.
+5. **Livres** : livre des recettes et des dépenses, registre des achats (format de l'AUDCG, art. 31 et 32), tirés des saisies, pour tout commerçant. Le logiciel ne gère pas de statut juridique.
 6. **Bureau** : trois écrans (clients, contrôles d'un client, ses états) ; arrêté par un bouton réservé à l'expert.
 7. **Site vitrine** de la structure (offre, formules, démonstration, contact WhatsApp affiché en clair).
 
@@ -64,7 +64,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 
 ## Modèle de données (base locale)
 
-- `entreprises` (nom, activité, secteur SMT négoce / artisanat / services, statut entreprenant / commerçant / société, n° de déclaration ou RCCM, commune, identifiant fiscal)
+- `entreprises` (nom, activité, secteur SMT négoce / artisanat / services, commune, identifiant fiscal)
 - `exercices` (année, soldes d'ouverture, stock initial, stock final, taux de clôture, statut, arrêté le)
 - `comptes` (entreprise, type, libellé, devise)
 - `operations` (date, type, compte, compte de destination, nature SMT, libellé, montant, devise, taux, pièce, annulation, règlement de)

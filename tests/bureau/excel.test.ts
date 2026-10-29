@@ -28,21 +28,16 @@ describe('export Excel des états', () => {
   });
 });
 
-describe("export Excel d'un entreprenant", () => {
-  const d = { ...jeuPrototype(), entreprise: { ...jeuPrototype().entreprise, statut: 'entreprenant' as const } };
-  const ee = calculerEtats(d);
-  const feuilles = classeurEtats(ee, d);
+describe('export Excel avec le livre et le registre des achats', () => {
+  const d = jeuPrototype();
+  const feuilles = classeurEtats(e, d);
   const texte = (i: number) => (feuilles[i]?.data ?? []).flat().map((c) => (c && typeof c === 'object' && 'value' in c ? c.value : c));
 
-  it('ajoute le livre (art. 31) et le registre des achats (art. 32)', () => {
+  it('ajoute le livre et le registre des achats quand le dossier est fourni', () => {
     expect(feuilles.map((f) => f.sheet)).toEqual(['Compte de résultat', 'Bilan', 'Notes', 'Livre', 'Registre des achats']);
     expect(texte(3)).toContain('Recettes en espèces');
     expect(texte(4)).toContain('Récapitulation');
     for (const i of [3, 4]) expect(texte(i)).toContain('Mbongo prépare, il ne certifie pas.');
-  });
-
-  it("n'ajoute rien pour un commerçant immatriculé", () => {
-    expect(classeurEtats(e, jeuPrototype()).map((f) => f.sheet)).toHaveLength(3);
   });
 
   it('produit toujours un vrai fichier .xlsx', async () => {

@@ -56,7 +56,6 @@ export function Client() {
         </Link>
         <h1 className="m-0 text-[17px] font-semibold">{c.entreprise.nom}</h1>
         {c.entreprise.demo && <Pastille ton="neutre">fictif</Pastille>}
-        {c.entreprise.statut === 'entreprenant' && <Pastille ton="neutre">entreprenant{c.entreprise.immatriculation ? ` n° ${c.entreprise.immatriculation}` : ''}</Pastille>}
         {exercices && exercices.length > 1 ? (
           <select className="champ" aria-label="Exercice" value={c.exercice.annee} onChange={(e) => setAnnee(Number(e.target.value))}>
             {exercices.map((x) => (

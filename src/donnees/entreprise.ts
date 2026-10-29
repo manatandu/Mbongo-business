@@ -1,5 +1,5 @@
 /** Création de l'entreprise sur le téléphone et choix de l'exercice ouvert. */
-import type { Devise, Montant, SecteurSMT, StatutJuridique, TypeCompte } from '../moteur';
+import type { Devise, Montant, SecteurSMT, TypeCompte } from '../moteur';
 import { TABLES_ENTREPRISE, type BaseMbongo } from './base';
 import { nouvelId } from './ids';
 import { ecrireReglage, lireReglage } from './reglages';
@@ -17,8 +17,6 @@ export interface DonneesEntreprise {
   nom: string;
   activite: string;
   secteur: SecteurSMT;
-  statut?: StatutJuridique;
-  immatriculation?: string;
   commune: string;
   nif: string;
   responsable: string;
@@ -44,8 +42,6 @@ export async function creerEntreprise(db: BaseMbongo, d: DonneesEntreprise): Pro
       nom: d.nom.trim(),
       activite: d.activite.trim(),
       secteur: d.secteur,
-      statut: d.statut ?? 'commercant',
-      immatriculation: (d.immatriculation ?? '').trim(),
       commune: d.commune.trim(),
       nif: d.nif.trim(),
       responsable: d.responsable.trim(),
@@ -97,9 +93,4 @@ export async function entrepriseActive(db: BaseMbongo): Promise<LigneEntreprise 
 export async function exerciceCourant(db: BaseMbongo, entrepriseId: string, annee: number): Promise<LigneExercice | undefined> {
   const tous = await db.exercices.where('entrepriseId').equals(entrepriseId).toArray();
   return tous.filter((e) => e.annee <= annee).sort((a, b) => b.annee - a.annee)[0] ?? tous.sort((a, b) => a.annee - b.annee)[0];
-}
-
-/** Changement de statut : un entreprenant qui s'immatricule au RCCM, ou l'inverse. */
-export async function modifierStatut(db: BaseMbongo, entrepriseId: string, statut: StatutJuridique, immatriculation: string): Promise<void> {
-  await db.entreprises.update(entrepriseId, { statut, immatriculation: immatriculation.trim() });
 }

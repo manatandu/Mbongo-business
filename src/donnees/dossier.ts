@@ -101,7 +101,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   const dossier: DossierExercice = {
-    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif, statut: entreprise.statut ?? 'commercant' },
+    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif },
     exercice: { annee: exercice.annee, debut, fin },
     comptes: comptes.map((c) => ({ id: c.id, type: c.type, libelle: c.libelle, devise: c.devise })),
     soldesOuverture: { ...exercice.soldesOuverture },
@@ -116,7 +116,6 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     stockFinal: exercice.stockFinal,
     // Un seul taux de clôture, saisi au bureau : pas de confirmation opération par opération.
     tauxCloture: exercice.tauxCloture,
-    chiffreAffairesPrecedent: exercice.chiffreAffairesPrecedent ?? null,
   };
   if (inventaire.length) {
     dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant }));

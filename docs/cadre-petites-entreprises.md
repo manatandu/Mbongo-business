@@ -75,7 +75,7 @@ Rien, dans ce qu'on a lu, ne fixe le délai ni l'exercice de bascule après un d
 
 Personne physique qui exerce sur simple déclaration d'activité, sans frais, sans RCCM. Il tient un livre des ressources et des emplois (art. 31) et, s'il vend des marchandises, un registre des achats (art. 32). Il perd son statut après deux années de suite au-dessus des seuils du SMT (art. 30). Il porte son numéro et la mention « Entreprenant dispensé d'immatriculation » sur ses factures (art. 62). Prescription de cinq ans entre entreprenants (art. 33).
 
-**C'est fait dans Mbongo** (voir `docs/regles-smt.md`, § 9).
+Mbongo ne gère pas ce statut. Il reprend seulement le format du livre et du registre des achats, proposés à tout commerçant (voir `docs/regles-smt.md`, § 9).
 
 L'AUDCIF (art. 2) vise les entités soumises à l'AUDCG. L'entreprenant doit-il aussi produire les états du SMT ? Les skills ne le disent pas. À trancher avec l'expert.
 
@@ -249,8 +249,7 @@ Rien de tout cela ne bloque la soutenance (pas de serveur, données fictives). T
 | caisse jamais créditrice | AUDCIF, compte 57 | contrôle « solde négatif », à traiter |
 | inventaire extra-comptable, amortissement sans prorata | AUDCIF, Titre X | oui |
 | alerte de dépassement du seuil | AUDCIF, art. 13 | oui (paramètre BCC) |
-| livre et registre des achats de l'entreprenant, perte du statut sur deux ans | AUDCG, art. 30 à 32 | oui, depuis cette analyse |
-| mention de l'entreprenant sur les factures | AUDCG, art. 62 | rappelée dans Réglages |
+| livre des ressources et emplois, registre des achats (format) | AUDCG, art. 31 et 32 | oui, pour tout commerçant |
 | tenue en francs congolais | AUDCIF, art. 17-1 | états en FC, dollars convertis |
 | la structure ne redresse pas | loi 15/002, art. 43.1 | le bureau n'a aucun bouton d'écriture |
 | pas de confusion avec un cabinet | loi 15/002, art. 42 | mention fixe, vocabulaire surveillé |

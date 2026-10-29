@@ -109,23 +109,11 @@ Le modèle SMT ne tranche pas ces cas. Conventions du moteur, à confirmer par l
 - **Arrondis** : conversion arrondie au franc le plus proche, une fois par opération. Annuité = montant ÷ durée arrondi à l'entier inférieur ; la dernière annuité prend le reste.
 - **Situation en cours d'exercice** : sans inventaire, le stock final est pris égal au stock initial et les états sont marqués provisoires.
 
-## 9. L'entreprenant (AUDCG révisé, art. 30 à 33 et 62 à 65)
+## 9. Livre des recettes et des dépenses, registre des achats
 
-Personne physique qui exerce sur simple déclaration d'activité, sans frais, sans immatriculation au RCCM (art. 30, 62). Textes lus dans le skill `audcg-acte-uniforme`.
+Le logiciel ne gère pas de statut juridique (entreprenant, commerçant immatriculé, société) : ce n'est pas son rôle. Il propose à tout commerçant deux documents tirés de ses saisies, au format de l'AUDCG révisé :
 
-- **Seuil** (art. 30, al. 2) : il garde son statut si son chiffre d'affaires annuel, pendant deux exercices successifs, n'excède pas les seuils du SMT. Le chiffre d'affaires se compte à part pour la vente et pour les services.
-- **Perte du statut** (art. 30, al. 3) : après deux années de suite au-dessus, il se met en règle dès le premier jour de l'année suivante et avant la fin du premier trimestre.
-- **Livre** (art. 31) : au jour le jour, chronologique, l'origine et le montant des ressources, en distinguant les espèces des autres modes de règlement ; la destination et le montant des emplois. Conservé cinq ans au moins.
-- **Registre des achats** (art. 32) : s'il vend des marchandises, objets, fournitures, denrées ou loge, un registre récapitulé par année, avec le détail des achats, leur mode de règlement et la référence des pièces, qui sont conservées.
-- **Mention** (art. 62) : son numéro de déclaration sur ses factures et documents, avec la mention « Entreprenant dispensé d'immatriculation ».
+- **Livre des recettes et des dépenses** (format de l'art. 31) : chronologique, l'origine et le montant des recettes en distinguant les espèces des autres modes de paiement, la destination et le montant des dépenses. Les transferts entre ses propres comptes n'y figurent pas. Espèces = une caisse ; autre mode = banque, monnaie électronique, tontine.
+- **Registre des achats** (format de l'art. 32) : achats de marchandises et de fournitures, mode de règlement, référence de la pièce (champ « N° de la facture ou du reçu » à la saisie), récapitulation par mois et par année. Un achat à crédit y entre à la date de la facture ; son règlement n'est pas un second achat. Les totaux repris du cahier sont marqués comme tels.
 
-Dans le logiciel :
-
-- le statut se choisit à la création de l'entreprise et se change dans Réglages ;
-- le livre et le registre se tirent des saisies (moteur, `entreprenant.ts`) : rien de plus à noter. Les transferts entre ses propres comptes n'entrent pas dans le livre. Un achat à crédit entre au registre à la date de la facture, son règlement n'est pas un second achat ;
-- espèces = une caisse ; autre mode = banque, monnaie électronique, tontine ;
-- alerte la première année au-dessus du seuil ; perte du statut signalée après deux années de suite (le chiffre d'affaires de l'année passée est gardé à l'ouverture de l'année suivante) ;
-- les états SMT restent disponibles. L'AUDCIF (art. 2) vise les entités soumises à l'AUDCG : l'entreprenant doit-il aussi produire les états du SMT ? Question à trancher avec l'expert-comptable partenaire.
-
-Conservation : cinq ans pour le livre (AUDCG, art. 31), dix ans pour les pièces et documents comptables (AUDCIF, art. 24). On retient dix ans.
-
+Conservation des pièces : dix ans (AUDCIF, art. 24).

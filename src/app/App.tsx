@@ -9,7 +9,7 @@ import { Icone } from './composants';
 import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
 import { Bienvenue, CreerEntreprise } from './ecrans/Bienvenue';
-import { Livre, RegistreAchats } from './ecrans/Entreprenant';
+import { Livre, RegistreAchats } from './ecrans/Livres';
 import { Etats } from './ecrans/Etats';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';

@@ -1,7 +1,7 @@
 /** Premier lancement : démonstration fictive ou création de l'entreprise. */
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation } from 'wouter';
-import type { SecteurSMT, StatutJuridique } from '../../moteur';
+import type { SecteurSMT } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
 import { creerEntreprise, type CompteACreer } from '../../donnees/entreprise';
@@ -83,8 +83,7 @@ export function CreerEntreprise() {
   const { t } = useLangue();
   const { aujourdhui } = useSession();
   const [, aller] = useLocation();
-  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: '', telephone: '', nif: '', immatriculation: '', stock: '', taux: '' });
-  const [statut, setStatut] = useState<StatutJuridique>('commercant');
+  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: '', telephone: '', nif: '', stock: '', taux: '' });
   const [secteur, setSecteur] = useState<SecteurSMT>('negoce');
   const [comptes, setComptes] = useState(COMPTES_PROPOSES);
   const [erreurs, setErreurs] = useState<string[]>([]);
@@ -113,8 +112,6 @@ export function CreerEntreprise() {
         telephone: champs.telephone,
         nif: champs.nif,
         secteur,
-        statut,
-        immatriculation: champs.immatriculation,
         annee: Number(aujourdhui.slice(0, 4)),
         comptes: choisis.map((c, i) => ({ type: c.type, devise: c.devise, libelle: t(c.cle), solde: soldes[i] ?? 0 })),
         stockInitial: stock ?? 0,
@@ -143,16 +140,6 @@ export function CreerEntreprise() {
           <option value="artisanat">{t('secteur.artisanat')}</option>
           <option value="services">{t('secteur.services')}</option>
         </select>
-      </label>
-
-      <label className="champ">
-        {t('statut.titre')}
-        <select value={statut} onChange={(e) => setStatut(e.target.value as StatutJuridique)}>
-          <option value="entreprenant">{t('statut.entreprenant')}</option>
-          <option value="commercant">{t('statut.commercant')}</option>
-          <option value="societe">{t('statut.societe')}</option>
-        </select>
-        <span className="aide">{t('statut.aide')}</span>
       </label>
 
       <h2 className="titre-section">{t('creer.comptes')}</h2>
@@ -211,10 +198,7 @@ export function CreerEntreprise() {
             {t('creer.nif')}
             <input {...champ('nif')} />
           </label>
-          <label className="champ">
-            {t('creer.immatriculation')}
-            <input {...champ('immatriculation')} />
-          </label>
+
         </div>
       </details>
       <p className="aide">{t('creer.reprise')}</p>

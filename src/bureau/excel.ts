@@ -4,7 +4,7 @@
  * La bibliothèque n'est chargée qu'au clic, et jamais par le téléphone du commerçant.
  */
 import type { Cell, SheetData } from 'write-excel-file/browser';
-import { livreEntreprenant, registreAchats, type DossierExercice, type Etats, type Montant } from '../moteur';
+import { livreRecettesDepenses, registreAchats, type DossierExercice, type Etats, type Montant } from '../moteur';
 
 const FORMAT = '#,##0';
 const gras = (value: string): Cell => ({ value, fontWeight: 'bold' });
@@ -32,11 +32,11 @@ export interface FeuilleEtats {
 
 const MODE = { especes: 'Espèces', autre: 'Autre mode', credit: 'À crédit' } as const;
 
-/** Livres de l'entreprenant (AUDCG, art. 31 et 32), ajoutés au classeur quand le client a ce statut. */
-function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
-  const l = livreEntreprenant(d, d.exercice.debut, e.auDate);
+/** Livre des recettes et des dépenses, registre des achats : ajoutés au classeur quand le dossier est fourni. */
+function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
+  const l = livreRecettesDepenses(d, d.exercice.debut, e.auDate);
   const livre: SheetData = [
-    ...entete(e, "Livre des recettes et des dépenses (AUDCG, art. 31)"),
+    ...entete(e, 'Livre des recettes et des dépenses'),
     [gras('Date'), gras('Origine ou destination'), gras('Compte'), gras('Mode'), gras('Recette (CDF)'), gras('Dépense (CDF)')],
     ...l.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.compte, MODE[x.mode], x.sens === 'ressource' ? nombre(x.montantFC) : '', x.sens === 'emploi' ? nombre(x.montantFC) : '']),
     [],
@@ -47,7 +47,7 @@ function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
   ];
   const r = registreAchats(d);
   const achats: SheetData = [
-    ...entete(e, `Registre des achats ${r.annee} (AUDCG, art. 32)`),
+    ...entete(e, `Registre des achats ${r.annee}`),
     [gras('Date'), gras('Détail'), gras('Mode de règlement'), gras('Référence de la pièce'), gras('Montant (CDF)')],
     ...r.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.mode === 'credit' ? MODE.credit : `${MODE[x.mode]} (${x.compte})`, x.reference || (x.reprise ? 'repris du cahier' : ''), nombre(x.montantFC)]),
     [],
@@ -62,7 +62,7 @@ function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
   ];
 }
 
-/** Les feuilles du classeur, prêtes à écrire : états SMT, plus les livres de l'entreprenant si le client a ce statut. */
+/** Les feuilles du classeur, prêtes à écrire : états SMT, plus le livre et le registre des achats si le dossier est fourni. */
 export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
   const r = e.compteDeResultat;
   const b = e.bilan;
@@ -135,7 +135,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     ...pied(e),
   ];
 
-  const livres = d?.entreprise.statut === 'entreprenant' ? feuillesEntreprenant(e, d) : [];
+  const livres = d ? feuillesLivres(e, d) : [];
   return [
     { sheet: 'Compte de résultat', data: resultat, columns: [{ width: 58 }, { width: 8 }, { width: 18 }] },
     { sheet: 'Bilan', data: bilan, columns: [{ width: 52 }, { width: 8 }, { width: 18 }] },

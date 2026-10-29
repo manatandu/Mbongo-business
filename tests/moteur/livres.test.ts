@@ -1,6 +1,6 @@
-/** Livres de l'entreprenant (AUDCG, art. 30 à 32). Données fictives. */
+/** Livre des recettes et des dépenses, registre des achats. Données fictives. */
 import { describe, expect, it } from 'vitest';
-import { controler, livreEntreprenant, registreAchats } from '../../src/moteur';
+import { livreRecettesDepenses, registreAchats } from '../../src/moteur';
 import { annulation, dossierDeBase, op } from './outils';
 
 const comptes = [
@@ -9,7 +9,7 @@ const comptes = [
   { id: 'usd', type: 'caisse' as const, libelle: 'Caisse dollars', devise: 'USD' as const },
 ];
 
-describe("livre de l'entreprenant (art. 31)", () => {
+describe('livre des recettes et des dépenses', () => {
   const venteCaisse = op({ id: 'v1', date: '2026-03-02', type: 'recette', nature: 'ventes', montant: 300_000 });
   const venteMpesa = op({ id: 'v2', date: '2026-03-03', compte: 'mpesa', type: 'recette', nature: 'ventes', montant: 120_000 });
   const venteDollars = op({ id: 'v3', date: '2026-03-04', compte: 'usd', type: 'recette', nature: 'ventes', montant: 5_000, devise: 'USD', taux: 2800 });
@@ -22,7 +22,7 @@ describe("livre de l'entreprenant (art. 31)", () => {
   });
 
   it('distingue les espèces des autres modes et laisse de côté les transferts', () => {
-    const l = livreEntreprenant(d, '2026-03-01', '2026-03-31');
+    const l = livreRecettesDepenses(d, '2026-03-01', '2026-03-31');
     expect(l.lignes.map((x) => x.operation)).not.toContain('t1');
     expect(l.ressourcesEspeces).toBe(300_000 + 140_000); // 50 $ à 2 800 FC
     expect(l.ressourcesAutres).toBe(120_000 - 120_000);
@@ -30,18 +30,18 @@ describe("livre de l'entreprenant (art. 31)", () => {
   });
 
   it("garde l'ordre chronologique et montre l'annulation en négatif", () => {
-    const l = livreEntreprenant(d, '2026-03-01', '2026-03-31');
+    const l = livreRecettesDepenses(d, '2026-03-01', '2026-03-31');
     expect(l.lignes.map((x) => x.date)).toEqual([...l.lignes.map((x) => x.date)].sort());
     const derniere = l.lignes[l.lignes.length - 1];
     expect(derniere).toMatchObject({ date: '2026-03-20', mode: 'autre', compte: 'M-Pesa', montantFC: -120_000 });
   });
 
   it('ne prend que la période demandée', () => {
-    expect(livreEntreprenant(d, '2026-04-01', '2026-04-30').lignes).toEqual([]);
+    expect(livreRecettesDepenses(d, '2026-04-01', '2026-04-30').lignes).toEqual([]);
   });
 });
 
-describe('registre des achats (art. 32)', () => {
+describe('registre des achats', () => {
   const comptant = op({ id: 'a1', date: '2026-02-10', type: 'depense', nature: 'achats_marchandises', montant: 400_000, reference: 'R-12' });
   const fournitures = op({ id: 'a2', date: '2026-03-15', compte: 'banque', type: 'depense', nature: 'achats_fournitures', montant: 50_000 });
   const loyer = op({ id: 'l1', date: '2026-03-01', type: 'depense', nature: 'loyers', montant: 150_000 });
@@ -67,27 +67,5 @@ describe('registre des achats (art. 32)', () => {
       { mois: '2026-02', total: 400_000 },
       { mois: '2026-03', total: 950_000 },
     ]);
-  });
-});
-
-describe('seuil de l’entreprenant (art. 30)', () => {
-  const S = { negoce: 300_000_000, artisanat: 200_000_000, services: 150_000_000 };
-  const grosseVente = op({ date: '2026-05-01', type: 'recette', nature: 'ventes', montant: 310_000_000 });
-  const codes = (p: Parameters<typeof dossierDeBase>[0]) => controler(dossierDeBase(p), '2026-06-30', { seuilsSMT: S }).map((a) => a.code);
-
-  it("prévient la première année au-dessus du seuil, sans retirer le statut", () => {
-    const c = codes({ entreprise: { nom: 'Fictif', secteur: 'negoce', statut: 'entreprenant' }, operations: [grosseVente] });
-    expect(c).toContain('entreprenant_seuil');
-    expect(c).not.toContain('entreprenant_statut');
-  });
-
-  it('signale la perte du statut après deux années de suite', () => {
-    const c = codes({ entreprise: { nom: 'Fictif', secteur: 'negoce', statut: 'entreprenant' }, operations: [grosseVente], chiffreAffairesPrecedent: 305_000_000 });
-    expect(c).toContain('entreprenant_statut');
-  });
-
-  it("ne dit rien à un commerçant immatriculé, ni sous le seuil", () => {
-    expect(codes({ entreprise: { nom: 'Fictif', secteur: 'negoce', statut: 'commercant' }, operations: [grosseVente] })).not.toContain('entreprenant_seuil');
-    expect(codes({ entreprise: { nom: 'Fictif', secteur: 'negoce', statut: 'entreprenant' }, chiffreAffairesPrecedent: 305_000_000 })).not.toContain('entreprenant_statut');
   });
 });
