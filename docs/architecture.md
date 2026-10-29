@@ -616,7 +616,7 @@ Livrable : `src/moteur/` complet (sections 4, 9.2, 10.5, 11), jeu du prototype e
 Fini quand : tous les tests passent, le jeu du prototype redonne ses montants, aucune dépendance hors moteur.
 Prérequis : décisions D1 à D6, D9 et D10 (retenues).
 
-**Étape 2. Appli commerçant hors ligne**
+**Étape 2. Appli commerçant hors ligne** · en cours : base locale, saisie et écrans faits ; restent l'installation hors ligne (service worker) et le parcours testé en mode avion.
 Livrable : PWA installable, base Dexie, saisie, journaux, clients et fournisseurs, matériel, stock, états, français et lingala, mode démonstration.
 Fini quand : l'appli tourne en mode avion sur un Android d'entrée de gamme et respecte le budget de poids.
 
@@ -631,7 +631,7 @@ Fini quand : un exercice complet passe d'« ouvert » à « arrêté » avec les
 **Étape 5. Exports**
 Livrable : états imprimables en PDF, export Excel au bureau.
 
-**Étape 6. Site vitrine**
+**Étape 6. Site vitrine** · maquette faite le 29 octobre 2026 (`site/index.html`, organisation reprise de la maquette validée d'OmegaX, `docs/site-vitrine/maquette-v2.html` du dépôt `manatandu/om-ga-x`). Reste avant mise en ligne : numéro WhatsApp, contenu et tarifs des formules, mentions légales et confidentialité, adresse de l'appli.
 Livrable : page statique, offre, formules, démonstration, contact WhatsApp affiché en clair. Aucun terme pouvant faire croire à un cabinet d'expertise comptable.
 
 **Étape 7. Soutenance**
