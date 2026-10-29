@@ -32,7 +32,7 @@ export function Client() {
   }, [c, aujourdhui]);
 
   if (c === undefined) return <p className="text-text-dim">Ouverture du dossier…</p>;
-  if (!c || !vue) return <Message ton="avert">Ce client n'est pas sur cet ordinateur. Revenez à la liste des clients.</Message>;
+  if (!c || !vue) return <Message ton="avert">Client introuvable sur cet ordinateur.</Message>;
 
   const etats = onglet === 'etats';
   const arrete = c.exercice.statut === 'arrete';
@@ -79,8 +79,8 @@ export function Client() {
       </div>
 
       {!etats && (
-        <Carte titre="À vérifier avec le commerçant">
-          {vue.resume.anomalies.length === 0 && <Message ton="ok">Rien à signaler : les saisies sont à jour et justifiées.</Message>}
+        <Carte titre="À vérifier">
+          {vue.resume.anomalies.length === 0 && <Message ton="ok">Rien à signaler.</Message>}
           {vue.resume.anomalies.map((a) => {
             const n = NIVEAU[a.niveau as keyof typeof NIVEAU];
             return (
@@ -90,7 +90,7 @@ export function Client() {
               </div>
             );
           })}
-          <p className="m-0 text-text-dim">C'est le commerçant qui corrige, depuis son téléphone. Le bureau ne modifie jamais ses saisies.</p>
+          <p className="m-0 text-text-dim">Correction par le commerçant, sur son téléphone.</p>
         </Carte>
       )}
 
@@ -98,7 +98,7 @@ export function Client() {
         <>
           <TablesEtats e={vue.etats} />
           <Carte titre="Arrêté par l'expert-comptable partenaire" droite={arrete ? <Pastille ton="ok">Arrêtés le {fmtDate(c.exercice.arreteLe ?? vue.ref)}</Pastille> : <Pastille ton="avert">Non arrêtés</Pastille>}>
-            {role !== 'expert' && <p className="m-0 text-text-dim">Seul l'expert-comptable partenaire arrête les états (rôle à choisir en haut à droite).</p>}
+            {role !== 'expert' && <p className="m-0 text-text-dim">Réservé à l'expert-comptable partenaire.</p>}
             {role === 'expert' && !arrete && (
               <>
                 {dollars && (

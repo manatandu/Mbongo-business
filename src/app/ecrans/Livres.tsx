@@ -68,7 +68,6 @@ export function Livre() {
           </div>
         )}
       </div>
-      <p className="aide">{t('livre.mention')}</p>
     </>
   );
 }
@@ -108,7 +107,6 @@ export function RegistreAchats() {
         </section>
       ))}
       {registre.lignes.length === 0 && <p className="aide">{t('achats.vide')}</p>}
-      <p className="aide">{t('achats.mention')}</p>
     </>
   );
 }

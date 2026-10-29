@@ -6,9 +6,8 @@ import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
 import { useLangue, type Cle } from '../../i18n';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { useDossier } from '../session';
-import { LigneEcheance, useEcheances } from './Echeances';
+import { useEcheances } from './Echeances';
 import { FinAnnee } from './FinAnnee';
-import { LigneOperation } from './LigneOperation';
 
 /** Alertes montrées au commerçant, et l'écran où il peut agir. */
 const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
@@ -32,7 +31,7 @@ const valeur = (o: Operation): number => (o.annule ? -1 : 1) * versFC(o.montant,
 
 export function Accueil() {
   const { chargement, dateRef, taux, aujourdhui } = useDossier();
-  const prochaines = useEcheances(15).slice(0, 2);
+  const prochaine = useEcheances(30)[0];
   const { t, mois } = useLangue();
   const { dossier, comptes } = chargement;
 
@@ -47,12 +46,10 @@ export function Accueil() {
       .filter((a) => a.niveau !== 'information' && ALERTES[a.code])
       .sort((a, b) => (a.niveau === b.niveau ? 0 : a.niveau === 'a_traiter' ? -1 : 1))
       .slice(0, 2);
-    const recentes = [...dossier.operations].reverse().slice(0, 3);
-    return { soldes, etats, entre, sorti, anomalies, recentes };
+    return { soldes, etats, entre, sorti, anomalies };
   }, [dossier, dateRef]);
 
   const totalFC = vue.soldes.reduce((s, x) => s + (x.compte.devise === 'CDF' ? x.natif : taux ? centimesEnFrancs(x.natif, taux) : x.fcHistorique), 0);
-  const libelleCompte = (id: string) => comptes.find((c) => c.id === id)?.libelle ?? id;
 
   return (
     <>
@@ -82,20 +79,13 @@ export function Accueil() {
         ) : null;
       })}
 
-      {prochaines.length > 0 && (
-        <>
-          <h2 className="titre-section">
-            {t('echeances.prochaines')}
-            <Link href="/echeances" className="bouton discret petit">
-              {t('accueil.toutVoir')}
-            </Link>
-          </h2>
-          <div className="liste">
-            {prochaines.map((e) => (
-              <LigneEcheance key={`${e.date}-${e.cle}`} e={e} />
-            ))}
-          </div>
-        </>
+      {prochaine && (
+        <Link href="/echeances" className="alerte information">
+          <span className="point" aria-hidden="true" />
+          <span>
+            <b className="num">{fmtDate(prochaine.date).slice(0, 5)}</b> · {t(`echeance.${prochaine.cle}` as Cle)}
+          </span>
+        </Link>
       )}
 
       <div className="comptes">
@@ -107,47 +97,24 @@ export function Accueil() {
         ))}
       </div>
 
-      <h2 className="titre-section">{t('accueil.mois', { mois: mois(Number(dateRef.slice(5, 7))) })}</h2>
-      <div className="kpis">
-        <div className="kpi">
-          <div className="n">{t('accueil.entre')}</div>
+      <div className="comptes">
+        <Link href="/journal" className="kpi lien-carte">
+          <div className="n">{t('accueil.entre', { mois: mois(Number(dateRef.slice(5, 7))) })}</div>
           <div className="v amt-in">{fmt(vue.entre)}</div>
-        </div>
-        <div className="kpi">
-          <div className="n">{t('accueil.sorti')}</div>
+        </Link>
+        <Link href="/journal" className="kpi lien-carte">
+          <div className="n">{t('accueil.sorti', { mois: mois(Number(dateRef.slice(5, 7))) })}</div>
           <div className="v amt-out">{fmt(vue.sorti)}</div>
-        </div>
-        <div className="kpi">
-          <div className="n">{t('accueil.reste')}</div>
-          <div className={`v ${vue.entre - vue.sorti < 0 ? 'neg' : ''}`}>{fmt(vue.entre - vue.sorti)}</div>
-        </div>
-      </div>
-      <div className="duo">
+        </Link>
         <Link href="/clients" className="kpi lien-carte">
           <div className="n">{t('accueil.onMeDoit')}</div>
-          <div className="v">{fmtMontant(vue.etats.bilan.actif.creances, 'CDF')}</div>
+          <div className="v">{fmt(vue.etats.bilan.actif.creances)}</div>
         </Link>
         <Link href="/clients/dettes" className="kpi lien-carte">
           <div className="n">{t('accueil.jeDois')}</div>
-          <div className="v">{fmtMontant(vue.etats.bilan.passif.dettes, 'CDF')}</div>
+          <div className="v">{fmt(vue.etats.bilan.passif.dettes)}</div>
         </Link>
       </div>
-
-      <h2 className="titre-section">
-        {t('accueil.dernieres')}
-        <Link href="/journal" className="bouton discret petit">
-          {t('accueil.toutVoir')}
-        </Link>
-      </h2>
-      {vue.recentes.length ? (
-        <div className="liste">
-          {vue.recentes.map((o) => (
-            <LigneOperation key={o.id} operation={o} libelleCompte={libelleCompte} />
-          ))}
-        </div>
-      ) : (
-        <p className="aide">{t('accueil.rien')}</p>
-      )}
     </>
   );
 }

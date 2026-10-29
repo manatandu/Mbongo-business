@@ -136,13 +136,13 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 
 | Écran | Contenu |
 |---|---|
-| Accueil | argent disponible, entré et sorti du mois, on me doit, je dois, deux alertes au plus, les échéances des quinze prochains jours |
+| Accueil | argent disponible, Recette et Dépense, deux alertes au plus, la prochaine échéance, les comptes, entré et sorti du mois, on me doit, je dois |
 | Saisir | recette, dépense, transfert, change de dollars ; payé ou à crédit ; photo ; le reste sous « Plus d'options » |
 | Journal | un compte, un mois, en liste lisible : début du mois, entré, sorti, fin du mois |
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois ; pour chaque créance, un dossier imprimable (facture, paiements, reste dû, délai, reconnaissance de dette) |
 | Plus | matériel, stock (inventaire), états, livre des recettes et des dépenses, registre des achats, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
 
-Même kit de design que le bureau (§ 8.4) : bandeau à l'encre et filet jaune, une fenêtre par écran avec sa barre de titre, onglets soulignés, bouton principal en pilule. Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
+Même kit de design que le bureau (§ 8.4) : bandeau à l'encre et filet jaune, une fenêtre par écran avec sa barre de titre, onglets soulignés, bouton principal en pilule. Principes : peu de texte (pas de phrase d'aide, libellés courts, la fenêtre nomme l'écran), grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
 
 ## 8. Le bureau
 

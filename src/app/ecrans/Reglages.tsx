@@ -75,7 +75,6 @@ export function Reglages() {
       )}
 
       <h2 className="titre-section">{t('reglages.code')}</h2>
-      <p className="aide">{t('reglages.codeAide')}</p>
       {aCode ? (
         <button
           className="bouton discret"
@@ -101,9 +100,6 @@ export function Reglages() {
       <Erreurs messages={erreurs} />
 
       <h2 className="titre-section">{t('reglages.donnees')}</h2>
-      <p className="aide">
-        {t('reglages.nonEnvoyees', { n: nonEnvoyees ?? 0 })} {t('reglages.pasDeServeur')}
-      </p>
       <button className="bouton discret" onClick={() => void telechargerCopie(entreprise.id, entreprise.nom, aujourdhui)}>
         {t('reglages.copie')}
       </button>

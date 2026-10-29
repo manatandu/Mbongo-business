@@ -16,9 +16,6 @@ export function LigneEcheance({ e }: { e: Echeance }) {
     <div className="ligne">
       <div className="l">{t(`echeance.${e.cle}` as Cle)}</div>
       <b className="num">{fmtDate(e.date)}</b>
-      <div className="meta">
-        <span>{e.texte}</span>
-      </div>
     </div>
   );
 }

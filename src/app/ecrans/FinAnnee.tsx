@@ -37,7 +37,6 @@ export function FinAnnee() {
   return (
     <section className="fin-annee">
       <h2>{t('fin.titre', { annee })}</h2>
-      <p>{t('fin.texte', { suivante })}</p>
       {stockFait ? (
         <p className="fait">{t('fin.stockFait', { total: fmtMontant(exercice.stockFinal ?? 0, 'CDF') })}</p>
       ) : (
@@ -49,7 +48,6 @@ export function FinAnnee() {
         <label className="champ">
           {t('fin.dollar')}
           <input inputMode="decimal" value={tauxTexte} onChange={(e) => setTauxTexte(e.target.value)} />
-          <span className="aide">{t('fin.dollarAide')}</span>
         </label>
       )}
       <Erreurs messages={erreurs} />

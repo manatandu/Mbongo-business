@@ -57,7 +57,7 @@ Point à faire passer : la structure accompagne et contrôle ; l'expert-comptabl
 | N° | Geste | Ce qu'on dit |
 |---|---|---|
 | 14 | Téléphone : Réglages, « Voir la fin d'année » | « Revenons au 31 décembre de l'année passée. L'appli le signale : l'année est finie. » |
-| 15 | « Compter le stock » | « L'inventaire extra-comptable du SMT. La commerçante compte ses sacs de riz, ses bidons d'huile. » |
+| 15 | « Faire l'inventaire » | « L'inventaire extra-comptable du SMT. La commerçante compte ses sacs de riz, ses bidons d'huile. » |
 | 16 | « Valider l'inventaire », retour à l'accueil | « Le prix du dollar au 31 décembre est proposé. L'expert pourra le corriger. » |
 | 17 | « Commencer » l'année suivante | « Elle peut noter ses ventes de janvier tout de suite. Elle n'attend pas l'expert-comptable. » |
 | 18 | Bureau, liste des clients | « Au bureau, l'année passée attend son arrêté. » |

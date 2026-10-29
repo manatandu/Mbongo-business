@@ -72,8 +72,8 @@ function verifier(condition, message) {
     if (captures) await page.screenshot({ path: `${captures}/hl-2-journal.png` });
 
     await page.goto(`${URL_APPLI}#/reglages`);
-    const message = await page.waitForSelector('text=Mbongo marche sans internet sur ce téléphone.', { timeout: 10_000 }).then(() => true, () => false);
-    verifier(message, 'Réglages : « Mbongo marche sans internet sur ce téléphone. »');
+    const message = await page.waitForSelector('text=Marche sans internet.', { timeout: 10_000 }).then(() => true, () => false);
+    verifier(message, 'Réglages : « Marche sans internet. »');
     if (captures) await page.screenshot({ path: `${captures}/hl-3-reglages.png`, fullPage: true });
 
     // 4. Le bureau n'est pas téléchargé par le téléphone.

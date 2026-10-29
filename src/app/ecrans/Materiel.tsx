@@ -95,7 +95,6 @@ export function Materiel() {
 
   return (
     <>
-      <h2 className="titre-section">{t('materiel.titre')}</h2>
       <div className="liste">
         {note1.lignes.map((l) => (
           <div className="ligne" key={l.id}>

@@ -85,9 +85,6 @@ export function Journal() {
         </select>
       </label>
 
-      <h2 className="titre-section">
-        {journal.compte.libelle} · {nomMois(Number(mois.slice(5, 7)))} {mois.slice(0, 4)}
-      </h2>
       <Erreurs messages={erreurs} />
       <div className="kpis" style={{ gridTemplateColumns: '1fr 1fr' }}>
         <div className="kpi">

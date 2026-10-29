@@ -72,7 +72,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
     });
     await etape(tel, 'vente-a-credit', async () => {
       await tel.goto(`${BASE}#/saisir/recette`);
-      await tap('Vente à crédit : le client paiera plus tard');
+      await tap('Vente à crédit');
       await tel.fill('input.montant', '240000');
       await tel.getByRole('textbox', { name: 'Client', exact: true }).fill('Papa Mukendi (fictif)');
       await tel.getByLabel('N° de facture').fill('F-4021');
@@ -118,7 +118,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
     });
     await etape(bur, 'bureau-controles', async () => {
       await bur.click('td:has-text("Alimentation Maman Nsimba")');
-      await bur.waitForSelector('text=À vérifier avec le commerçant');
+      await bur.waitForSelector('text=À vérifier');
     });
     await etape(
       bur,
@@ -144,7 +144,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       await tel.waitForSelector(`text=L'année ${passee} est finie`);
     });
     await etape(tel, 'inventaire', async () => {
-      await tap('1. Compter le stock (inventaire)');
+      await tap("Faire l'inventaire");
       await tel.waitForSelector('text=Inventaire du stock');
       await tel.waitForSelector('input[value="Riz, sac de 25 kg"]');
     });

@@ -33,11 +33,9 @@ export function Bienvenue() {
         <Marque />
         <div>
           <strong style={{ fontFamily: 'var(--display)', fontSize: 20 }}>{t('app.nom')}</strong>
-          <div className="aide">{t('app.devise')}</div>
         </div>
       </div>
       <h1>{t('bienvenue.titre')}</h1>
-      <p style={{ margin: 0 }}>{t('bienvenue.texte')}</p>
       <ChoixLangue />
       <div className="choix">
         <button
@@ -201,7 +199,6 @@ export function CreerEntreprise() {
 
         </div>
       </details>
-      <p className="aide">{t('creer.reprise')}</p>
       <Erreurs messages={erreurs} />
       <button className="bouton" type="submit">
         {t('creer.valider')}
