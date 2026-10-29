@@ -624,7 +624,7 @@ Fini quand : l'appli tourne en mode avion sur un Android d'entrée de gamme et r
 Livrable : migrations SQL, RLS selon la matrice 7.2, Auth, Storage, synchronisation et envoi des photos.
 Fini quand : les tests de droits passent, une saisie hors ligne arrive au serveur une seule fois après reconnexion.
 
-**Étape 4. Bureau**
+**Étape 4. Bureau** · interface faite le 29 octobre 2026, avant l'étape 3, dans le style « logiciel expert Windows dense » (skill `dense-desktop-design`, dépôt `manatandu/Design_desktop_pro`). Elle lit pour l'instant les données du poste ; les droits par rôle sont tenus par l'interface et passeront dans la base à l'étape 3. Reste : commentaires et propositions de correction, administration.
 Livrable : espace assistant (portefeuille, contrôles, commentaires, propositions, taux, inventaire, relances), puis espace expert (revue, confirmation des taux, arrêté par la fonction serveur, journal), puis administration minimale.
 Fini quand : un exercice complet passe d'« ouvert » à « arrêté » avec les trois rôles.
 
