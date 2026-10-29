@@ -6,7 +6,7 @@ Toutes les données montrées sont fictives : la boutique « Alimentation Maman 
 
 Le scénario est rejoué automatiquement par `npm run build` puis `npm run scenario` : une capture par étape (numérotée comme ci-dessous), le classeur Excel des états et deux vidéos. Le relancer la veille, à la date du jour J : `DATE=2027-07-12 npm run scenario` (remplacer par la vraie date).
 
-Les diapositives : `docs/diapositives/` (voir le lien dans le compte rendu de préparation).
+Les diapositives (15, avec les notes de l'orateur) : https://claude.ai/artifact/F4jbqjRWodJjLvtiYnFUuH. Téléchargeables en PowerPoint ou en PDF depuis la page. À compléter : nom de l'étudiant, de l'encadreur, université (couverture).
 
 ---
 
