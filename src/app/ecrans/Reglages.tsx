@@ -74,6 +74,7 @@ export function Reglages() {
           {t('reglages.installer')}
         </button>
       )}
+      {appli.iphone && !appli.installee && <p className="aide">{t('reglages.installerIphone')}</p>}
 
       <h2 className="titre-section">{t('reglages.code')}</h2>
       {aCode ? (

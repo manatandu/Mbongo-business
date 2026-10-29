@@ -175,8 +175,6 @@ section { padding-block: clamp(64px, 10vw, 112px); }
 .liasse li span:last-child { font: .8rem var(--mono); color: var(--texte-dim); white-space: nowrap; }
 .liasse li small { display: block; color: var(--texte-dim); font-size: .84rem; }
 .reference { margin-top: 18px; font-size: .86rem; color: var(--texte-dim); }
-.formule-g { margin-top: 26px; display: inline-flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--nuit); color: #fff; font: 600 1.05rem var(--mono); }
-.formule-g small { font: 400 .78rem var(--sans); color: #aebdd2; }
 
 /* Deux espaces */
 .espaces { display: grid; gap: 18px; }
@@ -202,6 +200,7 @@ section { padding-block: clamp(64px, 10vw, 112px); }
 .seuil .montant { font: 600 clamp(1.6rem, 3.4vw, 2.1rem) var(--mono); letter-spacing: -.02em; }
 .seuil .montant small { font: 400 .9rem var(--sans); color: #aebdd2; }
 .seuil p { color: #c3cfe0; font-size: .93rem; }
+.seuil .equiv { font: .82rem var(--mono); color: #9fb0c8; margin-top: -6px; }
 .note-public { margin-top: 26px; font-size: .9rem; color: #9fb0c8; max-width: 70ch; border-left: 2px solid var(--jaune); padding-left: 16px; }
 
 /* Mise en service */
@@ -288,7 +287,7 @@ footer a:hover { color: #fff; }
 <body>
 <script>document.documentElement.classList.add('js');</script>
 
-<div class="prepa" role="note"><div class="cadre">Page en cours de finalisation : tarifs et coordonnées seront publiés prochainement.</div></div>
+<div class="prepa" role="note"><div class="cadre">Page en cours de finalisation : les tarifs seront publiés prochainement.</div></div>
 
 <header class="entete" id="entete">
   <div class="cadre">
@@ -336,7 +335,7 @@ footer a:hover { color: #fff; }
           <li><b>Hors ligne</b>après la première ouverture</li>
           <li><b>CDF et USD</b>un compte par devise</li>
           <li><b>2 langues</b>français et lingala</li>
-          <li><b>~200 Ko</b>pour un Android simple</li>
+          <li><b>Android et iPhone</b>sans magasin d'applications</li>
         </ul>
       </div>
 
@@ -356,8 +355,8 @@ footer a:hover { color: #fff; }
               <div class="kpis">
                 <div style="--k:0"><small>Entré ce mois</small><b>2 410 000</b></div>
                 <div style="--k:1"><small>Sorti ce mois</small><b>1 126 000</b></div>
-                <div style="--k:2"><small>On me doit</small><b>140 000</b></div>
-                <div style="--k:3"><small>Je dois</small><b>0</b></div>
+                <div style="--k:2"><small>Créances</small><b>140 000</b></div>
+                <div style="--k:3"><small>Dettes</small><b>0</b></div>
               </div>
             </div>
             <div class="onglets"><span>Accueil</span><span>Journal</span><span>Clients</span><span>Plus</span></div>
@@ -415,7 +414,6 @@ footer a:hover { color: #fff; }
         <p class="surtitre" style="margin-bottom:14px">États financiers</p>
         <h2>Les documents du Système minimal de trésorerie</h2>
         <p class="dim" style="margin-top:14px;color:var(--texte-dim)">Établis à partir des opérations saisies, selon les modèles de l'AUDCIF révisé. Ils restent « non arrêtés » tant que l'expert-comptable partenaire ne les a pas arrêtés.</p>
-        <p class="formule-g">G = C − D + E − F <small>résultat de l'exercice</small></p>
       </div>
       <div class="liasse apparait" style="--i:1">
         <div class="liasse-tete"><span>Exercice 2026</span><span class="statut">Non arrêtés</span></div>
@@ -472,11 +470,11 @@ footer a:hover { color: #fff; }
         <p>Boutiques, dépôts, ateliers et prestataires dont le chiffre d'affaires annuel reste sous le seuil de leur secteur.</p>
       </div>
       <div class="seuils">
-        <div class="seuil apparait"><span class="secteur">Négoce</span><span class="montant">240 M <small>CDF</small></span><p>Alimentations, dépôts, boutiques, quincailleries.</p></div>
-        <div class="seuil apparait" style="--i:1"><span class="secteur">Artisanat</span><span class="montant">160 M <small>CDF</small></span><p>Couture, menuiserie, soudure, boulangerie.</p></div>
-        <div class="seuil apparait" style="--i:2"><span class="secteur">Services</span><span class="montant">120 M <small>CDF</small></span><p>Coiffure, transport, réparation, restauration.</p></div>
+        <div class="seuil apparait"><span class="secteur">Négoce</span><span class="montant">60 M <small>FCFA</small></span><span class="equiv">soit environ 240 M CDF</span><p>Alimentations, dépôts, boutiques, quincailleries.</p></div>
+        <div class="seuil apparait" style="--i:1"><span class="secteur">Artisanat</span><span class="montant">40 M <small>FCFA</small></span><span class="equiv">soit environ 160 M CDF</span><p>Couture, menuiserie, soudure, boulangerie.</p></div>
+        <div class="seuil apparait" style="--i:2"><span class="secteur">Services</span><span class="montant">30 M <small>FCFA</small></span><span class="equiv">soit environ 120 M CDF</span><p>Coiffure, transport, réparation, restauration.</p></div>
       </div>
-      <p class="note-public apparait">Seuils de chiffre d'affaires hors taxes, équivalents 2026 en francs congolais. Le logiciel signale leur approche ; le passage au Système normal se fait avec l'expert-comptable partenaire.</p>
+      <p class="note-public apparait">Seuils de chiffre d'affaires annuel hors taxes fixés par l'AUDCIF révisé (art. 13), en francs CFA. Le logiciel les applique en francs congolais (équivalents 2026, revus chaque année) et signale leur approche ; le passage au Système normal se fait avec l'expert-comptable partenaire.</p>
     </div>
   </section>
 
@@ -545,7 +543,7 @@ footer a:hover { color: #fff; }
       </div>
       <div class="questions apparait" style="--i:1">
         <details class="q"><summary>Une connexion internet est-elle nécessaire ?</summary><p>Seulement pour la première ouverture. Ensuite, l'application s'ouvre et enregistre sans réseau.</p></details>
-        <details class="q"><summary>Quel téléphone faut-il ?</summary><p>Un téléphone Android avec le navigateur Chrome. L'application s'installe sur l'écran d'accueil et pèse environ 200 Ko.</p></details>
+        <details class="q"><summary>Quel téléphone faut-il ?</summary><p>Un téléphone Android avec Chrome, ou un iPhone avec Safari. L'application s'installe sur l'écran d'accueil depuis le navigateur, sans passer par un magasin d'applications, et pèse environ 200 Ko.</p></details>
         <details class="q"><summary>TRK Consulting tient-il la comptabilité à ma place ?</summary><p>Non. Le commerçant saisit lui-même ses opérations ; TRK Consulting le forme et contrôle ses saisies. La tenue déléguée relève de l'expert-comptable partenaire.</p></details>
         <details class="q"><summary>Où sont conservées les données ?</summary><p>Sur le téléphone du commerçant. Une copie de sauvegarde peut être téléchargée à tout moment depuis les réglages.</p></details>
         <details class="q"><summary>Je tiens déjà un cahier de caisse.</summary><p>Les totaux des mois passés sont reportés lors de la mise en place, puis la saisie se poursuit dans l'application.</p></details>
@@ -562,12 +560,12 @@ footer a:hover { color: #fff; }
         <p>Une démonstration se tient sur le lieu d'activité. L'application contient aussi une boutique fictive, accessible sans compte.</p>
       </div>
       <dl class="coordonnees apparait" style="--i:1">
-        <div><dt>WhatsApp</dt><dd><span class="a-venir">communiqué prochainement</span></dd></div>
+        <div><dt>WhatsApp</dt><dd><a href="https://wa.me/243983510725" class="mono" style="text-decoration:none">+243 983 510 725</a></dd></div>
         <div><dt>Ville</dt><dd>Kinshasa</dd></div>
         <div><dt>Horaires</dt><dd>Du lundi au samedi</dd></div>
         <div><dt>Langues</dt><dd>Français, lingala</dd></div>
         <div class="pied-carte">
-          <a class="bouton bouton-bleu inactif" aria-disabled="true" tabindex="-1">Écrire sur WhatsApp</a>
+          <a class="bouton bouton-bleu" href="https://wa.me/243983510725">Écrire sur WhatsApp</a>
           <a class="bouton bouton-trait" href="https://mbongo-business.web.app/">Essayer la démonstration</a>
         </div>
       </dl>

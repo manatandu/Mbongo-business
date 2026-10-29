@@ -1,4 +1,4 @@
-/** Journaux de suivi : « On me doit » (créances) et « Je dois » (dettes), avec paiements en plusieurs fois. */
+/** Journaux de suivi des créances et des dettes, avec paiements en plusieurs fois. */
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { situationTiers, type Devise, type GenreTiers, type SituationTiers } from '../../moteur';

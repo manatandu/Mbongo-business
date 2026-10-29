@@ -77,7 +77,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       await tel.getByRole('textbox', { name: 'Client', exact: true }).fill('Papa Mukendi (fictif)');
       await tel.getByLabel('N° de facture').fill('F-4021');
       await tel.click('button[type="submit"]');
-      await tel.waitForSelector('text=Ajouté à « On me doit »');
+      await tel.waitForSelector('text=Ajouté aux créances');
       await tel.goto(`${BASE}#/clients`);
       await tel.waitForSelector('text=Papa Mukendi (fictif)');
     });

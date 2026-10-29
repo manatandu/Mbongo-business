@@ -38,7 +38,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 
 | Rôle | Support | Peut faire |
 |---|---|---|
-| Commerçant | téléphone Android, hors ligne | saisir recettes, dépenses, transferts, ventes et achats à crédit, photo des pièces, inventaire ; voir soldes, tableau de bord, journaux, états |
+| Commerçant | téléphone Android ou iPhone, hors ligne | saisir recettes, dépenses, transferts, ventes et achats à crédit, photo des pièces, inventaire ; voir soldes, tableau de bord, journaux, états |
 | Assistant (structure) | navigateur, bureau | voir ses clients, leurs contrôles et leurs états ; **aucune écriture** dans les saisies |
 | Expert-comptable partenaire | navigateur, bureau | la même chose, plus la correction du taux du dollar au 31 décembre et l'arrêté des états |
 
@@ -56,7 +56,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 
 ## Architecture technique retenue
 
-- **Front** : React + TypeScript + Vite, deux pages (appli, bureau), application installable (PWA) pour Android d'entrée de gamme.
+- **Front** : React + TypeScript + Vite, deux pages (appli, bureau), application installable (PWA) pour Android d'entrée de gamme et iPhone (Safari, « Sur l'écran d'accueil »).
 - **Données** : IndexedDB (Dexie) dans le navigateur, en ajout seulement. Pas de serveur pour la soutenance.
 - **Serveur** : seulement pour un éventuel pilote réel (Supabase, RLS, envoi des saisies). Voir `docs/architecture.md`, § 14.
 - **Moteur de calcul SMT** : module TypeScript pur, sans dépendance à l'interface, couvert par des tests (Vitest, fast-check). C'est la pièce critique.
@@ -96,7 +96,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 1. Moteur SMT et tests : fait.
 2. Appli du commerçant : faite, installable, marche sans réseau (essai en mode avion automatisé).
 3. Bureau et exports PDF / Excel : faits.
-4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent les informations réelles (WhatsApp, tarifs, adresse, immatriculation).
+4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent tarifs, adresse et immatriculation (WhatsApp : +243 983 510 725).
 5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
 Plus tard, seulement s'il y a un pilote : serveur.
 

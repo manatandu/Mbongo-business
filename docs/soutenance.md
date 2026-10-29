@@ -11,7 +11,7 @@ Le scénario est rejoué automatiquement par `npm run build` puis `npm run scena
 ## Avant le jour J
 
 **Une semaine avant**
-- Installer l'appli sur le téléphone Android qui servira : l'ouvrir une fois avec internet, puis Réglages, « Mettre Mbongo sur l'écran d'accueil ».
+- Installer l'appli sur le téléphone qui servira : l'ouvrir une fois avec internet, puis Réglages, « Mettre Mbongo sur l'écran d'accueil » (Android) ou, dans Safari, Partager puis « Sur l'écran d'accueil » (iPhone).
 - Couper les données et le Wi-Fi, rouvrir l'appli depuis l'écran d'accueil. Elle doit s'ouvrir.
 - Relancer `npm run scenario` et mettre les captures dans les diapositives.
 
@@ -33,7 +33,7 @@ Le téléphone et l'ordinateur ont chacun leur base : sans serveur, le bureau ne
 |---|---|---|
 | 1-2 | Ouvrir l'appli, « Voir la démonstration » | « Maman Nsimba tient une alimentation à Kinshasa. Elle note tout sur son téléphone, même sans internet. » |
 | 3-4 | « + Recette », taper 85 000, Enregistrer | « Une vente : le montant, un bouton. C'est elle qui saisit, pas nous. » |
-| 5 | Vente à crédit : 240 000, client, n° de facture | « Une vente à crédit ne touche pas la caisse. Elle va dans "On me doit". » |
+| 5 | Vente à crédit : 240 000, client, n° de facture | « Une vente à crédit ne touche pas la caisse. Elle va dans les créances. » |
 | 6 | Clients, Encaisser 100 000 | « Le client paie en deux fois. Il reste 140 000. C'est la réalité du marché. » |
 | 7 | Journal | « Le journal de trésorerie du mois, compte par compte, comme le modèle SMT. » |
 | 8 | Plus, États | « Ses états SMT provisoires, sur son téléphone. Ils restent « Non arrêtés » tant que l'expert-comptable ne les a pas arrêtés. » |

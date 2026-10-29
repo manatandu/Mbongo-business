@@ -19,9 +19,11 @@ interface Etat {
   peutInstaller: boolean;
   /** Ouverte depuis l'écran d'accueil. */
   installee: boolean;
+  /** iPhone ou iPad : Safari n'a pas de bouton d'installation, on explique le geste. */
+  iphone: boolean;
 }
 
-let etat: Etat = { majPrete: false, horsLignePret: false, peutInstaller: false, installee: false };
+let etat: Etat = { majPrete: false, horsLignePret: false, peutInstaller: false, installee: false, iphone: false };
 let demande: EvenementInstallation | null = null;
 let appliquer: ((recharger?: boolean) => Promise<void>) | null = null;
 const abonnes = new Set<() => void>();
@@ -33,7 +35,9 @@ function changer(m: Partial<Etat>) {
 
 export function demarrerInstallation(): void {
   if (typeof window === 'undefined') return;
-  changer({ installee: window.matchMedia?.('(display-mode: standalone)').matches ?? false });
+  const iphone = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standaloneIos = (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  changer({ iphone, installee: standaloneIos || (window.matchMedia?.('(display-mode: standalone)').matches ?? false) });
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     demande = e as EvenementInstallation;
