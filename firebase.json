@@ -1,21 +1,46 @@
 {
-  "hosting": {
-    "public": "dist",
-    "predeploy": ["npm run build"],
-    "ignore": ["firebase.json", "**/.*"],
-    "headers": [
-      {
-        "source": "**/*.@(html|webmanifest)",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-      },
-      {
-        "source": "sw.js",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-      },
-      {
-        "source": "assets/**",
-        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "site": "mbongo-8a748",
+      "public": "dist",
+      "predeploy": ["npm run build"],
+      "ignore": ["firebase.json", "**/.*"],
+      "headers": [
+        {
+          "source": "**/*.@(html|webmanifest)",
+          "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        },
+        {
+          "source": "sw.js",
+          "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        },
+        {
+          "source": "assets/**",
+          "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+        }
+      ]
+    },
+    {
+      "site": "mbongo-business",
+      "public": "sites/mbongo-business",
+      "ignore": ["**/.*"],
+      "headers": [
+        {
+          "source": "**/*.html",
+          "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        }
+      ]
+    },
+    {
+      "site": "trk-consulting",
+      "public": "sites/trk-consulting",
+      "ignore": ["**/.*"],
+      "headers": [
+        {
+          "source": "**/*.html",
+          "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        }
+      ]
+    }
+  ]
 }

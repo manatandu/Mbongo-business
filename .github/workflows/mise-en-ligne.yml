@@ -1,4 +1,5 @@
-# Remet Mbongo en ligne sur Firebase Hosting à chaque push, si les tests passent.
+# Remet en ligne les trois sites sur Firebase Hosting à chaque push, si les tests passent :
+# l'appli (mbongo-8a748), le site de Mbongo Business et celui de TRK Consulting.
 # Il faut le secret FIREBASE_SERVICE_ACCOUNT dans le dépôt (voir docs/deploiement.md).
 name: Mise en ligne
 
@@ -16,21 +17,41 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLE: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      PROJET: mbongo-8a748
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run verifier
-      - name: Publier sur Firebase
-        if: env.CLE != ''
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: mbongo-8a748
-          channelId: live
       - name: Secret manquant
         if: env.CLE == ''
         run: echo "::warning::Secret FIREBASE_SERVICE_ACCOUNT absent, rien n'a été publié."
+      - name: Outil Firebase et clé
+        if: env.CLE != ''
+        run: |
+          npm install -g firebase-tools@15 --silent
+          printf '%s' "$CLE" > "$RUNNER_TEMP/cle.json"
+      - name: Créer les sites qui manquent
+        if: env.CLE != ''
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cle.json
+        run: |
+          for site in $(node -p "require('./firebase.json').hosting.map(h => h.site).join(' ')"); do
+            if firebase hosting:sites:get "$site" --project "$PROJET" > /dev/null 2>&1; then
+              echo "Site $site : existe."
+            else
+              echo "Site $site : création."
+              firebase hosting:sites:create "$site" --project "$PROJET" --non-interactive
+            fi
+          done
+      - name: Publier
+        if: env.CLE != ''
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cle.json
+        run: firebase deploy --only hosting --project "$PROJET" --non-interactive
+      - name: Effacer la clé
+        if: always()
+        run: rm -f "$RUNNER_TEMP/cle.json"

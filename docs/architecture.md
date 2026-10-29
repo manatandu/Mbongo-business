@@ -91,7 +91,7 @@ Mbongo-business/
 ├── tests/                 moteur, données, bureau, format
 ├── scripts/               icônes, essai en mode avion, scénario de soutenance
 ├── public/                icônes
-└── site/                  site vitrine
+└── sites/                 trk-consulting/ et mbongo-business/
 ```
 
 Règle de dépendance, vérifiée par un test : `moteur` n'importe rien d'autre que lui-même. Ni React, ni la base, ni la date du jour.
@@ -296,7 +296,7 @@ Reste à faire sur un vrai téléphone Android d'entrée de gamme, avant la sout
 
 **3 bis. Livres** · fait. Livre des recettes et des dépenses, registre des achats, feuilles Excel. Pas de statut juridique dans le logiciel.
 
-**4. Site vitrine** · maquette faite (`site/index.html`).
+**4. Site vitrine** · en ligne (`sites/trk-consulting/`, `sites/mbongo-business/`).
 Reste : numéro WhatsApp, formules et tarifs, mentions légales, adresse de l'appli.
 
 **5. Soutenance** · préparée (`docs/soutenance.md`). Scénario minuté en trois parties, rejoué par `npm run scenario` ; questions probables du jury ; plan B en quatre niveaux.

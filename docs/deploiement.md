@@ -1,6 +1,12 @@
 # Mettre Mbongo en ligne avec Firebase
 
-On met en ligne le logiciel (l'appli du commerçant et le bureau). Le site vitrine viendra après, quand ses informations réelles seront prêtes.
+Trois sites dans le même projet Firebase (`mbongo-8a748`), réglés dans `firebase.json` :
+
+- l'appli et le bureau : `https://mbongo-8a748.web.app` (dossier `dist`) ;
+- le logiciel présenté : `https://mbongo-business.web.app` (dossier `sites/mbongo-business`) ;
+- TRK Consulting : `https://trk-consulting.web.app` (dossier `sites/trk-consulting`).
+
+La mise en ligne automatique (plus bas) crée les deux derniers sites s'ils n'existent pas. À la main : `firebase hosting:sites:create mbongo-business` et `firebase hosting:sites:create trk-consulting`.
 
 Tout se fait depuis un ordinateur. Une seule fois pour les étapes 1 à 5, ensuite seule l'étape 6 revient.
 

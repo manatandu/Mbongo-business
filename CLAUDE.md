@@ -52,7 +52,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 4. **Sorties** : journal de trésorerie mensuel par compte, compte de résultat, bilan, notes 1 à 3, tableau de bord du commerçant ; au bureau, impression PDF et export Excel.
 5. **Livres** : livre des recettes et des dépenses, registre des achats (format de l'AUDCG, art. 31 et 32), tirés des saisies, pour tout commerçant. Le logiciel ne gère pas de statut juridique.
 6. **Bureau** : trois écrans (clients, contrôles d'un client, ses états) ; arrêté par un bouton réservé à l'expert.
-7. **Site vitrine** de la structure (offre, formules, démonstration, contact WhatsApp affiché en clair).
+7. **Sites** : celui de TRK Consulting (vision, missions, objectifs, offres et produits) et celui de Mbongo Business (le logiciel, formules, contact WhatsApp affiché en clair).
 
 ## Architecture technique retenue
 
@@ -60,7 +60,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - **Données** : IndexedDB (Dexie) dans le navigateur, en ajout seulement. Pas de serveur pour la soutenance.
 - **Serveur** : seulement pour un éventuel pilote réel (Supabase, RLS, envoi des saisies). Voir `docs/architecture.md`, § 14.
 - **Moteur de calcul SMT** : module TypeScript pur, sans dépendance à l'interface, couvert par des tests (Vitest, fast-check). C'est la pièce critique.
-- **Site vitrine** : page statique séparée dans `site/`.
+- **Sites** : deux pages statiques séparées, `sites/trk-consulting/` (TRK Consulting, qui détient les droits du logiciel) et `sites/mbongo-business/` (présentation du logiciel).
 - Montants stockés en **entiers** (francs congolais ; centimes de dollar pour l'USD). Jamais de flottants pour l'argent.
 
 ## Modèle de données (base locale)
@@ -89,14 +89,14 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - `npm run verifier` : les deux, à lancer avant chaque commit.
 - `npm run build` puis `npm run essai:hors-ligne` : essai de l'appli en mode avion (Playwright).
 - `npm run build` puis `npm run scenario [dossier]` : scénario de soutenance rejoué (captures, Excel, vidéos). `DATE=2027-07-12` pour le rejouer à une autre date.
-- `firebase deploy --only hosting` : mise en ligne sur Firebase Hosting (voir `docs/deploiement.md`).
+- Mise en ligne : automatique à chaque push (GitHub Actions, Firebase Hosting), ou `firebase deploy --only hosting`. Trois sites : l'appli mbongo-8a748.web.app, mbongo-business.web.app, trk-consulting.web.app (voir `docs/deploiement.md`).
 
 ## Feuille de route
 
 1. Moteur SMT et tests : fait.
 2. Appli du commerçant : faite, installable, marche sans réseau (essai en mode avion automatisé).
 3. Bureau et exports PDF / Excel : faits.
-4. Site vitrine : maquette faite ; restent les informations réelles.
+4. Sites TRK Consulting et Mbongo Business : en ligne ; restent les informations réelles (WhatsApp, tarifs, adresse, immatriculation).
 5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
 Plus tard, seulement s'il y a un pilote : serveur.
 

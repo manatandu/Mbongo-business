@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TRK Consulting</title>
+<meta name="description" content="TRK Consulting accompagne les micro et petites entreprises de Kinshasa dans la tenue de leur comptabilité au Système minimal de trésorerie de l'OHADA : formation, logiciel Mbongo Business, contrôle des saisies.">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<style>
+/*
+ * Site de TRK Consulting, qui détient les droits du logiciel Mbongo Business.
+ * Même construction que le site de Mbongo Business : une colonne sur téléphone, deux à partir de 820 px.
+ * Bleu nuit et or. Polices du téléphone, rien à télécharger.
+ */
+:root {
+  --nuit: #0b2a52;
+  --nuit-2: #133a6b;
+  --or: #d9a400;
+  --or-clair: #f5e3a6;
+  --fond: #ffffff;
+  --surface: #f4f6f9;
+  --trait: #d8dee7;
+  --texte: #0b2a52;
+  --texte-dim: #55657a;
+  --police: system-ui, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --large: 1080px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--fond); color: var(--texte); font-family: var(--police); font-size: 16px; line-height: 1.55; }
+.cadre { max-width: var(--large); margin-inline: auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; font-weight: 650; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.8rem, 4.8vw, 2.9rem); }
+h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--or); outline-offset: 3px; border-radius: 4px; }
+.etiquette { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--texte-dim); font-weight: 500; }
+.dim { color: var(--texte-dim); }
+
+/* Bandeau */
+.prepa { background: #fff6d6; color: #6b4a00; border-bottom: 1px solid #f0dc9a; font-size: .84rem; }
+.prepa .cadre { padding-block: 8px; display: flex; gap: 6px 10px; flex-wrap: wrap; }
+.prepa b { text-transform: uppercase; letter-spacing: .06em; font-size: .76rem; }
+
+/* En-tête */
+.entete { position: sticky; top: 0; z-index: 5; background: var(--fond); border-bottom: 1px solid var(--trait); }
+.entete .cadre { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.sigle { width: 36px; height: 36px; border-radius: 8px; background: var(--nuit); color: #fff; display: grid; place-items: center; font-weight: 750; font-size: 12.5px; letter-spacing: -.02em; position: relative; flex: none; }
+.sigle::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 7px; height: 2px; background: var(--or); }
+.logo strong { font-size: 1.1rem; letter-spacing: -0.01em; }
+.logo small { display: block; font-size: .72rem; color: var(--texte-dim); font-weight: 400; letter-spacing: 0; }
+.nav { display: none; gap: 22px; font-size: .92rem; }
+.nav a { text-decoration: none; color: var(--texte-dim); }
+.nav a:hover { color: var(--texte); }
+@media (min-width: 860px) { .nav { display: flex; } }
+
+/* Boutons */
+.bouton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; border-radius: 999px; font: 600 .95rem var(--police); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.bouton-or { background: var(--or); color: var(--nuit); }
+.bouton-or:hover { filter: brightness(1.06); }
+.bouton-nuit { background: var(--nuit); color: #fff; }
+.bouton-nuit:hover { background: var(--nuit-2); }
+.bouton-clair { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+.bouton-clair:hover { background: rgba(255,255,255,.08); }
+.bouton-trait { background: transparent; color: var(--texte); border-color: var(--trait); }
+.bouton-trait:hover { background: var(--surface); }
+.entete .bouton { min-height: 38px; padding: 6px 16px; font-size: .88rem; }
+
+section { padding-block: clamp(48px, 8vw, 88px); }
+.entete-section { display: grid; gap: 10px; max-width: 640px; margin-bottom: 32px; }
+.entete-section .dim { font-size: 1.02rem; }
+
+/* Ouverture */
+.ouverture { background: var(--nuit); color: #fff; }
+.ouverture .cadre { display: grid; gap: 40px; }
+@media (min-width: 820px) { .ouverture .cadre { grid-template-columns: 1.15fr .85fr; align-items: center; } }
+.ouverture .etiquette { color: var(--or-clair); }
+.ouverture-texte { display: grid; gap: 18px; min-width: 0; }
+.ouverture-texte .chapo { font-size: 1.08rem; color: #c9d4e3; max-width: 34em; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.apports { background: var(--nuit-2); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 20px; display: grid; gap: 4px; min-width: 0; }
+.apports ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; counter-reset: a; }
+.apports li { counter-increment: a; display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding-block: 11px; border-top: 1px solid rgba(255,255,255,.12); }
+.apports li::before { content: counter(a); color: var(--or); font-weight: 650; font-variant-numeric: tabular-nums; }
+.apports li span { color: #c9d4e3; font-size: .9rem; display: block; }
+
+/* Vision */
+.vision .cadre { display: grid; gap: 28px; }
+@media (min-width: 820px) { .vision .cadre { grid-template-columns: .9fr 1.1fr; align-items: start; gap: 56px; } }
+.citation { font-size: clamp(1.25rem, 3vw, 1.6rem); line-height: 1.35; font-weight: 550; border-left: 3px solid var(--or); padding-left: 18px; text-wrap: pretty; }
+.vision .texte { display: grid; gap: 14px; color: var(--texte-dim); max-width: 60ch; }
+
+/* Missions */
+.missions { background: var(--surface); }
+.grille { display: grid; gap: 16px; }
+@media (min-width: 640px) { .grille { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .grille.quatre { grid-template-columns: repeat(4, 1fr); } }
+.carte { background: var(--fond); border: 1px solid var(--trait); border-radius: 12px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.carte .verbe { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: #8a6a00; font-weight: 600; }
+.carte p { color: var(--texte-dim); font-size: .95rem; }
+
+/* Objectifs */
+.objectifs { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--trait); }
+@media (min-width: 820px) { .objectifs { grid-template-columns: 1fr 1fr; column-gap: 48px; } }
+.objectifs li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding-block: 18px; border-bottom: 1px solid var(--trait); }
+.objectifs .n { font-weight: 650; color: var(--or); font-variant-numeric: tabular-nums; }
+.objectifs p { color: var(--texte-dim); font-size: .95rem; margin-top: 4px; }
+
+/* Offres et produits */
+.offres { display: grid; gap: 16px; }
+@media (min-width: 820px) { .offres { grid-template-columns: repeat(2, 1fr); } }
+.offre { border: 1px solid var(--trait); border-radius: 12px; padding: 22px; display: grid; gap: 12px; align-content: start; }
+.offre ul { margin: 0; padding-left: 1.1em; display: grid; gap: 5px; color: var(--texte-dim); font-size: .95rem; }
+.offre .note { font-size: .85rem; color: var(--texte-dim); }
+.offre.partenaire { background: var(--surface); }
+.sous-titre { margin: 44px 0 18px; }
+.produit { border-radius: 14px; background: linear-gradient(135deg, #0b5fb8, #0b2a52); color: #fff; padding: clamp(22px, 4vw, 34px); display: grid; gap: 22px; }
+@media (min-width: 820px) { .produit { grid-template-columns: 1.2fr .8fr; align-items: center; } }
+.produit .marque-produit { display: flex; align-items: center; gap: 12px; }
+.produit .m { width: 44px; height: 44px; border-radius: 10px; background: #fff; color: #0b5fb8; display: grid; place-items: center; font-weight: 800; font-size: 22px; position: relative; overflow: hidden; flex: none; }
+.produit .m::after { content: ""; position: absolute; width: 60px; height: 9px; background: #f2c200; transform: rotate(-35deg); top: 26px; }
+.produit .m b { position: relative; z-index: 1; }
+.produit p { color: #d6e3f5; }
+.produit ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: .95rem; }
+.produit li { padding-left: 18px; position: relative; color: #eaf1fb; }
+.produit li::before { content: ""; position: absolute; left: 0; top: .6em; width: 8px; height: 2px; background: #f2c200; }
+
+/* Cadre légal */
+.cadre-legal { background: var(--surface); }
+.colonnes { display: grid; gap: 16px; }
+@media (min-width: 820px) { .colonnes { grid-template-columns: 1fr 1fr; } }
+.colonne { padding-left: 14px; border-left: 2px solid var(--trait); display: grid; gap: 8px; align-content: start; }
+.colonne.trk { border-left-color: var(--or); }
+.colonne.expert { border-left-color: var(--nuit); }
+.colonne ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; color: var(--texte-dim); font-size: .95rem; }
+.loi { margin-top: 24px; font-size: .9rem; color: var(--texte-dim); max-width: 66ch; }
+
+/* Contact */
+.contact .cadre { display: grid; gap: 32px; }
+@media (min-width: 820px) { .contact .cadre { grid-template-columns: .9fr 1.1fr; align-items: start; } }
+.carte-contact { border: 1px solid var(--trait); border-radius: 12px; padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.numero { font: 500 clamp(1.3rem, 5vw, 1.6rem) ui-monospace, "Roboto Mono", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.coordonnees { display: grid; gap: 4px; font-size: .95rem; color: var(--texte-dim); }
+
+/* Pied */
+footer { background: var(--nuit); color: #c9d4e3; padding-block: 32px calc(32px + env(safe-area-inset-bottom, 0px)); font-size: .88rem; }
+footer .cadre { display: grid; gap: 16px; }
+@media (min-width: 820px) { footer .cadre { grid-template-columns: 1fr auto; align-items: end; } }
+footer b { color: #fff; }
+.liens-pied { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+@media (prefers-reduced-motion: no-preference) { .bouton { transition: filter .15s ease, background-color .15s ease; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<div class="prepa" role="note">
+  <div class="cadre"><b>En préparation</b><span>Adresse, numéro WhatsApp et immatriculation à venir.</span></div>
+</div>
+
+<header class="entete">
+  <div class="cadre">
+    <a class="logo" href="#haut" aria-label="TRK Consulting, accueil">
+      <span class="sigle" aria-hidden="true">TRK</span>
+      <strong>TRK Consulting<small>Assistance comptable et de gestion</small></strong>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#vision">Vision</a>
+      <a href="#missions">Missions</a>
+      <a href="#objectifs">Objectifs</a>
+      <a href="#offres">Offres et produits</a>
+    </nav>
+    <a class="bouton bouton-nuit" href="#contact">Nous écrire</a>
+  </div>
+</header>
+
+<main id="haut">
+  <section class="ouverture">
+    <div class="cadre">
+      <div class="ouverture-texte">
+        <p class="etiquette">Kinshasa · Micro et petites entreprises</p>
+        <h1>Des comptes simples et justes pour les petits commerces.</h1>
+        <p class="chapo">TRK Consulting accompagne les micro et petites entreprises qui tiennent leurs comptes au Système minimal de trésorerie de l'OHADA. Nous formons, nous outillons, nous contrôlons. Le commerçant reste maître de ses comptes.</p>
+        <div class="actions">
+          <a class="bouton bouton-or" href="#offres">Nos offres</a>
+          <a class="bouton bouton-clair" href="https://mbongo-business.web.app/">Découvrir Mbongo Business</a>
+        </div>
+      </div>
+      <aside class="apports" aria-label="Ce que nous apportons">
+        <p class="etiquette">Ce que nous apportons</p>
+        <ol>
+          <li><div>Un logiciel fait pour eux<span>Mbongo Business, sur le téléphone, sans internet</span></div></li>
+          <li><div>Une formation sur place<span>À la boutique, en français ou en lingala</span></div></li>
+          <li><div>Un contrôle régulier<span>Saisies, pièces, clients en retard</span></div></li>
+          <li><div>Un expert-comptable partenaire<span>Pour l'arrêté des états et le fiscal</span></div></li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <section class="vision" id="vision">
+    <div class="cadre">
+      <div style="display:grid;gap:16px">
+        <p class="etiquette">Notre vision</p>
+        <p class="citation">Que chaque commerçant sache, chaque soir, ce qu'il a gagné. Et qu'en fin d'année, ses comptes tiennent devant une banque ou un partenaire.</p>
+      </div>
+      <div class="texte">
+        <p>À Kinshasa, la plupart des petits commerces tiennent un cahier, ou rien. Le résultat de l'année reste une impression. Le crédit devient difficile, la boutique se gère au jour le jour.</p>
+        <p>Le droit OHADA prévoit pourtant un cadre léger pour eux : le Système minimal de trésorerie. Des recettes, des dépenses, un inventaire en fin d'année, et des états simples.</p>
+        <p>TRK Consulting rend ce cadre utilisable au quotidien. Avec un outil adapté au téléphone, et des personnes qui passent à la boutique.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="missions" id="missions">
+    <div class="cadre">
+      <div class="entete-section">
+        <p class="etiquette">Nos missions</p>
+        <h2>Ce que nous faisons</h2>
+      </div>
+      <div class="grille quatre">
+        <article class="carte">
+          <span class="verbe">Former</span>
+          <h3>Apprendre à tenir sa caisse</h3>
+          <p>Noter chaque recette et chaque dépense, garder ses pièces, compter son stock.</p>
+        </article>
+        <article class="carte">
+          <span class="verbe">Outiller</span>
+          <h3>Un logiciel sur le téléphone</h3>
+          <p>Mbongo Business fait les calculs et sort les états du Système minimal de trésorerie.</p>
+        </article>
+        <article class="carte">
+          <span class="verbe">Contrôler</span>
+          <h3>Vérifier sans écrire à la place</h3>
+          <p>Pièces manquantes, caisse négative, mois oubliés, clients en retard : nous le signalons.</p>
+        </article>
+        <article class="carte">
+          <span class="verbe">Relier</span>
+          <h3>Ouvrir la porte à l'expert</h3>
+          <p>Un expert-comptable inscrit, partenaire par convention, arrête les états et traite le fiscal.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="objectifs">
+    <div class="cadre">
+      <div class="entete-section">
+        <p class="etiquette">Nos objectifs</p>
+        <h2>Où nous voulons mener nos clients</h2>
+      </div>
+      <ol class="objectifs">
+        <li><span class="n">01</span><div><h3>Du cahier au Système minimal de trésorerie</h3><p>Des comptes tenus selon l'AUDCIF, par le commerçant lui-même.</p></div></li>
+        <li><span class="n">02</span><div><h3>Des comptes présentables</h3><p>Des états clairs à montrer à une banque, une microfinance ou un fournisseur.</p></div></li>
+        <li><span class="n">03</span><div><h3>Moins d'argent perdu à crédit</h3><p>Chaque client qui doit est suivi, relancé à temps, avec un dossier en cas de litige.</p></div></li>
+        <li><span class="n">04</span><div><h3>Les échéances connues d'avance</h3><p>Des rappels pour l'IRPP des micro et petites entreprises, la CNSS, le loyer.</p></div></li>
+        <li><span class="n">05</span><div><h3>Grandir sans être surpris</h3><p>Une alerte quand les ventes approchent des seuils, avant le passage au Système normal.</p></div></li>
+        <li><span class="n">06</span><div><h3>Un partage clair des rôles</h3><p>Le commerçant saisit, TRK Consulting accompagne, l'expert-comptable arrête.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="offres" style="padding-top:0">
+    <div class="cadre">
+      <div class="entete-section">
+        <p class="etiquette">Offres et produits</p>
+        <h2>Nos offres</h2>
+      </div>
+      <div class="offres">
+        <article class="offre">
+          <h3>Assistance comptable</h3>
+          <ul>
+            <li>Installation et formation à la boutique</li>
+            <li>Contrôle mensuel des saisies et des pièces</li>
+            <li>Aide à l'inventaire de fin d'année</li>
+          </ul>
+        </article>
+        <article class="offre">
+          <h3>Accompagnement de gestion</h3>
+          <ul>
+            <li>Suivi des clients qui doivent et des fournisseurs à payer</li>
+            <li>Lecture du tableau de bord avec le commerçant</li>
+            <li>Organisation de la caisse et du mobile money</li>
+          </ul>
+        </article>
+        <article class="offre">
+          <h3>Ateliers de formation</h3>
+          <ul>
+            <li>En groupe, sur un marché ou dans une association</li>
+            <li>En français et en lingala</li>
+            <li>Caisse, crédit client, stock, échéances</li>
+          </ul>
+        </article>
+        <article class="offre partenaire">
+          <h3>Avec l'expert-comptable partenaire</h3>
+          <ul>
+            <li>Arrêté et, s'il le faut, certification des états</li>
+            <li>Assistance et déclarations fiscales</li>
+            <li>Tenue des comptes, si le commerçant la confie</li>
+          </ul>
+          <p class="note">Réalisé par l'expert-comptable, sur son devis.</p>
+        </article>
+      </div>
+
+      <h2 class="sous-titre">Nos produits</h2>
+      <article class="produit">
+        <div style="display:grid;gap:14px">
+          <div class="marque-produit"><span class="m" aria-hidden="true"><b>M</b></span><h3 style="font-size:1.35rem">Mbongo Business</h3></div>
+          <p>Le logiciel du petit commerçant. Il note les recettes, les dépenses et les crédits, et sort les états du Système minimal de trésorerie. Sur un Android simple, sans internet, en français et en lingala.</p>
+          <div class="actions">
+            <a class="bouton bouton-or" href="https://mbongo-business.web.app/">Découvrir le logiciel</a>
+            <a class="bouton bouton-clair" href="https://mbongo-8a748.web.app/">Ouvrir l'appli</a>
+          </div>
+        </div>
+        <ul>
+          <li>Caisse, M-Pesa, Orange Money, Airtel Money, banque</li>
+          <li>Francs congolais et dollars</li>
+          <li>Ventes et achats à crédit</li>
+          <li>Compte de résultat, bilan et notes</li>
+          <li>Un bureau pour TRK Consulting et l'expert-comptable</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="cadre-legal">
+    <div class="cadre">
+      <div class="entete-section">
+        <p class="etiquette">Notre cadre</p>
+        <h2>Qui fait quoi</h2>
+      </div>
+      <div class="colonnes">
+        <div class="colonne trk">
+          <h3>TRK Consulting</h3>
+          <ul>
+            <li>forme le commerçant et l'outille</li>
+            <li>contrôle ses saisies et réclame les pièces</li>
+            <li>l'aide à faire son inventaire</li>
+          </ul>
+        </div>
+        <div class="colonne expert">
+          <h3>L'expert-comptable partenaire</h3>
+          <ul>
+            <li>arrête les états, les certifie s'il le faut</li>
+            <li>conseille et assiste pour les impôts</li>
+            <li>tient les comptes qu'on lui confie</li>
+          </ul>
+        </div>
+      </div>
+      <p class="loi">TRK Consulting n'est pas un cabinet d'expertise comptable. Les actes réservés par la loi n° 15/002 du 12 février 2015, modifiée par la loi n° 18/017 du 9 juillet 2018, sont confiés à un expert-comptable inscrit au tableau de l'Ordre national des experts-comptables, lié à TRK Consulting par convention.</p>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="cadre">
+      <div style="display:grid;gap:10px">
+        <h2>Nous écrire</h2>
+        <p class="dim">Sur WhatsApp, en français ou en lingala. Nous passons vous voir à la boutique.</p>
+      </div>
+      <div class="carte-contact">
+        <p class="etiquette">WhatsApp</p>
+        <!-- Numéro à venir : tant qu'il manque, le bouton reste inactif. -->
+        <p class="numero">+243 ··· ··· ···</p>
+        <div class="coordonnees">
+          <span>Kinshasa</span>
+          <span>Du lundi au samedi</span>
+        </div>
+        <a class="bouton bouton-nuit" aria-disabled="true" tabindex="-1" style="opacity:.55;pointer-events:none">Ouvrir WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="cadre">
+    <div style="display:grid;gap:6px">
+      <p><b>TRK Consulting</b> · Assistance comptable et de gestion · Kinshasa</p>
+      <p>Mbongo Business est un logiciel de TRK Consulting.</p>
+    </div>
+    <div class="liens-pied">
+      <span>Mentions légales</span>
+      <span>Confidentialité</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
