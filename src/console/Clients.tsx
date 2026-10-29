@@ -15,6 +15,7 @@ import {
   type Formule,
 } from './abonnement';
 import { EtatAbo } from './Console';
+import { useAdmin } from './role';
 import { sb, useLecture, type Abonnement, type Client, type ClientVue, type Paiement, type Sms, type Suivi } from './supabase';
 
 const SECTEUR = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Services' } as const;
@@ -123,6 +124,7 @@ function FormClient({ depart, apres }: { depart?: Client; apres: (id: string) =>
 }
 
 export function ListeClients() {
+  const admin = useAdmin();
   const [, aller] = useLocation();
   const [filtre, setFiltre] = useState<Filtre>('tous');
   const [cherche, setCherche] = useState('');
@@ -144,9 +146,11 @@ export function ListeClients() {
     <Fenetre
       titre="Clients"
       droite={
-        <button className="btn btn-principal" onClick={() => setAjout((a) => !a)}>
-          {ajout ? 'Fermer' : 'Nouveau client'}
-        </button>
+        admin ? (
+          <button className="btn btn-principal" onClick={() => setAjout((a) => !a)}>
+            {ajout ? 'Fermer' : 'Nouveau client'}
+          </button>
+        ) : undefined
       }
     >
       <div className="flex flex-col gap-3">
@@ -363,6 +367,7 @@ function NouveauSuivi({ client, apres }: { client: string; apres: () => void }) 
 type OngletFiche = 'abonnements' | 'paiements' | 'suivi' | 'sms' | 'fiche';
 
 export function FicheClient({ id }: { id: string }) {
+  const admin = useAdmin();
   const [onglet, setOnglet] = useState<OngletFiche>('abonnements');
   const client = useLecture<ClientVue>(() => sb.from('vue_clients').select('*').eq('id', id).single(), [id]);
   const abos = useLecture<Abonnement[]>(() => sb.from('abonnements').select('*').eq('client_id', id).order('fin', { ascending: false }), [id]);
@@ -414,14 +419,16 @@ export function FicheClient({ id }: { id: string }) {
           {ongletBouton('paiements', 'Paiements')}
           {ongletBouton('suivi', 'Suivi')}
           {ongletBouton('sms', 'SMS')}
-          {ongletBouton('fiche', 'Fiche')}
+          {admin && ongletBouton('fiche', 'Fiche')}
         </nav>
 
         {onglet === 'abonnements' && (
           <>
-            <Carte titre={abos.donnees?.length ? 'Renouveler' : 'Premier abonnement'}>
-              <NouvelAbonnement key={abos.donnees?.[0]?.id ?? 'premier'} client={id} dernier={abos.donnees?.[0]} apres={toutRelire} />
-            </Carte>
+            {admin && (
+              <Carte titre={abos.donnees?.length ? 'Renouveler' : 'Premier abonnement'}>
+                <NouvelAbonnement key={abos.donnees?.[0]?.id ?? 'premier'} client={id} dernier={abos.donnees?.[0]} apres={toutRelire} />
+              </Carte>
+            )}
             <table className="grille">
               <thead>
                 <tr>
@@ -452,9 +459,11 @@ export function FicheClient({ id }: { id: string }) {
 
         {onglet === 'paiements' && (
           <>
-            <Carte titre="Enregistrer un paiement">
-              <NouveauPaiement key={abos.donnees?.[0]?.id ?? 'aucun'} client={id} abonnements={abos.donnees ?? []} apres={toutRelire} />
-            </Carte>
+            {admin && (
+              <Carte titre="Enregistrer un paiement">
+                <NouveauPaiement key={abos.donnees?.[0]?.id ?? 'aucun'} client={id} abonnements={abos.donnees ?? []} apres={toutRelire} />
+              </Carte>
+            )}
             <table className="grille">
               <thead>
                 <tr>
@@ -532,7 +541,7 @@ export function FicheClient({ id }: { id: string }) {
           </table>
         )}
 
-        {onglet === 'fiche' && <FormClient depart={c} apres={() => client.relire()} />}
+        {admin && onglet === 'fiche' && <FormClient depart={c} apres={() => client.relire()} />}
       </div>
     </Fenetre>
   );

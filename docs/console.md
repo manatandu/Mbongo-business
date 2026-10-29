@@ -18,9 +18,14 @@ L'offre gratuite met le projet en pause après une semaine sans activité. Le ra
 
 | Qui | Voit | Écrit |
 |---|---|---|
-| Administrateur TRK | clients, abonnements, paiements, suivi, SMS | les mêmes ; jamais les saisies comptables |
+| Administrateur TRK | clients, abonnements, paiements, suivi, SMS, équipe | tout cela ; jamais les saisies comptables |
+| Assistant TRK | clients, abonnements, paiements, suivi, SMS | le suivi seulement (visites, appels, formations, contrôles) |
 | Membre d'un client (commerçant, assistant, expert) | sa fiche, ses abonnements, ses paiements, ses saisies | rien, sauf le commerçant |
 | Commerçant | idem | ajoute ses saisies, pour son entreprise seulement ; personne ne les modifie ni ne les efface |
+
+## Équipe
+
+Onglet « Équipe » (administrateurs) : ajouter un membre avec un mot de passe provisoire, changer son rôle, lui donner un nouveau mot de passe, le retirer. Les comptes sont créés directement en base (`creer_membre_equipe`), sans e-mail. Essai : `supabase/tests/role_assistant.sql`.
 
 ## Rappels SMS
 

@@ -9,6 +9,8 @@ import { useHashLocation } from 'wouter/use-hash-location';
 import { Fenetre, Message, Pastille } from '../bureau/ui';
 import { etatAbonnement, type EtatAbonnement } from './abonnement';
 import { FicheClient, ListeClients } from './Clients';
+import { Equipe } from './Equipe';
+import { LIBELLE_ROLE, RoleContexte, type RoleEquipe } from './role';
 import { Rappels, TableauDeBord } from './Tableau';
 import { sb } from './supabase';
 import symboleTrk from './trk-symbole-negatif.svg';
@@ -128,7 +130,7 @@ function Onglet({ vers, children }: { vers: string; children: ReactNode }) {
   );
 }
 
-function Coquille({ session, admin }: { session: Session; admin: boolean | null }) {
+function Coquille({ session, role }: { session: Session; role: RoleEquipe | 'aucun' | null }) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="ecran-seul text-chrome-text" style={{ background: 'var(--bandeau)' }}>
@@ -140,6 +142,7 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
           <span className="flex-1" />
           <a href="#/compte" className="text-chrome-text-dim hidden sm:inline">
             {session.user.email}
+            {role === 'admin' || role === 'assistant' ? ` · ${LIBELLE_ROLE[role]}` : ''}
           </a>
           <button className="btn btn-neutre" onClick={() => void sb.auth.signOut()}>
             Se déconnecter
@@ -149,25 +152,27 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
       </header>
 
       <main className="flex-1 w-full max-w-[1100px] mx-auto p-4 flex flex-col gap-4">
-        {admin === null ? null : !admin ? (
+        {role === null ? null : role === 'aucun' ? (
           <Fenetre titre="Accès en attente">
-            <Message ton="avert">Ce compte n'est pas encore administrateur. Demandez à TRK Consulting d'autoriser {session.user.email}.</Message>
+            <Message ton="avert">Ce compte n'a pas encore accès à la console. Demandez à un administrateur de TRK Consulting d'autoriser {session.user.email}.</Message>
           </Fenetre>
         ) : (
-          <>
+          <RoleContexte.Provider value={role}>
             <nav className="flex gap-1 border-b" style={{ borderColor: 'var(--border)' }} aria-label="Console">
               <Onglet vers="/">Tableau de bord</Onglet>
               <Onglet vers="/clients">Clients</Onglet>
               <Onglet vers="/rappels">Rappels SMS</Onglet>
+              {role === 'admin' && <Onglet vers="/equipe">Équipe</Onglet>}
             </nav>
             <Switch>
               <Route path="/client/:id">{(p) => <FicheClient id={p.id} />}</Route>
               <Route path="/clients" component={ListeClients} />
               <Route path="/rappels" component={Rappels} />
               <Route path="/compte">{() => <MonCompte email={session.user.email ?? ''} />}</Route>
+              {role === 'admin' && <Route path="/equipe">{() => <Equipe moi={session.user.id} />}</Route>}
               <Route component={TableauDeBord} />
             </Switch>
-          </>
+          </RoleContexte.Provider>
         )}
       </main>
       <footer className="ecran-seul text-center text-text-dim py-3">Console interne de TRK Consulting · Mbongo Business</footer>
@@ -177,7 +182,7 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
 
 export function Console() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
-  const [admin, setAdmin] = useState<boolean | null>(null);
+  const [role, setRole] = useState<RoleEquipe | 'aucun' | null>(null);
 
   useEffect(() => {
     void sb.auth.getSession().then(({ data }) => setSession(data.session));
@@ -186,16 +191,16 @@ export function Console() {
   }, []);
 
   useEffect(() => {
-    setAdmin(null);
+    setRole(null);
     if (!session) return;
     void sb
       .from('administrateurs')
-      .select('user_id')
+      .select('role')
       .eq('user_id', session.user.id)
       .maybeSingle()
-      .then(({ data }) => setAdmin(!!data));
+      .then(({ data }) => setRole((data?.role as RoleEquipe | undefined) ?? 'aucun'));
   }, [session]);
 
   if (session === undefined) return null;
-  return <Router hook={useHashLocation}>{session ? <Coquille session={session} admin={admin} /> : <Connexion />}</Router>;
+  return <Router hook={useHashLocation}>{session ? <Coquille session={session} role={role} /> : <Connexion />}</Router>;
 }

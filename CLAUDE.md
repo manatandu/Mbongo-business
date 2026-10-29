@@ -42,7 +42,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 | Assistant (structure) | navigateur, bureau | voir ses clients, leurs contrôles et leurs états ; **aucune écriture** dans les saisies |
 | Expert-comptable partenaire | navigateur, bureau | la même chose, plus la correction du taux du dollar au 31 décembre et l'arrêté des états |
 
-Administrateurs TRK : console à part (`src/console/`, trkconsole.web.app) sur le serveur Supabase « mbongo » ; clients, abonnements, paiements, suivi, rappels SMS. Ils ne voient jamais les saisies comptables des clients. Voir `docs/console.md`.
+Équipe TRK (administrateurs et assistants) : console à part (`src/console/`, trkconsole.web.app) sur le serveur Supabase « mbongo » ; clients, abonnements, paiements, suivi, rappels SMS. Ils ne voient jamais les saisies comptables des clients. Voir `docs/console.md`.
 
 ## Modules fonctionnels
 

@@ -5,6 +5,7 @@ import { Carte, Fenetre, Message, Pastille } from '../bureau/ui';
 import { aujourdhuiLocal, fmt, fmtDate } from '../ui/format';
 import { afficherTelephone, etatAbonnement, LIBELLE_FORMULE, TARIFS } from './abonnement';
 import { EtatAbo } from './Console';
+import { useAdmin } from './role';
 import { sb, useLecture, type ClientVue, type Paiement, type Sms } from './supabase';
 
 function Chiffre({ titre, valeur, detail }: { titre: string; valeur: string; detail?: string }) {
@@ -91,6 +92,7 @@ const STATUT = {
 } as const;
 
 export function Rappels() {
+  const admin = useAdmin();
   const sms = useLecture<Sms[]>(() => sb.from('sms').select('*, clients(nom)').order('cree_le', { ascending: false }).limit(200), []);
   const mode = useLecture<{ valeur: string }>(() => sb.from('reglages_console').select('valeur').eq('cle', 'sms_mode').maybeSingle(), []);
   const [message, setMessage] = useState<{ ton: 'ok' | 'danger'; texte: string } | null>(null);
@@ -105,9 +107,11 @@ export function Rappels() {
     <Fenetre
       titre="Rappels SMS"
       droite={
-        <button className="btn btn-principal" onClick={() => void lancer()}>
-          Lancer les rappels maintenant
-        </button>
+        admin ? (
+          <button className="btn btn-principal" onClick={() => void lancer()}>
+            Lancer les rappels maintenant
+          </button>
+        ) : undefined
       }
     >
       <div className="flex flex-col gap-3">
