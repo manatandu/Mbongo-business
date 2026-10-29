@@ -214,7 +214,7 @@ Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête 
 | seuil de l'entreprenant | entreprenant au-dessus du seuil SMT de son secteur cette année | à revoir |
 | statut d'entreprenant perdu | deux années de suite au-dessus du seuil (AUDCG, art. 30) | à traiter |
 
-Le seuil SMT est fixé en FCFA. L'équivalent en francs congolais est un paramètre (`src/donnees/parametres.ts`, 5 FC pour 1 FCFA en 2026, à revoir chaque année). Le logiciel alerte ; le passage au Système normal se fait chez l'expert-comptable partenaire.
+Le seuil SMT est fixé en FCFA. L'équivalent en francs congolais est un paramètre (`src/donnees/parametres.ts` : 4 FC pour 1 FCFA, d'après le cours BCC d'août 2026 ; à revoir chaque année). Seuils en francs : environ 240 M FC (négoce), 160 M FC (artisanat), 120 M FC (services). Le logiciel alerte ; le passage au Système normal se fait chez l'expert-comptable partenaire.
 
 ## 12. Poids
 

@@ -62,8 +62,8 @@ describe('arrêté des états', () => {
 describe('liste des clients', () => {
   it('alerte quand les ventes approchent le seuil du SMT', async () => {
     expect(resumeDossier(await chargerDossier(db, exerciceId), '2026-10-29').anomalies.map((a) => a.code)).not.toContain('seuil_smt_approche');
-    // Négoce : 60 M FCFA, soit 300 M FC ; alerte à 80 %.
-    await enregistrerOperation(db, exerciceId, { date: '2026-06-01', type: 'recette', compte: caisse, nature: 'ventes', libelle: 'Ventes', montant: 250_000_000, devise: 'CDF', taux: null, piece: true });
+    // Négoce : 60 M FCFA, soit 240 M FC à 4 FC pour 1 FCFA ; alerte à 80 %, soit 192 M FC.
+    await enregistrerOperation(db, exerciceId, { date: '2026-06-01', type: 'recette', compte: caisse, nature: 'ventes', libelle: 'Ventes', montant: 200_000_000, devise: 'CDF', taux: null, piece: true });
     const r = resumeDossier(await chargerDossier(db, exerciceId), '2026-10-29');
     expect(r.anomalies.map((a) => a.code)).toContain('seuil_smt_approche');
     expect(r.aRevoir).toBeGreaterThan(0);

@@ -23,8 +23,9 @@ const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 
 /** Ventes et achats mensuels du cahier, en millions de francs. */
 const VENTES = [9.1, 8.6, 9.8, 9.3, 10.2, 9.7, 10.6, 11.1, 10.4, 10.9, 11.6, 13.2];
 const ACHATS = [6.4, 6.0, 7.1, 6.6, 7.3, 6.9, 7.6, 8.0, 7.5, 7.8, 8.3, 9.6];
-const TAUX_OUVERTURE = 2800;
-const TAUX_DU_JOUR = 2850;
+// Proches du cours indicatif de la BCC : 2 181 FC le 30/12/2025, autour de 2 260 FC à l'été 2026.
+const TAUX_OUVERTURE = 2200;
+const TAUX_DU_JOUR = 2250;
 
 const finDeMois = (a: number, m: number): number => new Date(Date.UTC(a, m, 0)).getUTCDate();
 const pad = (n: number): string => String(n).padStart(2, '0');
