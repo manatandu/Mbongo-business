@@ -5,8 +5,8 @@
  *
  * En ligne (depuis un ordinateur avec k6 installé) :
  *   k6 run tests/charge/k6-sites.js
- * En local, sur des serveurs de test :
- *   APPLI=http://localhost:4173 TRK=http://localhost:4174 CONSOLE=http://localhost:4175 k6 run tests/charge/k6-sites.js
+ * En local, sur des serveurs de test, avec la charge forte (60 utilisateurs) :
+ *   CHARGE=forte APPLI=http://localhost:4173 TRK=http://localhost:4174 CONSOLE=http://localhost:4175 k6 run tests/charge/k6-sites.js
  *
  * Avec SUPABASE=1, il vérifie aussi qu'un visiteur non connecté ne lit aucune donnée de la console (règles RLS).
  */
@@ -19,16 +19,22 @@ const CONSOLE = __ENV.CONSOLE || 'https://trkconsole.web.app';
 const SUPABASE_URL = 'https://vloavruyppvmbqlfldad.supabase.co';
 const CLE_PUBLIQUE = 'sb_publishable_KCJsAwlWR4ILrX05JWTUNQ_DnUdNcg5';
 
+// Par défaut, une charge légère : l'offre gratuite de Firebase limite le trafic par jour, et une charge forte
+// (près de 2 Go en une minute) rendrait les sites indisponibles jusqu'au lendemain. CHARGE=forte : en local seulement.
+const FORTE = __ENV.CHARGE === 'forte';
+
 export const options = {
   scenarios: {
-    visiteurs: {
-      executor: 'ramping-vus',
-      stages: [
-        { duration: '15s', target: 30 },
-        { duration: '30s', target: 60 },
-        { duration: '10s', target: 0 },
-      ],
-    },
+    visiteurs: FORTE
+      ? {
+          executor: 'ramping-vus',
+          stages: [
+            { duration: '15s', target: 30 },
+            { duration: '30s', target: 60 },
+            { duration: '10s', target: 0 },
+          ],
+        }
+      : { executor: 'constant-vus', vus: 3, duration: '20s' },
   },
   thresholds: {
     // Aucune erreur tolérée, et des pages rapides.
