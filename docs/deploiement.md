@@ -3,10 +3,10 @@
 Trois sites dans le même projet Firebase (`mbongo-8a748`), réglés dans `firebase.json` :
 
 - l'appli et le bureau : `https://mbongo-business.web.app` (dossier `dist`) ;
-- TRK Consulting : `https://trk-consulting-rdc.web.app` (dossier `sites/trk-consulting`), avec la présentation du logiciel en `/mbongo-business/` ;
+- TRK Consulting : `https://trkconsulting.web.app` (dossier `sites/trk-consulting`), avec la présentation du logiciel en `/mbongo-business/` ; `https://trk-consulting-rdc.web.app`, sa première adresse, y redirige ;
 - l'ancienne adresse de l'appli, `https://mbongo-8a748.web.app` (dossier `sites/ancienne-adresse`) : elle redirige vers la nouvelle. C'est le site par défaut du projet, Firebase ne permet pas de le supprimer. Son `sw.js` efface l'ancienne appli installée sur les téléphones ; il faut réinstaller depuis la nouvelle adresse.
 
-La mise en ligne automatique (plus bas) crée les sites qui n'existent pas. À la main : `firebase hosting:sites:create trk-consulting-rdc`.
+La mise en ligne automatique (plus bas) crée les sites qui n'existent pas. À la main : `firebase hosting:sites:create trkconsulting`.
 
 Tout se fait depuis un ordinateur. Une seule fois pour les étapes 1 à 5, ensuite seule l'étape 6 revient.
 

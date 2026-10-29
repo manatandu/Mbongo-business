@@ -41,7 +41,7 @@
       ]
     },
     {
-      "site": "trk-consulting-rdc",
+      "site": "trkconsulting",
       "public": "sites/trk-consulting",
       "ignore": [
         "**/.*"
@@ -58,6 +58,17 @@
         }
       ],
       "trailingSlash": true
+    },
+    {
+      "site": "trk-consulting-rdc",
+      "public": "sites/trk-consulting",
+      "redirects": [
+        {
+          "source": "/:chemin*",
+          "destination": "https://trkconsulting.web.app/:chemin",
+          "type": 301
+        }
+      ]
     },
     {
       "site": "mbongo-8a748",

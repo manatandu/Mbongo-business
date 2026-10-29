@@ -89,7 +89,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - `npm run verifier` : les deux, à lancer avant chaque commit.
 - `npm run build` puis `npm run essai:hors-ligne` : essai de l'appli en mode avion (Playwright).
 - `npm run build` puis `npm run scenario [dossier]` : scénario de soutenance rejoué (captures, Excel, vidéos). `DATE=2027-07-12` pour le rejouer à une autre date.
-- Mise en ligne : automatique à chaque push (GitHub Actions, Firebase Hosting), ou `firebase deploy --only hosting`. L'appli et le bureau : mbongo-business.web.app ; TRK Consulting : trk-consulting-rdc.web.app, présentation du logiciel en /mbongo-business/ ; mbongo-8a748.web.app (site par défaut, impossible à supprimer) ne fait que rediriger (voir `docs/deploiement.md`).
+- Mise en ligne : automatique à chaque push (GitHub Actions, Firebase Hosting), ou `firebase deploy --only hosting`. L'appli et le bureau : mbongo-business.web.app ; TRK Consulting : trkconsulting.web.app, présentation du logiciel en /mbongo-business/ ; mbongo-8a748.web.app (site par défaut, impossible à supprimer) ne fait que rediriger (voir `docs/deploiement.md`).
 
 ## Feuille de route
 

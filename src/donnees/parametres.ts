@@ -11,4 +11,4 @@ export const PARAMETRES_CONTROLE: ParametresControle = {
 };
 
 /** Site de TRK Consulting, qui détient les droits de Mbongo Business. */
-export const SITE_TRK = 'https://trk-consulting-rdc.web.app/';
+export const SITE_TRK = 'https://trkconsulting.web.app/';
