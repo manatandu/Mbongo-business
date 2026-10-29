@@ -4,7 +4,7 @@ import { Link, useLocation } from 'wouter';
 import type { SecteurSMT } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
-import { creerEntreprise, type CompteACreer } from '../../donnees/entreprise';
+import { BANQUES, creerEntreprise, type CompteACreer } from '../../donnees/entreprise';
 import { lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs, Marque } from '../composants';
 import { db, useSession } from '../session';
@@ -63,6 +63,8 @@ interface ChoixCompte {
   devise: CompteACreer['devise'];
   coche: boolean;
   solde: string;
+  /** Nom de la banque choisie dans la liste. */
+  nom?: string;
 }
 
 const COMPTES_PROPOSES: ChoixCompte[] = [
@@ -71,7 +73,7 @@ const COMPTES_PROPOSES: ChoixCompte[] = [
   { cle: 'compte.mpesa', type: 'mobile', devise: 'CDF', coche: false, solde: '' },
   { cle: 'compte.orange', type: 'mobile', devise: 'CDF', coche: false, solde: '' },
   { cle: 'compte.airtel', type: 'mobile', devise: 'CDF', coche: false, solde: '' },
-  { cle: 'compte.banque', type: 'banque', devise: 'CDF', coche: false, solde: '' },
+  { cle: 'compte.banque', type: 'banque', devise: 'CDF', coche: false, solde: '', nom: BANQUES[0] },
   { cle: 'compte.tontine', type: 'tontine', devise: 'CDF', coche: false, solde: '' },
 ];
 
@@ -109,7 +111,7 @@ export function CreerEntreprise() {
         nif: champs.nif,
         secteur,
         annee: Number(aujourdhui.slice(0, 4)),
-        comptes: choisis.map((c, i) => ({ type: c.type, devise: c.devise, libelle: t(c.cle), solde: soldes[i] ?? 0 })),
+        comptes: choisis.map((c, i) => ({ type: c.type, devise: c.devise, libelle: c.nom ?? t(c.cle), solde: soldes[i] ?? 0 })),
         stockInitial: stock ?? 0,
         tauxOuverture: taux,
       });
@@ -139,6 +141,7 @@ export function CreerEntreprise() {
       </label>
 
       <h2 className="titre-section">{t('creer.comptes')}</h2>
+      <p className="aide" style={{ margin: 0 }}>{t('creer.autresComptes')}</p>
       {comptes.map((c, i) => (
         <div key={c.cle} className="case" style={{ alignItems: 'center' }}>
           <input
@@ -148,7 +151,22 @@ export function CreerEntreprise() {
             disabled={c.cle === 'compte.caisse'}
             onChange={(e) => setComptes((cs) => cs.map((x, j) => (j === i ? { ...x, coche: e.target.checked } : x)))}
           />
-          <span style={{ flex: 1 }}>{t(c.cle)}</span>
+          {c.nom && c.coche ? (
+            <select
+              aria-label={t(c.cle)}
+              value={c.nom}
+              onChange={(e) => setComptes((cs) => cs.map((x, j) => (j === i ? { ...x, nom: e.target.value } : x)))}
+              style={{ flex: 1, minWidth: 0, border: '1px solid var(--line-strong)', borderRadius: 8, padding: '6px 8px', background: 'var(--surface)', fontSize: 16 }}
+            >
+              {BANQUES.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span style={{ flex: 1 }}>{t(c.cle)}</span>
+          )}
           {c.coche && (
             <input
               aria-label={`${t(c.cle)} : ${t('saisir.montant')}`}

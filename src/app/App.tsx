@@ -15,7 +15,7 @@ import { Echeances } from './ecrans/Echeances';
 import { Etats } from './ecrans/Etats';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
-import { Plus } from './ecrans/Plus';
+import { ENTREES, Plus } from './ecrans/Plus';
 import { Reglages } from './ecrans/Reglages';
 import { Saisir } from './ecrans/Saisir';
 import { Stock } from './ecrans/Stock';
@@ -56,7 +56,8 @@ function Coque() {
     window.scrollTo(0, 0);
   }, [chemin]);
   return (
-    <>
+    // Sur téléphone, la coque s'efface (display: contents) ; sur ordinateur, elle pose le menu à gauche.
+    <div className="coque">
       <header className="entete">
         <Marque />
         <div className="txt">
@@ -97,13 +98,21 @@ function Coque() {
       </main>
       <nav className="onglets" aria-label="Navigation">
         {ONGLETS.map((o) => (
-          <Link key={o.href} href={o.href} aria-current={o.actif(chemin) ? 'page' : undefined}>
+          <Link key={o.href} href={o.href} className={o.href === '/plus' ? 'etroit-seul' : undefined} aria-current={o.actif(chemin) ? 'page' : undefined}>
             <Icone nom={o.icone} />
             {t(o.cle)}
           </Link>
         ))}
+        {/* Sur ordinateur, les écrans du menu « Plus » sont tous dans la colonne de gauche. */}
+        <span className="large-seul separateur" aria-hidden="true" />
+        {ENTREES.map((e) => (
+          <Link key={e.href} href={e.href} className="large-seul" aria-current={chemin.startsWith(e.href) ? 'page' : undefined}>
+            <Icone nom={e.icone} />
+            {t(e.titre)}
+          </Link>
+        ))}
       </nav>
-    </>
+    </div>
   );
 }
 

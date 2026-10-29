@@ -117,3 +117,22 @@ Le logiciel ne gère pas de statut juridique (entreprenant, commerçant immatric
 - **Registre des achats** (format de l'art. 32) : achats de marchandises et de fournitures, mode de règlement, référence de la pièce (champ « N° de la facture ou du reçu » à la saisie), récapitulation par mois et par année. Un achat à crédit y entre à la date de la facture ; son règlement n'est pas un second achat. Les totaux repris du cahier sont marqués comme tels.
 
 Conservation des pièces : dix ans (AUDCIF, art. 24).
+
+## Vérification sur le texte de l'AUDCIF (octobre 2026)
+
+Relecture du Titre X (Système minimal de trésorerie) et des articles 1 à 34 de l'AUDCIF révisé.
+
+Conforme :
+- journal de trésorerie exigé (Titre X, ch. 1 : « journal unique de trésorerie (NOTE 4) »), un par banque et un pour la caisse (NB de la note 4), mensuel, avec report à nouveau et solde à reporter, colonnes Date, Libellés, Recettes, Dépenses, Solde et ventilation ;
+- journaux de suivi des créances impayées et des dettes à payer ; conservation des pièces ; inventaire extra-comptable par le responsable de l'entité ;
+- bilan, compte de résultat, notes 1 à 3 ; résultat G = C − D + E − F avec C = A − B (D et E : notre convention, le texte ne les nomme pas) ;
+- amortissement linéaire sans prorata temporis ; correction par écriture en négatif (art. 20) ; irréversibilité (art. 22) ; conservation dix ans (art. 24) ;
+- seuils de l'art. 13 en francs CFA (60 M négoce, 40 M artisanat, 30 M services) ; nos montants en CDF sont des équivalents du projet.
+
+Écarts à traiter :
+- colonne de l'exercice précédent (N-1) au bilan et au compte de résultat (modèle du ch. 2 et art. 34) : absente ;
+- note 3 : le modèle détaille chaque client et chaque fournisseur ; Mbongo n'en donne que les totaux ;
+- arrêté des états dans les quatre mois (art. 23) : pas de rappel du délai ;
+- « travaux en cours » à l'inventaire : pas de rubrique distincte.
+
+À trancher avec l'expert-comptable partenaire : l'art. 28 cite un tableau des flux de trésorerie que le Titre X ne prévoit pas ; aucune règle de sortie du SMT (nombre d'exercices de dépassement) dans le texte lu.

@@ -8,6 +8,7 @@ import { retirerEntreprise } from '../../donnees/entreprise';
 import { SITE_TRK } from '../../donnees/parametres';
 import { codeDefini, definirCode } from '../../donnees/reglages';
 import { Erreurs } from '../composants';
+import { MesComptes } from './Comptes';
 import { installer, useInstallation } from '../installation';
 import { db, useDossier } from '../session';
 
@@ -57,6 +58,8 @@ export function Reglages() {
 
   return (
     <>
+      <MesComptes />
+
       <h2 className="titre-section">{t('reglages.langue')}</h2>
       <div className="seg deux" role="group" aria-label={t('reglages.langue')}>
         <button aria-pressed={langue === 'fr'} onClick={() => changer('fr')}>

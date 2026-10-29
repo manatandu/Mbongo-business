@@ -69,6 +69,51 @@ export async function creerEntreprise(db: BaseMbongo, d: DonneesEntreprise): Pro
   return { entrepriseId, exerciceId };
 }
 
+/** Banques présentes à Kinshasa, proposées à l'ajout d'un compte (liste revue chaque année ; « Autre » laisse écrire le nom). */
+export const BANQUES = [
+  'Equity BCDC',
+  'Rawbank',
+  'TMB (Trust Merchant Bank)',
+  'Access Bank',
+  'Ecobank',
+  'Afriland First Bank',
+  'BGFIBank',
+  'FirstBank',
+  'Sofibanque',
+  'Stanbic Bank',
+  'UBA',
+  'Advans Banque',
+] as const;
+
+export const MOBILE_MONEY = ['M-Pesa', 'Orange Money', 'Airtel Money', 'Afrimoney'] as const;
+
+/**
+ * Ajoute un compte de trésorerie : une deuxième caisse, une autre banque, un autre mobile money.
+ * Un solde au 1er janvier n'est accepté que pour le premier exercice tenu dans Mbongo, encore ouvert :
+ * ensuite, l'ouverture vient de la clôture de l'année d'avant, et l'argent entre par un transfert ou un apport.
+ */
+export async function ajouterCompte(db: BaseMbongo, entrepriseId: string, exerciceId: string, c: CompteACreer): Promise<string> {
+  const libelle = c.libelle.trim();
+  if (!libelle) throw new Error('Donnez un nom au compte.');
+  const existants = await db.comptes.where('entrepriseId').equals(entrepriseId).toArray();
+  if (existants.some((x) => x.libelle.toLowerCase() === libelle.toLowerCase() && x.devise === c.devise)) throw new Error('Ce compte existe déjà.');
+  const exercice = await db.exercices.get(exerciceId);
+  if (!exercice) throw new Error('Exercice introuvable.');
+  if (c.solde !== 0) {
+    const anterieur = (await db.exercices.where('entrepriseId').equals(entrepriseId).toArray()).some((e) => e.annee < exercice.annee);
+    if (anterieur || exercice.statut !== 'ouvert')
+      throw new Error("Le solde du 1er janvier vient de la clôture de l'année passée. Mettez l'argent sur ce compte par un transfert ou un apport.");
+    if (c.devise === 'USD' && !exercice.tauxOuverture) throw new Error('Indiquez le taux du dollar au 1er janvier dans un compte en dollars créé au départ.');
+  }
+  const id = nouvelId();
+  const ordre = existants.reduce((m, x) => Math.max(m, x.ordre), -1) + 1;
+  await db.transaction('rw', [db.comptes, db.exercices], async () => {
+    await db.comptes.add({ id, entrepriseId, ordre, type: c.type, libelle, devise: c.devise });
+    await db.exercices.update(exerciceId, { soldesOuverture: { ...exercice.soldesOuverture, [id]: c.solde } });
+  });
+  return id;
+}
+
 /** Retire de l'appareil une entreprise et toutes ses données. Réservé aux données de démonstration. */
 export async function retirerEntreprise(db: BaseMbongo, entrepriseId: string): Promise<void> {
   const e = await db.entreprises.get(entrepriseId);

@@ -212,6 +212,37 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
 @keyframes trait-onglet { from { transform: scaleX(.3); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes monte { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .fenetre { animation: fenetre-in .28s var(--t-sortie) both; }
+/* Mes comptes (Réglages) */
+.liste-comptes { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--ombre-plate); }
+.liste-comptes li { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.liste-comptes li:first-child { border-top: 0; }
+.encart-form { display: flex; flex-direction: column; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+
+/* Téléphone : la coque s'efface, les écrans du menu « Plus » restent dans « Plus ». */
+.coque { display: contents; }
+.large-seul { display: none !important; }
+
+/* Ordinateur : bandeau sur toute la largeur, menu à gauche, contenu large. */
+@media (min-width: 900px) {
+  .app { max-width: none; }
+  .coque { display: grid; grid-template-columns: 240px minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: "entete entete" "menu ecran"; min-height: 100dvh; }
+  .entete { grid-area: entete; padding-inline: 24px; min-height: 56px; }
+  .ecran { grid-area: ecran; padding: 24px 28px 40px 8px; max-width: 1120px; width: 100%; }
+  .onglets { grid-area: menu; position: sticky; top: 0; align-self: start; display: flex; flex-direction: column; gap: 2px; border-top: 0; background: transparent; box-shadow: none; padding: 24px 12px 24px 16px; }
+  .onglets a { flex-direction: row; justify-content: flex-start; min-height: 40px; padding: 8px 12px; gap: 10px; font-size: 14.5px; border-radius: 6px; }
+  .onglets a:hover { background: var(--surface); color: var(--fg); }
+  .onglets a[aria-current="page"] { background: var(--surface); box-shadow: var(--ombre-plate); }
+  .onglets a[aria-current="page"]::before { top: 8px; bottom: 8px; left: 0; right: auto; width: 3px; height: auto; border-radius: 0 2px 2px 0; }
+  .onglets .etroit-seul { display: none; }
+  .large-seul { display: flex !important; }
+  .onglets .separateur { display: block !important; height: 1px; background: var(--line); margin: 10px 12px; }
+  .fenetre-corps { padding: 20px 24px 24px; gap: 16px; }
+  .fenetre-corps > form { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+  .kpis { grid-template-columns: repeat(4, 1fr); }
+  .comptes { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .bienvenue, .ecran > form.ecran { max-width: 560px; margin-inline: auto; width: 100%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

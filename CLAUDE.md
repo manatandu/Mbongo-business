@@ -46,7 +46,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 
 ## Modules fonctionnels
 
-1. **Caisse et banque** : comptes de trésorerie (caisse, M-Pesa, Orange Money, Airtel Money, banques, tontine) ; opérations recette / dépense / transfert ; ventilation SMT ; un compte par devise (CDF, USD), taux du jour saisi par le commerçant ; photo de la pièce.
+1. **Caisse et banque** : comptes de trésorerie, autant que nécessaire (plusieurs caisses, banques nommées : Equity BCDC, Rawbank…, plusieurs mobiles money, tontine), ajoutés dans Réglages ; opérations recette / dépense / transfert ; ventilation SMT ; un compte par devise (CDF, USD), taux du jour saisi par le commerçant ; photo de la pièce.
 2. **Tiers et stocks** : créances et dettes, règlements en une ou plusieurs fois ; client particulier ou commerçant (délai d'un an pour réclamer à un particulier), dossier de créance imprimable avec reconnaissance de dette ; inventaire fait par le commerçant ; registre du matériel avec amortissement linéaire sans prorata temporis.
 3. **Contrôle** : opérations sans pièce, jours ouvrés sans vente, mois sans saisie, solde négatif, créances de plus de 30 jours, créances sur un particulier proches d'un an, seuils SMT, inventaire et taux de clôture manquants. **Échéancier** fiscal et social (rappels sans montant).
 4. **Sorties** : journal de trésorerie mensuel par compte, compte de résultat, bilan, notes 1 à 3, tableau de bord du commerçant ; au bureau, impression PDF et export Excel.

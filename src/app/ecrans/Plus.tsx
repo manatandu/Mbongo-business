@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { useLangue, type Cle } from '../../i18n';
 import { Icone } from '../composants';
 
-const ENTREES: { href: string; icone: string; titre: Cle }[] = [
+export const ENTREES: { href: string; icone: string; titre: Cle }[] = [
   { href: '/etats', icone: 'etats', titre: 'plus.etats' },
   { href: '/echeances', icone: 'journal', titre: 'plus.echeances' },
   { href: '/livre', icone: 'journal', titre: 'plus.livre' },
