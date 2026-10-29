@@ -5,10 +5,14 @@
   "description": "Logiciel d'assistance comptable et de gestion pour les micro et petites entreprises (SMT, OHADA)",
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "apercu": "vite preview --port 4173 --strictPort",
     "test": "vitest run",
     "test:suivi": "vitest",
     "typage": "tsc --noEmit",
-    "verifier": "tsc --noEmit && vitest run"
+    "verifier": "tsc --noEmit && vitest run",
+    "icones": "NODE_PATH=/opt/node-tools/node_modules node scripts/icones.cjs"
   },
   "dependencies": {
     "dexie": "^4.4.7",
