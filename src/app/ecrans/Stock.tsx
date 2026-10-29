@@ -70,7 +70,6 @@ export function Stock() {
 
   return (
     <>
-      <h2 className="titre-section">{t('stock.titre')}</h2>
       <p className="aide">{t('stock.aide')}</p>
       <div className="kpis" style={{ gridTemplateColumns: '1fr 1fr' }}>
         <div className="kpi">

@@ -6,7 +6,7 @@ import { chargerDossier } from '../donnees/dossier';
 import { exerciceCourant } from '../donnees/entreprise';
 import { fmt, fmtDate } from '../ui/format';
 import { db, useBureau } from './contexte';
-import { Carte, Pastille } from './ui';
+import { Fenetre, Pastille } from './ui';
 
 const SECTEURS = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Services' } as const;
 
@@ -25,7 +25,7 @@ export function Clients() {
   }, [aujourdhui]);
 
   return (
-    <Carte titre="Clients suivis" droite={<span className="text-text-dim font-normal">{lignes?.length ?? 0} client(s)</span>}>
+    <Fenetre titre="Clients suivis" droite={<span className="text-chrome-text-dim">{lignes?.length ?? 0} client(s)</span>}>
       <div className="overflow-auto">
         <table className="grille">
           <thead>
@@ -85,6 +85,6 @@ export function Clients() {
           </tbody>
         </table>
       </div>
-    </Carte>
+    </Fenetre>
   );
 }

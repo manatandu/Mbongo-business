@@ -142,7 +142,7 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois ; pour chaque créance, un dossier imprimable (facture, paiements, reste dû, délai, reconnaissance de dette) |
 | Plus | matériel, stock (inventaire), états, livre des recettes et des dépenses, registre des achats, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
 
-Même charte que le bureau (§ 8.4) : bandeau bleu de Mbongo et filet jaune, cartes blanches sur fond gris-bleu, tableaux à en-tête bleu, police du système. Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
+Même kit de design que le bureau (§ 8.4) : bandeau à l'encre et filet jaune, une fenêtre par écran avec sa barre de titre, onglets soulignés, bouton principal en pilule. Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
 
 ## 8. Le bureau
 
@@ -165,7 +165,7 @@ Un bouton, réservé à l'expert : « Arrêter les états ». Il s'ouvre quand t
 
 ### 8.4 Habillage
 
-Le même pour le bureau et pour le téléphone. Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête bleu, police du système, 14 px. Rien à télécharger. Contrastes mesurés (WCAG 2.1, AA : 4,5:1 pour le texte, 3:1 pour un bord de champ ou un trait).
+Le kit de design « logiciel de gestion » fourni pour le projet, appliqué au bureau et au téléphone, aux couleurs de Mbongo : bandeau à l'encre (bleu foncé) avec la marque et le filet jaune ; une fenêtre par écran, à barre de titre à l'encre ; onglets soulignés ; bouton principal en pilule, bouton neutre, bouton fantôme ; champs à filet sombre dessous ; grilles blanches à en-tête bleu plein, total sur fond bleu clair ; trois ombres ; vert, ocre et rouge réservés au sens ; filet de clôture en séparateur ; animations courtes, coupées sous mouvement réduit. Police du système pour le texte, IBM Plex Sans 600 pour la marque seulement (un fichier de 24 Ko, licence SIL OFL, `src/ui/polices/`). Bureau en 14 px ; téléphone en 16 px, cibles de 44 px. Contrastes mesurés (WCAG 2.1, AA : 4,5:1 pour le texte, 3:1 pour un bord de champ ou un trait).
 
 | Couple | Rapport |
 |---|---|

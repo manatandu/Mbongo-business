@@ -11,7 +11,7 @@ import { fmt, fmtDate, lireTaux } from '../ui/format';
 import { dateRefDe, db, useBureau, useDossierBureau, useExercicesBureau } from './contexte';
 import { telechargerExcel } from './excel';
 import { TablesEtats } from './TablesEtats';
-import { Carte, Message, Pastille } from './ui';
+import { Carte, Fenetre, Message, Pastille } from './ui';
 
 const NIVEAU = { a_traiter: { libelle: 'À traiter', ton: 'danger' }, a_revoir: { libelle: 'À revoir', ton: 'avert' } } as const;
 
@@ -49,12 +49,11 @@ export function Client() {
   };
 
   return (
-    <>
+    <Fenetre titre={`${c.entreprise.nom} · exercice ${c.exercice.annee}`} droite={<span className="text-chrome-text-dim">situation au {fmtDate(vue.ref)}</span>}>
       <div className="flex items-center gap-3 flex-wrap">
         <Link href="/" className="text-sel">
           ← Clients
         </Link>
-        <h1 className="m-0 text-[17px] font-semibold">{c.entreprise.nom}</h1>
         {c.entreprise.demo && <Pastille ton="neutre">fictif</Pastille>}
         {exercices && exercices.length > 1 ? (
           <select className="champ" aria-label="Exercice" value={c.exercice.annee} onChange={(e) => setAnnee(Number(e.target.value))}>
@@ -68,7 +67,6 @@ export function Client() {
         ) : (
           <span className="text-text-dim">Exercice {c.exercice.annee}</span>
         )}
-        <span className="text-text-dim">situation au {fmtDate(vue.ref)}</span>
       </div>
 
       <div className="flex border-b border-border" role="tablist">
@@ -146,6 +144,7 @@ export function Client() {
               </Message>
             ))}
           </Carte>
+          <hr className="filet-cloture text-text" />
           <p className="m-0 text-center font-semibold">{vue.etats.mention}</p>
           <div className="ecran-seul flex gap-2 flex-wrap">
             <button className="btn btn-neutre" onClick={() => window.print()}>
@@ -157,6 +156,6 @@ export function Client() {
           </div>
         </>
       )}
-    </>
+    </Fenetre>
   );
 }

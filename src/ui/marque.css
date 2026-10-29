@@ -1,0 +1,29 @@
+/*
+ * Police de la marque, commune à l'appli et au bureau (kit de design « logiciel de gestion »).
+ * IBM Plex Sans 600 sert au nom « Mbongo » et aux titres de fenêtre ; tout le reste suit la police du système.
+ * Un seul fichier (24 Ko, latin), mis en cache avec l'appli. Licence SIL OFL 1.1 : polices/OFL.txt.
+ */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./polices/ibm-plex-sans-latin-600-normal.woff2') format('woff2');
+}
+
+/* Le filet de clôture : le trait qu'on tire sous une colonne pour la clore. Seul ornement, en séparateur. */
+.filet-cloture {
+  height: 1px;
+  border: 0;
+  margin: 4px 0;
+  background: linear-gradient(
+    to right,
+    currentColor 0,
+    currentColor calc(50% - min(12px, 6.65%)),
+    transparent calc(50% - min(12px, 6.65%)),
+    transparent calc(50% + min(12px, 6.65%)),
+    currentColor calc(50% + min(12px, 6.65%)),
+    currentColor 100%
+  );
+  opacity: 0.28;
+}

@@ -32,7 +32,7 @@ export default defineConfig({
       },
       workbox: {
         // Les icônes et le manifeste sont ajoutés par le plugin.
-        globPatterns: ['index.html', 'assets/*.{js,css}'],
+        globPatterns: ['index.html', 'assets/*.{js,css,woff2}'],
         globIgnores: ['**/bureau*', '**/excel-*'],
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/bureau\.html/],

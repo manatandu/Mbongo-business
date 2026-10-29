@@ -23,7 +23,6 @@ export function Livre() {
 
   return (
     <>
-      <h2 className="titre-section">{t('livre.titre')}</h2>
       <label className="champ">
         {t('journal.mois')}
         <select value={mois} onChange={(e) => aller(`/livre/${e.target.value}`, { replace: true })}>
@@ -81,7 +80,6 @@ export function RegistreAchats() {
 
   return (
     <>
-      <h2 className="titre-section">{t('achats.titre', { annee: registre.annee })}</h2>
       <div className="hero">
         <div className="lbl">{t('achats.total')}</div>
         <div className="big">{fmt(registre.total)} CDF</div>

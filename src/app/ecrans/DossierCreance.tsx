@@ -103,6 +103,7 @@ export function DossierCreance() {
             : t('dossier.delaiCommercant', { jours: x.ageJours })}
         </p>
 
+        <hr className="filet-cloture" />
         <h3>{t('dossier.reconnaissance')}</h3>
         <p>{t('dossier.reconnaissanceTexte', { nom: l.nom, montant: fmtMontant(x.reste, d), creancier: entreprise.nom, facture: l.facture || t('tiers.sansNumero'), date: fmtDate(l.date) })}</p>
         <p className="aide">{t('dossier.reconnaissanceAide')}</p>

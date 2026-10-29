@@ -238,6 +238,7 @@ export function Etats() {
       {vue === 'cr' && <CompteDeResultat e={e} />}
       {vue === 'bilan' && <Bilan e={e} />}
       {vue === 'notes' && <Notes e={e} />}
+      <hr className="filet-cloture" />
       <div className={`tampon ${arrete ? 'ok' : ''}`}>
         {arrete ? '' : `${t('etats.attente')} `}
         {e.mention}

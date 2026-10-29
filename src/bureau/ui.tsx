@@ -1,7 +1,20 @@
 /** Petits éléments d'écran du bureau. */
 import type { ReactNode } from 'react';
 
-/** Bloc de contenu à titre. */
+/** Fenêtre du kit : barre de titre à l'encre, corps sur fond de fenêtre. Une par écran. */
+export function Fenetre({ titre, droite, children }: { titre: string; droite?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="fenetre">
+      <div className="fenetre-titre">
+        <h1 className="m-0 text-[14px] font-semibold">{titre}</h1>
+        {droite}
+      </div>
+      <div className="fenetre-corps">{children}</div>
+    </section>
+  );
+}
+
+/** Bloc de contenu à titre, posé dans une fenêtre. */
 export function Carte({ titre, droite, children }: { titre: string; droite?: ReactNode; children: ReactNode }) {
   return (
     <section className="encart">

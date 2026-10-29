@@ -4,6 +4,8 @@
    des tableaux lisibles. Contrastes mesurés (docs/architecture.md, § 8.4).
    --------------------------------------------------------------------------- */
 
+@import '../ui/marque.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,8 +67,14 @@
   --danger-soft-rgb: 253 233 231;
 
   --ombre-plate: 0 1px 1px rgba(11, 42, 82, 0.05);
+  --ombre-posee: 0 0 0 1px rgba(11, 42, 82, 0.05), 0 1px 2px rgba(11, 42, 82, 0.06), 0 4px 12px -4px rgba(11, 42, 82, 0.1);
+  --fenetre: #f5f7fa;
+  --t-sortie: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+html {
+  background: var(--n-100);
+}
 body {
   margin: 0;
   /* La police du système : rien à télécharger. */
@@ -74,7 +82,7 @@ body {
   font-size: 14px;
   line-height: 1.45;
   color: var(--text);
-  background: var(--n-100);
+  background: linear-gradient(178deg, var(--n-50) 0%, var(--n-100) 100%) fixed;
   /* Les chiffres s'alignent colonne par colonne. */
   font-variant-numeric: tabular-nums;
 }
@@ -94,7 +102,29 @@ select:focus-visible {
   outline-offset: 1px;
 }
 
+.nom-marque {
+  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+}
+
 @layer components {
+  /* La fenêtre du kit : barre de titre à l'encre, corps sur fond de fenêtre. */
+  .fenetre {
+    background: var(--fenetre);
+    border-radius: 8px;
+    box-shadow: var(--ombre-posee);
+    overflow: hidden;
+    animation: fenetre-in 0.28s var(--t-sortie) both;
+  }
+  .fenetre-titre {
+    @apply px-4 py-2 flex items-center justify-between gap-3;
+    background: var(--bandeau);
+    color: #fff;
+  }
+  .fenetre-corps {
+    @apply p-4 flex flex-col gap-4;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center gap-1.5 px-3 h-[34px] text-[14px] font-semibold;
     border-radius: 6px;
@@ -105,12 +135,17 @@ select:focus-visible {
     opacity: 0.5;
     cursor: not-allowed;
   }
+  /* Le geste principal de l'écran, en pilule. */
   .btn-principal {
-    background: var(--a-600);
+    background: linear-gradient(180deg, var(--a-500), var(--a-600));
     color: #fff;
+    border-radius: 999px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 1px 2px rgba(11, 42, 82, 0.18);
   }
   .btn-principal:hover:not(:disabled) {
-    background: var(--a-700);
+    background: linear-gradient(180deg, var(--a-600), var(--a-700));
   }
   .btn-neutre {
     background: var(--surface);
@@ -171,10 +206,17 @@ select:focus-visible {
     background: var(--a-700);
   }
 
+  /* Champ : filet clair, filet sombre dessous, trait d'accent au focus. */
   .champ {
     @apply border px-2 h-[34px] text-[14px];
     background: var(--surface);
-    border-color: var(--border-dark);
+    border-color: var(--border);
+    border-bottom-color: var(--border-dark);
+  }
+  .champ:focus-visible {
+    outline: none;
+    border-bottom-color: var(--sel);
+    box-shadow: inset 0 -1px 0 var(--sel);
   }
   .libelle {
     @apply block text-[14px] mb-1;
@@ -191,6 +233,26 @@ select:focus-visible {
   .encart-titre {
     @apply px-3 py-2 flex items-center justify-between gap-2 border-b;
     border-color: var(--border);
+  }
+}
+
+/* Animations : courtes, transform et opacité, coupées sous mouvement réduit. */
+@keyframes fenetre-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -211,8 +273,13 @@ select:focus-visible {
   main {
     padding: 0 !important;
   }
-  .encart {
+  .encart,
+  .fenetre {
     box-shadow: none !important;
+  }
+  .fenetre-titre {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .grille th,
   .grille tr.total td,

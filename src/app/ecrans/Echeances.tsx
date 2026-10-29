@@ -28,7 +28,6 @@ export function Echeances() {
   const liste = useEcheances(365);
   return (
     <>
-      <h2 className="titre-section">{t('echeances.titre')}</h2>
       <p className="aide">{t('echeances.aide')}</p>
       <div className="liste">
         {liste.map((e) => (

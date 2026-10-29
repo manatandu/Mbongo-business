@@ -30,10 +30,27 @@ const ONGLETS: { href: string; icone: string; cle: Cle; actif: (chemin: string) 
   { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats', '/echeances'].some((p) => c.startsWith(p)) },
 ];
 
+/** Titre de la fenêtre selon l'écran : la barre de titre nomme l'écran, aucun titre de page ne le répète. */
+const TITRES: [string, Cle][] = [
+  ['/saisir', 'fenetre.saisir'],
+  ['/journal', 'fenetre.journal'],
+  ['/clients', 'fenetre.clients'],
+  ['/creance', 'fenetre.creance'],
+  ['/plus', 'fenetre.plus'],
+  ['/etats', 'fenetre.etats'],
+  ['/materiel', 'fenetre.materiel'],
+  ['/stock', 'fenetre.stock'],
+  ['/reglages', 'fenetre.reglages'],
+  ['/livre', 'fenetre.livre'],
+  ['/achats', 'fenetre.achats'],
+  ['/echeances', 'fenetre.echeances'],
+];
+
 function Coque() {
-  const { entreprise } = useDossier();
+  const { entreprise, chargement } = useDossier();
   const { t } = useLangue();
   const [chemin] = useLocation();
+  const titre = TITRES.find(([p]) => chemin.startsWith(p))?.[1] ?? 'fenetre.accueil';
   // Chaque écran s'ouvre en haut, pas à la hauteur où l'on avait laissé le précédent.
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,34 +60,40 @@ function Coque() {
       <header className="entete">
         <Marque />
         <div className="txt">
-          <div className="qui">
-            {entreprise.responsable}
-            {entreprise.commune ? ` · ${entreprise.commune}` : ''}
-          </div>
-          <h1>{entreprise.nom}</h1>
+          <span className="nom-marque">Mbongo</span>
+          <span className="dossier">· {entreprise.nom}</span>
         </div>
         {entreprise.demo && <span className="fictif">{t('app.fictif')}</span>}
       </header>
       <main className="ecran">
-        <Switch>
-          <Route path="/" component={Accueil} />
-          {/* La clé force un formulaire neuf quand on passe de « Recette » à « Dépense » depuis l'accueil. */}
-          <Route path="/saisir/:type?">{(p) => <Saisir key={p.type ?? 'recette'} />}</Route>
-          <Route path="/journal/:compte?/:mois?" component={Journal} />
-          <Route path="/clients/:genre?" component={Tiers} />
-          <Route path="/plus" component={Plus} />
-          <Route path="/etats" component={Etats} />
-          <Route path="/materiel" component={Materiel} />
-          <Route path="/stock" component={Stock} />
-          <Route path="/reglages" component={Reglages} />
-          <Route path="/livre/:mois?" component={Livre} />
-          <Route path="/achats" component={RegistreAchats} />
-          <Route path="/creance/:id" component={DossierCreance} />
-          <Route path="/echeances" component={Echeances} />
-          <Route>
-            <Accueil />
-          </Route>
-        </Switch>
+        {/* La clé rejoue l'entrée de la fenêtre à chaque changement d'écran. */}
+        <section className="fenetre" key={titre}>
+          <h1 className="fenetre-titre">
+            {t(titre)}
+            <small>{t('fenetre.exercice', { annee: chargement.exercice.annee })}</small>
+          </h1>
+          <div className="fenetre-corps">
+            <Switch>
+              <Route path="/" component={Accueil} />
+              {/* La clé force un formulaire neuf quand on passe de « Recette » à « Dépense » depuis l'accueil. */}
+              <Route path="/saisir/:type?">{(p) => <Saisir key={p.type ?? 'recette'} />}</Route>
+              <Route path="/journal/:compte?/:mois?" component={Journal} />
+              <Route path="/clients/:genre?" component={Tiers} />
+              <Route path="/plus" component={Plus} />
+              <Route path="/etats" component={Etats} />
+              <Route path="/materiel" component={Materiel} />
+              <Route path="/stock" component={Stock} />
+              <Route path="/reglages" component={Reglages} />
+              <Route path="/livre/:mois?" component={Livre} />
+              <Route path="/achats" component={RegistreAchats} />
+              <Route path="/creance/:id" component={DossierCreance} />
+              <Route path="/echeances" component={Echeances} />
+              <Route>
+                <Accueil />
+              </Route>
+            </Switch>
+          </div>
+        </section>
       </main>
       <nav className="onglets" aria-label="Navigation">
         {ONGLETS.map((o) => (

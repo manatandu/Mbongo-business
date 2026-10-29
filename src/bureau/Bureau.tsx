@@ -19,10 +19,10 @@ function Coquille() {
           {/* La marque Mbongo : le carré bleu barré de l'étoile jaune, comme sur le téléphone. */}
           <span className="relative w-6 h-6 rounded overflow-hidden grid place-items-center" style={{ background: 'var(--a-600)' }} aria-hidden="true">
             <span className="absolute w-8 h-[6px] -rotate-[35deg]" style={{ background: 'var(--etoile)' }} />
-            <span className="relative font-bold text-[13px] text-white">M</span>
+            <span className="relative nom-marque text-[13px] text-white">M</span>
           </span>
-          <a href="#/" className="font-semibold text-[15px] text-white no-underline">
-            Mbongo · Bureau
+          <a href="#/" className="text-[15px] text-white no-underline">
+            <span className="nom-marque">Mbongo</span> <span className="text-chrome-text-dim">· Bureau</span>
           </a>
           <span className="flex-1" />
           <label className="flex items-center gap-2">
