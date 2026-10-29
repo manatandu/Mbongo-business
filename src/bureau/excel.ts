@@ -59,7 +59,7 @@ function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
 }
 
 /** Les feuilles du classeur, prêtes à écrire : états SMT, plus le livre et le registre des achats si le dossier est fourni. */
-export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
+export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: string): FeuilleEtats[] {
   const r = e.compteDeResultat;
   const b = e.bilan;
   const n = e.notes;
@@ -119,6 +119,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     ]),
     [],
     [gras('Note 2 · État des stocks')],
+    ...(methodeStock ? [[methodeStock]] : []),
     ...n.note2.lignes.map((l): Cell[] => [l.reference, l.designation, { value: l.quantite, type: Number }, nombre(l.prixUnitaire), nombre(l.montant)]),
     ['Valeur du stock final', n.note2.inventaireFait ? '' : 'inventaire non fait', nombre(n.note2.stockFinal, 'bold')],
     ['Valeur du stock initial', '', nombre(n.note2.stockInitial)],
@@ -147,7 +148,7 @@ export function nomFichier(e: Etats): string {
 }
 
 /** Fabrique et télécharge le classeur dans le navigateur. */
-export async function telechargerExcel(e: Etats, d?: DossierExercice): Promise<void> {
+export async function telechargerExcel(e: Etats, d?: DossierExercice, methodeStock?: string): Promise<void> {
   const { default: ecrire } = await import('write-excel-file/browser');
-  await ecrire(classeurEtats(e, d)).toFile(nomFichier(e));
+  await ecrire(classeurEtats(e, d, methodeStock)).toFile(nomFichier(e));
 }

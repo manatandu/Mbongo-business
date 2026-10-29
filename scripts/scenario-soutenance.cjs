@@ -145,7 +145,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
     });
     await etape(tel, 'inventaire', async () => {
       await tap("Faire l'inventaire");
-      await tel.waitForSelector('text=Inventaire du stock');
+      await tel.waitForSelector("text=Inventaire de fin d'année");
       await tel.waitForSelector('input[value="Riz, sac de 25 kg"]');
     });
     await etape(tel, 'nouvelle-annee-prete', async () => {

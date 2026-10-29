@@ -2,11 +2,13 @@
  * États SMT : compte de résultat, bilan, notes 1 à 3.
  * Toujours en français : c'est le vocabulaire officiel.
  */
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
 import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteur';
 import { useLangue } from '../../i18n';
 import { fmt, fmtDate } from '../../ui/format';
-import { useDossier } from '../session';
+import { mentionMethodeStock } from '../../donnees/stock';
+import { db, useDossier } from '../session';
 
 type Vue = 'cr' | 'bilan' | 'notes';
 
@@ -161,6 +163,7 @@ function Notes({ e }: { e: EtatsSMT }) {
         </table>
       </div>
       <h3>Note 2 · État des stocks</h3>
+      <MentionStock />
       <div className="tableau">
         <table>
           <tbody>
@@ -215,6 +218,12 @@ function Notes({ e }: { e: EtatsSMT }) {
       </div>
     </div>
   );
+}
+
+function MentionStock() {
+  const { entreprise } = useDossier();
+  const texte = useLiveQuery(() => mentionMethodeStock(db, entreprise.id), [entreprise.id]);
+  return texte ? <p className="aide">{texte}</p> : null;
 }
 
 export function Etats() {

@@ -40,7 +40,7 @@ export function FinAnnee() {
       {stockFait ? (
         <p className="fait">{t('fin.stockFait', { total: fmtMontant(exercice.stockFinal ?? 0, 'CDF') })}</p>
       ) : (
-        <Link href="/stock" className="bouton discret">
+        <Link href="/stock/inventaire" className="bouton discret">
           {t('fin.stockFaire')}
         </Link>
       )}

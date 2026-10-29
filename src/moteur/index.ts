@@ -7,6 +7,7 @@ export * from './natures';
 export { appliquerTaux, centimesEnFrancs, estMontant, estTaux, versFC } from './montants';
 export { estDateISO } from './dates';
 export { valider, verifierDossier, ErreurDossier } from './validation';
+export { valoriser, LIBELLE_METHODE, type MethodeValorisation, type MouvementStock, type EtatArticle, type SortieValorisee } from './valorisation';
 export { soldesTresorerie, journalMensuel, ligneBilan, type SoldeCompte, type JournalTresorerie, type LigneJournal } from './tresorerie';
 export { situationTiers, encaisser, regler, prescription, dossierCreance, type SituationTiers, type ParametresReglement, type DossierCreance } from './tiers';
 export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';

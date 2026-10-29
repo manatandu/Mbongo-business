@@ -2,11 +2,13 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
   LigneCompte,
+  LigneArticle,
   LigneEntreprise,
   LigneEnvoi,
   LigneExercice,
   LigneImmobilisation,
   LigneInventaire,
+  LigneMouvementStock,
   LigneOperation,
   LignePiece,
   LigneSortie,
@@ -24,6 +26,8 @@ export class BaseMbongo extends Dexie {
   immobilisations!: EntityTable<LigneImmobilisation, 'id'>;
   sorties!: EntityTable<LigneSortie, 'id'>;
   inventaires!: EntityTable<LigneInventaire, 'id'>;
+  articles!: EntityTable<LigneArticle, 'id'>;
+  mouvementsStock!: EntityTable<LigneMouvementStock, 'id'>;
   taux!: EntityTable<LigneTaux, 'id'>;
   pieces!: EntityTable<LignePiece, 'id'>;
   fileEnvoi!: EntityTable<LigneEnvoi, 'seq'>;
@@ -53,8 +57,10 @@ export class BaseMbongo extends Dexie {
     // Allègement : l'arrêté devient une date sur l'exercice ; plus de journal d'interventions
     // ni de confirmation du taux opération par opération (un seul taux de clôture).
     this.version(3).stores({ arretes: null, interventions: null, confirmations: null });
+    // Fiches de stock (inventaire permanent, facultatif) : articles et mouvements valorisés.
+    this.version(4).stores({ articles: 'id, entrepriseId', mouvementsStock: 'id, entrepriseId, articleId, date' });
   }
 }
 
 /** Tables métier à vider ensemble quand on retire une entreprise de l'appareil. */
-export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'pieces'] as const;
+export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'pieces', 'articles', 'mouvementsStock'] as const;

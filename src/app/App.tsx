@@ -83,7 +83,7 @@ function Coque() {
               <Route path="/plus" component={Plus} />
               <Route path="/etats" component={Etats} />
               <Route path="/materiel" component={Materiel} />
-              <Route path="/stock" component={Stock} />
+              <Route path="/stock/:onglet?" component={Stock} />
               <Route path="/reglages" component={Reglages} />
               <Route path="/livre/:mois?" component={Livre} />
               <Route path="/achats" component={RegistreAchats} />

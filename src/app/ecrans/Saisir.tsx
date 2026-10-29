@@ -2,15 +2,18 @@
  * Saisie d'une recette, d'une dépense ou d'un transfert, payé ou à crédit.
  * Le formulaire vérifie l'évident ; le moteur vérifie le reste avant toute écriture.
  */
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeClient, type TypeOperation } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { ajouterPhoto, enregistrerFacture, enregistrerOperation, ErreurSaisie } from '../../donnees/saisie';
+import { enregistrerMouvement, sortiePossible } from '../../donnees/stock';
 import { lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs } from '../composants';
 import { compresserPhoto } from '../photo';
 import { db, useDossier } from '../session';
+import { lireQuantite } from './FichesStock';
 
 const NATURES_RECETTE: Nature[] = ['ventes', 'autres_recettes', 'apport', 'emprunt_recu'];
 const NATURES_DEPENSE: Nature[] = [
@@ -32,6 +35,30 @@ function natures(type: TypeOperation, credit: boolean): Nature[] {
   if (type === 'transfert') return ['transfert'];
   if (type === 'recette') return credit ? NATURES_VENTE_CREDIT : NATURES_RECETTE;
   return credit ? [...NATURES_DETTE] : NATURES_DEPENSE;
+}
+
+/** Sous la liste des natures : que faire d'une dépense ou d'une recette absente, et libellés courants pour « Autres ». */
+function AideNature({ type, nature, choisir }: { type: TypeOperation; nature: Nature; choisir: (libelle: string) => void }) {
+  const { t } = useLangue();
+  if (type === 'transfert') return null;
+  const genre = type === 'recette' ? 'recette' : 'depense';
+  const autres = nature === 'autres_depenses' || nature === 'autres_recettes';
+  return (
+    <>
+      <p className="aide">{t(`saisir.aideNature.${genre}`)}</p>
+      {autres && (
+        <div className="puces">
+          {t(`saisir.suggestions.${genre}`)
+            .split('|')
+            .map((s) => (
+              <button key={s} type="button" onClick={() => choisir(s)}>
+                {s}
+              </button>
+            ))}
+        </div>
+      )}
+    </>
+  );
 }
 
 export function Saisir() {
@@ -64,6 +91,9 @@ export function Saisir() {
   const [designation, setDesignation] = useState('');
   const [categorie, setCategorie] = useState<CategorieImmobilisation>('materiel');
   const [duree, setDuree] = useState('5');
+  const [articleId, setArticleId] = useState('');
+  const [quantiteArticle, setQuantiteArticle] = useState('');
+  const articles = useLiveQuery(() => db.articles.where('entrepriseId').equals(entreprise.id).sortBy('designation'), [entreprise.id]);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [occupe, setOccupe] = useState(false);
 
@@ -78,6 +108,8 @@ export function Saisir() {
   const tauxVisible = type === 'transfert' ? compte?.devise === 'USD' && vers?.devise === 'USD' : devise === 'USD';
   const estBien = !credit && NATURES_IMMOBILISATION.includes(nature);
   const creditPossible = type !== 'transfert';
+  // Une vente fait sortir du stock, un achat de marchandises y fait entrer : la fiche suit si on choisit l'article.
+  const mouvementStock = type !== 'transfert' && (nature === 'ventes' || nature === 'achats_marchandises') && (articles?.length ?? 0) > 0;
 
   const choisirType = (nouveau: TypeOperation) => {
     setType(nouveau);
@@ -112,15 +144,34 @@ export function Saisir() {
     if (change && !(recuLu && recuLu > 0)) err.push(t('saisir.erreur.montant'));
     const dureeLue = Number(duree);
     if (estBien && nature === 'materiel' && !(Number.isInteger(dureeLue) && dureeLue >= 1 && dureeLue <= 20)) err.push(t('saisir.erreur.duree'));
+    const qArticle = mouvementStock && articleId ? lireQuantite(quantiteArticle) : null;
+    if (mouvementStock && articleId && !qArticle) err.push(t('saisir.erreur.montant'));
+    if (qArticle && nature === 'ventes' && !(await sortiePossible(db, articleId, date, qArticle))) {
+      const nom = articles?.find((a) => a.id === articleId)?.designation ?? '';
+      err.push(`« ${nom} » : quantité plus grande que le stock.`);
+    }
     setErreurs(err);
     if (err.length || !m || !compte) return;
+    // Mouvement de stock lié : sortie pour une vente, entrée au coût unitaire (en CDF) pour un achat.
+    const lierStock = async (origine: string) => {
+      if (!qArticle || !articleId) return;
+      const tauxStock = devise === 'USD' ? tauxLu : null;
+      const montantCDF = devise === 'USD' && tauxStock ? Math.round((m / 100) * tauxStock) : m;
+      await enregistrerMouvement(db, entreprise.id, {
+        articleId,
+        date,
+        quantite: qArticle,
+        origine,
+        ...(nature === 'ventes' ? { sens: 'sortie' as const, motif: 'vente' as const } : { sens: 'entree' as const, motif: 'achat' as const, prixUnitaire: Math.round(montantCDF / qArticle) }),
+      });
+    };
 
     const texte = libelle.trim() || (type === 'transfert' ? `${compte.libelle} → ${vers?.libelle ?? ''}` : t(`nature.${nature}` as Cle));
     setOccupe(true);
     try {
       if (credit) {
         const genre = type === 'recette' ? 'creance' : 'dette';
-        await enregistrerFacture(db, exercice.id, genre, {
+        const idFacture = await enregistrerFacture(db, exercice.id, genre, {
           date,
           facture: facture.trim(),
           nom: tiers.trim(),
@@ -130,6 +181,7 @@ export function Saisir() {
           taux: devise === 'USD' ? tauxLu : null,
           ...(genre === 'creance' ? { client: typeClient, ...(adresse.trim() ? { adresse: adresse.trim() } : {}) } : {}),
         });
+        await lierStock(idFacture);
         annoncer(t(genre === 'creance' ? 'saisir.okCreance' : 'saisir.okDette'));
         aller(genre === 'creance' ? '/clients' : '/clients/dettes');
         return;
@@ -155,6 +207,7 @@ export function Saisir() {
         estBien ? { designation: designation.trim() || texte, categorie, duree: nature === 'caution' ? 0 : dureeLue } : undefined,
       );
       if (photo) await ajouterPhoto(db, entreprise.id, id, photo);
+      await lierStock(id);
       annoncer(t('saisir.ok', { compte: compte.libelle }));
       aller(`/journal/${compte.id}/${date.slice(0, 7)}`);
     } catch (x) {
@@ -310,6 +363,8 @@ export function Saisir() {
         </div>
       )}
 
+      {!credit && <AideNature type={type} nature={nature} choisir={setLibelle} />}
+
       {credit && (
         <label className="champ">
           {t('saisir.nature')}
@@ -321,6 +376,29 @@ export function Saisir() {
             ))}
           </select>
         </label>
+      )}
+      {credit && <AideNature type={type} nature={nature} choisir={setLibelle} />}
+
+      {mouvementStock && (
+        <div className="deux-col">
+          <label className="champ">
+            {t('saisir.article')}
+            <select value={articleId} onChange={(e) => setArticleId(e.target.value)}>
+              <option value="">{t('saisir.sansArticle')}</option>
+              {(articles ?? []).map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.designation}
+                </option>
+              ))}
+            </select>
+          </label>
+          {articleId && (
+            <label className="champ">
+              {t('saisir.quantite')} {articles?.find((a) => a.id === articleId)?.unite ? `(${articles.find((a) => a.id === articleId)?.unite})` : ''}
+              <input inputMode="decimal" value={quantiteArticle} onChange={(e) => setQuantiteArticle(e.target.value)} />
+            </label>
+          )}
+        </div>
       )}
 
       {change && vers && (

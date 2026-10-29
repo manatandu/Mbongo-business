@@ -10,6 +10,7 @@ import { calculerEtats } from '../moteur';
 import { fmt, fmtDate, lireTaux } from '../ui/format';
 import { dateRefDe, db, useBureau, useDossierBureau, useExercicesBureau } from './contexte';
 import { telechargerExcel } from './excel';
+import { mentionMethodeStock } from '../donnees/stock';
 import { TablesEtats } from './TablesEtats';
 import { Carte, Fenetre, Message, Pastille } from './ui';
 
@@ -149,7 +150,7 @@ export function Client() {
             <button className="btn btn-neutre" onClick={() => window.print()}>
               Imprimer ou enregistrer en PDF
             </button>
-            <button className="btn btn-neutre" onClick={() => void agir(() => telechargerExcel(vue.etats, c.dossier))}>
+            <button className="btn btn-neutre" onClick={() => void agir(async () => telechargerExcel(vue.etats, c.dossier, await mentionMethodeStock(db, c.entreprise.id)))}>
               Exporter en Excel
             </button>
           </div>

@@ -1,10 +1,13 @@
-/** Inventaire du stock de fin d'exercice (note 2). Brouillon modifiable, puis validation par le commerçant. */
+/** Stock : fiches de stock (entrées, sorties, valorisation) et inventaire de fin d'exercice (note 2). */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
+import { useParams } from 'wouter';
 import { useLangue } from '../../i18n';
 import { enregistrerInventaire, ErreurSaisie, validerInventaire } from '../../donnees/saisie';
 import { fmt, fmtMontant, lireMontant } from '../../ui/format';
+import { fichesStock } from '../../donnees/stock';
 import { Erreurs } from '../composants';
+import { FichesStock, lireQuantite } from './FichesStock';
 import { db, useDossier } from '../session';
 
 interface Brouillon {
@@ -13,15 +16,30 @@ interface Brouillon {
   prix: string;
 }
 
-const lireQuantite = (s: string): number | null => {
-  const n = Number(s.replace(/\s/g, '').replace(',', '.'));
-  return Number.isFinite(n) && n >= 0 ? n : null;
-};
-
 export function Stock() {
-  const { chargement, annoncer } = useDossier();
+  const { t } = useLangue();
+  const params = useParams<{ onglet?: string }>();
+  const [onglet, setOnglet] = useState<'fiches' | 'inventaire'>(params.onglet === 'inventaire' ? 'inventaire' : 'fiches');
+  return (
+    <>
+      <div className="seg deux" role="group">
+        <button aria-pressed={onglet === 'fiches'} onClick={() => setOnglet('fiches')}>
+          {t('stock.onglet.fiches')}
+        </button>
+        <button aria-pressed={onglet === 'inventaire'} onClick={() => setOnglet('inventaire')}>
+          {t('stock.onglet.inventaire')}
+        </button>
+      </div>
+      {onglet === 'fiches' ? <FichesStock /> : <Inventaire />}
+    </>
+  );
+}
+
+function Inventaire() {
+  const { chargement, annoncer, entreprise } = useDossier();
   const { t } = useLangue();
   const { exercice } = chargement;
+  const fiches = useLiveQuery(() => fichesStock(db, entreprise.id, exercice.fin), [entreprise.id, exercice.fin]);
   const enregistrees = useLiveQuery(() => db.inventaires.where('exerciceId').equals(exercice.id).sortBy('ordre'), [exercice.id]);
   const [lignes, setLignes] = useState<Brouillon[] | null>(null);
   const [erreurs, setErreurs] = useState<string[]>([]);
@@ -134,6 +152,27 @@ export function Stock() {
               </div>
             ))}
           </div>
+          {(fiches?.fiches.length ?? 0) > 0 && (
+            <>
+              <button
+                className="bouton discret"
+                onClick={() =>
+                  setLignes(
+                    (fiches?.fiches ?? [])
+                      .filter((f) => f.etat.quantite > 0)
+                      .map((f) => ({
+                        designation: f.article.unite ? `${f.article.designation} (${f.article.unite})` : f.article.designation,
+                        quantite: String(f.etat.quantite).replace('.', ','),
+                        prix: String(Math.round(f.etat.coutUnitaire)),
+                      })),
+                  )
+                }
+              >
+                {t('stock.reprendre')}
+              </button>
+              <p className="aide">{t('stock.aideReprendre')}</p>
+            </>
+          )}
           <button className="bouton discret" onClick={() => setLignes((ls) => [...(ls ?? []), { designation: '', quantite: '', prix: '' }])}>
             {t('stock.ajouter')}
           </button>

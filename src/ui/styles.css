@@ -218,6 +218,19 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
 .liste-comptes li:first-child { border-top: 0; }
 .encart-form { display: flex; flex-direction: column; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 
+/* Libellés tout prêts sous la nature « Autres » */
+.puces { display: flex; flex-wrap: wrap; gap: 6px; }
+.puces button { border: 1px solid var(--accent-bord); background: var(--accent-soft); color: var(--accent-fort); border-radius: 999px; padding: 6px 12px; font-size: 14px; min-height: 36px; }
+.puces button:hover { background: #fff; }
+
+/* Fiches de stock */
+.ligne-fiche { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 14px; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; }
+.liste > div:first-child > .ligne-fiche { border-top: 0; }
+.ligne-fiche span:first-child { display: flex; flex-direction: column; min-width: 0; }
+.ligne-fiche small { color: var(--muted); font-size: 13px; }
+.ligne-fiche .num { font-weight: 600; }
+.ligne-fiche.total { font-weight: 600; background: var(--accent-soft); color: var(--encre); }
+
 /* Téléphone : la coque s'efface, les écrans du menu « Plus » restent dans « Plus ». */
 .coque { display: contents; }
 .large-seul { display: none !important; }

@@ -96,6 +96,34 @@ export interface LignePiece {
 }
 
 /** File d'envoi vers le serveur (étape 3). */
+/** Article suivi en fiche de stock (inventaire permanent, facultatif). */
+export interface LigneArticle {
+  id: string;
+  entrepriseId: string;
+  designation: string;
+  /** sac, carton, kg, litre, pièce… */
+  unite: string;
+  creeLe: string;
+}
+
+export type MotifMouvement = 'stock_initial' | 'achat' | 'vente' | 'consommation' | 'perte' | 'ajustement';
+
+/** Entrée ou sortie de stock, en ajout seulement. Une erreur se corrige par un mouvement inverse. */
+export interface LigneMouvementStock {
+  id: string;
+  entrepriseId: string;
+  articleId: string;
+  date: DateISO;
+  sens: 'entree' | 'sortie';
+  quantite: number;
+  /** Coût unitaire d'entrée en francs congolais (entrées seulement). */
+  prixUnitaire?: Montant;
+  motif: MotifMouvement;
+  /** Opération de trésorerie ou facture d'où vient le mouvement. */
+  origine?: string;
+  creeLe: string;
+}
+
 export interface LigneEnvoi {
   seq?: number;
   table: string;
