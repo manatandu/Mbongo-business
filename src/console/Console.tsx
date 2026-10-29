@@ -32,6 +32,51 @@ export function EtatAbo({ jours }: { jours: number | null }) {
   );
 }
 
+/** Messages du service de connexion, en français. */
+export function traduireErreur(m: string): string {
+  if (m === 'Invalid login credentials') return 'Adresse ou mot de passe incorrect.';
+  if (m === 'Email not confirmed') return "Adresse pas encore confirmée : ouvrez le lien reçu par e-mail, ou demandez à TRK Consulting de l'activer.";
+  if (/fetch|network/i.test(m)) return 'Serveur injoignable. Vérifiez la connexion internet et réessayez.';
+  if (/rate limit/i.test(m)) return 'Trop de tentatives. Réessayez dans quelques minutes.';
+  if (/sending|smtp|email/i.test(m)) return "L'e-mail de confirmation n'a pas pu partir. Demandez à TRK Consulting d'activer votre accès.";
+  if (/at least|password/i.test(m)) return 'Mot de passe trop court : 8 caractères au moins.';
+  return m;
+}
+
+function MonCompte({ email }: { email: string }) {
+  const [mdp, setMdp] = useState('');
+  const [mdp2, setMdp2] = useState('');
+  const [message, setMessage] = useState<{ ton: 'ok' | 'danger'; texte: string } | null>(null);
+  async function changer(e: FormEvent) {
+    e.preventDefault();
+    if (mdp.length < 8) return setMessage({ ton: 'danger', texte: 'Mot de passe trop court : 8 caractères au moins.' });
+    if (mdp !== mdp2) return setMessage({ ton: 'danger', texte: 'Les deux mots de passe ne sont pas identiques.' });
+    const { error } = await sb.auth.updateUser({ password: mdp });
+    setMessage(error ? { ton: 'danger', texte: traduireErreur(error.message) } : { ton: 'ok', texte: 'Mot de passe changé.' });
+    if (!error) {
+      setMdp('');
+      setMdp2('');
+    }
+  }
+  return (
+    <Fenetre titre="Mon compte">
+      <form className="flex flex-col gap-3 max-w-[360px]" onSubmit={(e) => void changer(e)}>
+        <p className="m-0">{email}</p>
+        <label>
+          <span className="libelle">Nouveau mot de passe</span>
+          <input className="champ w-full" type="password" autoComplete="new-password" value={mdp} onChange={(e) => setMdp(e.target.value)} />
+        </label>
+        <label>
+          <span className="libelle">Le même, une seconde fois</span>
+          <input className="champ w-full" type="password" autoComplete="new-password" value={mdp2} onChange={(e) => setMdp2(e.target.value)} />
+        </label>
+        {message && <Message ton={message.ton}>{message.texte}</Message>}
+        <button className="btn btn-principal self-start">Changer le mot de passe</button>
+      </form>
+    </Fenetre>
+  );
+}
+
 function Connexion() {
   const [email, setEmail] = useState('');
   const [mdp, setMdp] = useState('');
@@ -44,7 +89,7 @@ function Connexion() {
     setMessage(null);
     const r = inscription ? await sb.auth.signUp({ email, password: mdp }) : await sb.auth.signInWithPassword({ email, password: mdp });
     setOccupe(false);
-    if (r.error) setMessage({ ton: 'danger', texte: r.error.message === 'Invalid login credentials' ? 'Adresse ou mot de passe incorrect.' : r.error.message });
+    if (r.error) setMessage({ ton: 'danger', texte: traduireErreur(r.error.message) });
     else if (inscription && !r.data.session) setMessage({ ton: 'ok', texte: "Accès créé. Confirmez l'adresse avec le lien reçu par e-mail, puis connectez-vous." });
   }
 
@@ -67,7 +112,6 @@ function Connexion() {
           <button type="button" className="btn btn-neutre" disabled={occupe || !email || mdp.length < 8} onClick={(e) => void agir(e, true)}>
             Créer mon accès
           </button>
-          <p className="text-text-dim text-[13px] m-0">Réservé à l'équipe de TRK Consulting. Un accès créé ne voit rien tant qu'il n'a pas été autorisé.</p>
         </form>
       </Fenetre>
     </div>
@@ -94,7 +138,9 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
             <span className="nom-marque">TRK Consulting</span> <span className="text-chrome-text-dim">· Console</span>
           </a>
           <span className="flex-1" />
-          <span className="text-chrome-text-dim hidden sm:inline">{session.user.email}</span>
+          <a href="#/compte" className="text-chrome-text-dim hidden sm:inline">
+            {session.user.email}
+          </a>
           <button className="btn btn-neutre" onClick={() => void sb.auth.signOut()}>
             Se déconnecter
           </button>
@@ -118,6 +164,7 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
               <Route path="/client/:id">{(p) => <FicheClient id={p.id} />}</Route>
               <Route path="/clients" component={ListeClients} />
               <Route path="/rappels" component={Rappels} />
+              <Route path="/compte">{() => <MonCompte email={session.user.email ?? ''} />}</Route>
               <Route component={TableauDeBord} />
             </Switch>
           </>

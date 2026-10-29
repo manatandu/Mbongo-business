@@ -11,6 +11,7 @@ L'offre gratuite met le projet en pause après une semaine sans activité. Le ra
 ## Accès
 
 - Administrateur : adresse inscrite dans `invitations_admin`. Le compte créé avec cette adresse devient administrateur à l'inscription. Ajouter une adresse : `insert into public.invitations_admin values ('adresse@exemple.cd');` dans l'éditeur SQL de Supabase.
+- L'envoi d'e-mails par défaut de Supabase ne sert que les membres de l'équipe du projet : une inscription depuis la console peut échouer. Le compte de manyblck@gmail.com a été créé directement en base, confirmé, avec un mot de passe provisoire à changer dans « Mon compte » (clic sur l'adresse, en haut). Pour d'autres administrateurs : brancher un SMTP (Authentication, SMTP Settings) ou créer le compte depuis le tableau de bord Supabase (Authentication, Users, « Add user », case « Auto confirm »), après l'avoir mis dans `invitations_admin`.
 - Lien de confirmation d'e-mail : il confirme l'adresse même si la page d'arrivée ne s'affiche pas. Pour une page d'arrivée correcte, régler dans Supabase « Authentication », « URL Configuration », Site URL : `https://trkconsole.web.app`.
 
 ## Cloisonnement (règles RLS)
