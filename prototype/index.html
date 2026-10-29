@@ -1,0 +1,536 @@
+<title>Mbongo Lingwala</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : colonne de téléphone pour le commerçant, tableau large pour l'assistant et l'expert. Bleu ciel du drapeau, jaune pour l'attention, rouge réservé aux anomalies. */
+:root{
+  --bg:#eef2f6; --surface:#ffffff; --surface-2:#f5f8fb; --line:#d6dee8; --line-strong:#b4c1d1;
+  --fg:#14202e; --muted:#566578; --faint:#8593a5;
+  --accent:#0a6fd6; --accent-ink:#ffffff; --accent-soft:#e3effc;
+  --in:#127a4b; --in-soft:#e2f4ea; --out:#b3361f; --out-soft:#fbe8e3;
+  --warn:#8a5a00; --warn-soft:#fff3cc; --star:#f2c200;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1520; --surface:#152130; --surface-2:#1b293a; --line:#26374b; --line-strong:#3a4f68;
+  --fg:#e7eef6; --muted:#a3b2c4; --faint:#7385a0;
+  --accent:#4ea3f5; --accent-ink:#06192c; --accent-soft:#16304c;
+  --in:#5fd39c; --in-soft:#123526; --out:#ff8a72; --out-soft:#3d1c16;
+  --warn:#f5cf63; --warn-soft:#3a3010; --star:#f2c200; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1520; --surface:#152130; --surface-2:#1b293a; --line:#26374b; --line-strong:#3a4f68;
+  --fg:#e7eef6; --muted:#a3b2c4; --faint:#7385a0;
+  --accent:#4ea3f5; --accent-ink:#06192c; --accent-soft:#16304c;
+  --in:#5fd39c; --in-soft:#123526; --out:#ff8a72; --out-soft:#3d1c16;
+  --warn:#f5cf63; --warn-soft:#3a3010; --star:#f2c200; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.top{max-width:1080px;margin:0 auto;padding-block:18px 14px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;position:relative;overflow:hidden}
+.mark::after{content:"";position:absolute;width:44px;height:9px;background:var(--star);transform:rotate(-35deg)}
+.mark span{position:relative;z-index:1;color:var(--accent-ink);font-family:var(--display);font-weight:700;font-size:18px}
+.brand h1{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:-.01em}
+.brand small{display:block;color:var(--muted);font-size:12.5px;margin-top:-2px}
+.roles{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.roles button{border:0;background:transparent;padding:7px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--muted)}
+.roles button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.demo-note{max-width:1080px;margin:0 auto 14px;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.demo-note b{color:var(--warn);background:var(--warn-soft);padding:1px 7px;border-radius:6px;font-weight:600;letter-spacing:.02em;font-size:11.5px;text-transform:uppercase}
+.linkbtn{border:0;background:none;color:var(--accent);padding:0;text-decoration:underline;font-size:12.5px}
+.view{max-width:1080px;margin:0 auto}
+.phone{max-width:460px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;min-height:640px}
+.phone-head{padding:18px 18px 10px;border-bottom:1px solid var(--line)}
+.phone-head .who{font-size:12.5px;color:var(--muted)}
+.phone-head h2{font-family:var(--display);font-size:20px;margin:2px 0 0;font-weight:700;text-wrap:balance}
+.screen{flex:1;padding:16px 18px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.tabs{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:var(--surface)}
+.tabs button{border:0;background:none;padding:10px 2px 12px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+.tabs button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="page"]{color:var(--accent);font-weight:600}
+.hero{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-30px;top:18px;width:150px;height:16px;background:var(--star);transform:rotate(-35deg);opacity:.9}
+.hero .lbl{font-size:12.5px;opacity:.85}
+.hero .big{font-family:var(--mono);font-size:27px;font-weight:500;letter-spacing:-.02em;margin-top:2px;position:relative}
+.hero .sub{font-size:12.5px;opacity:.85;margin-top:4px;position:relative}
+.accts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acct{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.acct .n{font-size:12px;color:var(--muted)}
+.acct .v{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+.acct .v.neg{color:var(--out)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big-act{border:0;border-radius:14px;padding:14px 12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.big-act strong{font-family:var(--display);font-size:17px}
+.big-act span{font-size:12px;opacity:.85}
+.big-act.in{background:var(--in-soft);color:var(--in)}
+.big-act.out{background:var(--out-soft);color:var(--out)}
+.sec-t{font-family:var(--display);font-weight:500;font-size:15.5px;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec-t small{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:400}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:9px 10px;min-width:0}
+.kpi .n{font-size:11.5px;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 12px;border-top:1px solid var(--line);min-width:0}
+.row:first-child{border-top:0}
+.row .l{min-width:0;overflow-wrap:anywhere}
+.row .meta{font-size:12px;color:var(--muted);grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 10px}
+.amt-in{color:var(--in)} .amt-out{color:var(--out)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;letter-spacing:.01em}
+.pill.ok{background:var(--in-soft);color:var(--in)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--out-soft);color:var(--out)}
+.pill.info{background:var(--accent-soft);color:var(--accent)}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:118px 1fr auto;gap:8px;align-items:center;font-size:12.5px}
+.bar .track{height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;background:var(--out);opacity:.75}
+form{display:flex;flex-direction:column;gap:13px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;border-radius:9px;padding:9px 4px;font-weight:500;font-size:13.5px;color:var(--muted);line-height:1.2}
+.seg button small{display:block;font-weight:400;font-size:11px}
+.seg button[aria-pressed="true"].t-in{background:var(--in);color:#fff}
+.seg button[aria-pressed="true"].t-out{background:var(--out);color:#fff}
+.seg button[aria-pressed="true"].t-tr{background:var(--accent);color:var(--accent-ink)}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted);font-weight:500;min-width:0}
+.f input,.f select{border:1px solid var(--line-strong);background:var(--surface);border-radius:10px;padding:10px 11px;font-size:15px;color:var(--fg);width:100%;min-width:0}
+.amount-row{display:grid;grid-template-columns:1fr 92px;gap:8px}
+.amount-row input{font-family:var(--mono);font-size:20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--fg);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.check input{margin-top:3px;width:17px;height:17px;accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted);margin:0}
+.err{font-size:12.5px;color:var(--out);margin:0}
+.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:600;background:var(--accent);color:var(--accent-ink);font-size:15px}
+.btn.ghost{background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
+.btn.sm{padding:6px 10px;font-size:12.5px;border-radius:9px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:600}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:11.5px;letter-spacing:.02em;background:var(--surface-2);white-space:nowrap}
+td.r,th.r{text-align:right}
+tr.total td{font-weight:600;background:var(--surface-2)}
+tr.sub td{font-weight:600}
+tr.res td{font-weight:600;background:var(--accent-soft);color:var(--fg)}
+.doc{border:1px solid var(--line-strong);border-radius:12px;padding:12px;background:var(--surface)}
+.doc-h{font-size:11.5px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin-bottom:10px}
+.doc-h b{color:var(--fg);font-weight:600}
+.doc h3{font-family:var(--display);font-size:15px;font-weight:700;margin:0 0 8px;letter-spacing:.01em}
+.stamp{border:1.5px dashed var(--in);color:var(--in);border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:600}
+.stamp.pending{border-color:var(--warn);color:var(--warn)}
+.wide{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-family:var(--display);font-size:19px;margin:0;font-weight:700}
+.panel p{margin:0}
+.lead{color:var(--muted);font-size:13.5px}
+.sumrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.clientline{cursor:pointer}
+.clientline:hover td{background:var(--surface-2)}
+.clientline[aria-selected="true"] td{background:var(--accent-soft)}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);font-size:13px;align-items:start}
+.alert .dot{width:9px;height:9px;border-radius:50%;margin-top:6px}
+.alert.bad .dot{background:var(--out)} .alert.warn .dot{background:var(--warn)} .alert.ok .dot{background:var(--in)}
+.alert small{grid-column:2;color:var(--muted)}
+.rights{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rights div{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px}
+.rights h4{margin:0 0 6px;font-size:13px;font-family:var(--display)}
+.rights ul{margin:0;padding-left:18px;color:var(--muted)}
+@media (max-width:820px){.wide{grid-template-columns:1fr}.sumrow{grid-template-columns:1fr 1fr}.rights{grid-template-columns:1fr}}
+@media (max-width:420px){.phone{border-radius:16px}.screen{padding:14px 13px 20px}.bar{grid-template-columns:96px 1fr auto}.kpis{grid-template-columns:1fr 1fr 1fr}}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .18s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}}
+</style>
+
+<header class="top">
+  <div class="brand"><div class="mark" aria-hidden="true"><span>M</span></div><div><h1>Mbongo</h1><small>Assistance comptable et de gestion · Lingwala</small></div></div>
+  <div class="roles" role="group" aria-label="Choisir l'espace">
+    <button id="r-com" data-role="com" aria-pressed="true">Commerçant</button>
+    <button id="r-ass" data-role="ass" aria-pressed="false">Assistant</button>
+    <button id="r-exp" data-role="exp" aria-pressed="false">Expert-comptable</button>
+  </div>
+</header>
+<div class="demo-note"><b>Prototype</b><span>Entreprise, clients et montants fictifs, à des fins de démonstration. Les saisies restent dans ce navigateur.</span><button class="linkbtn" id="reset">Remettre les données de départ</button></div>
+<main class="view" id="view"></main>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const ACCTS=[{id:"caisse",label:"Caisse",line:"caisse"},{id:"mpesa",label:"M-Pesa",line:"banque"},{id:"orange",label:"Orange Money",line:"banque"},{id:"banque",label:"Banque",line:"banque"}];
+const CAT_IN=[["ventes","Ventes"],["autres_r","Autres recettes"],["apport","Apport de l'exploitant"]];
+const CAT_OUT=[["achats_m","Achats de marchandises"],["achats_f","Achats de fournitures"],["loyers","Loyers"],["salaires","Salaires"],["impots","Impôts et taxes"],["autres_d","Autres dépenses"],["materiel","Matériel et mobilier"],["prelev","Prélèvement de l'exploitant"]];
+const CATS=Object.fromEntries([...CAT_IN,...CAT_OUT,["transfert","Transfert"]]);
+const MONTHS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const YEAR=2026;
+
+function seed(){
+  let id=1;const E=[];
+  const add=(date,type,compte,cat,libelle,montant,devise="CDF",piece=true,extra={})=>E.push({id:id++,date,type,compte,cat,libelle,montant,devise,piece,...extra});
+  const base=[[9.1,6.4],[8.6,6.0],[9.8,7.1],[9.3,6.6],[10.2,7.3],[9.7,6.9],[10.6,7.6],[11.1,8.0]];
+  base.forEach(([v,a],i)=>{const m=String(i+1).padStart(2,"0"),mn=MONTHS[i];
+    add(`${YEAR}-${m}-28`,"recette","caisse","ventes",`Report du cahier de caisse, ventes de ${mn}`,Math.round(v*1e6));
+    add(`${YEAR}-${m}-28`,"depense","caisse","achats_m",`Report du cahier, achats de ${mn}`,Math.round(a*1e6));
+    add(`${YEAR}-${m}-05`,"depense","banque","loyers",`Loyer du dépôt, ${mn}`,450000);
+    add(`${YEAR}-${m}-30`,"depense","caisse","salaires",`Salaire du vendeur, ${mn}`,320000);
+    add(`${YEAR}-${m}-15`,"depense","caisse","autres_d",`Transport et petits frais, ${mn}`,165000);
+    if(i%3===0)add(`${YEAR}-${m}-20`,"depense","banque","impots",`Taxes et redevances, ${mn}`,180000);
+    add(`${YEAR}-${m}-29`,"depense","caisse","prelev",`Prélèvement pour le ménage, ${mn}`,700000);
+  });
+  const d=(dd,mm=10)=>`${YEAR}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+  add(d(1,9),"depense","banque","loyers","Loyer du dépôt, septembre",450000);
+  add(d(3,9),"recette","caisse","ventes","Ventes de la journée",412000);
+  add(d(4,9),"depense","caisse","achats_m","Riz et huile, grossiste Marché central",1850000,"CDF",true,{tiers:"Ets Mukoko"});
+  add(d(6,9),"recette","mpesa","ventes","Ventes payées par M-Pesa",186000);
+  add(d(10,9),"recette","caisse","ventes","Ventes de la journée",388000);
+  add(d(12,9),"depense","caisse","achats_m","Sucre et lait en poudre",420,"USD",true,{tiers:"Ets Mukoko"});
+  add(d(15,9),"transfert","caisse","transfert","Versement de la caisse à la banque",2500000,"CDF",true,{vers:"banque"});
+  add(d(18,9),"recette","caisse","ventes","Ventes de la journée",455000);
+  add(d(20,9),"depense","mpesa","autres_d","Crédit téléphone et forfait internet",35000,"CDF",false);
+  add(d(24,9),"recette","caisse","ventes","Ventes de la semaine",1960000);
+  add(d(27,9),"depense","banque","materiel","Congélateur pour les boissons",650,"USD",true);const congel=id-1;
+  add(d(30,9),"depense","caisse","salaires","Salaire du vendeur, septembre",320000);
+  add(d(30,9),"recette","caisse","ventes","Ventes de fin de mois",2240000);
+  add(d(30,9),"depense","caisse","prelev","Prélèvement pour le ménage, septembre",700000);
+  add(d(2),"depense","banque","loyers","Loyer du dépôt, octobre",450000);
+  add(d(3),"recette","caisse","ventes","Ventes de la semaine",2105000);
+  add(d(6),"depense","caisse","achats_m","Boissons, dépôt Bralima de Lingwala",1340000,"CDF",true,{tiers:"Dépôt boissons Lingwala"});
+  add(d(8),"recette","orange","ventes","Ventes payées par Orange Money",92000);
+  add(d(10),"recette","caisse","ventes","Ventes de la semaine",2380000);
+  add(d(13),"depense","caisse","autres_d","Réparation de l'étagère",60000,"CDF",false);
+  add(d(14),"depense","banque","impots","Taxe sur l'enseigne, commune de Lingwala",95000);
+  add(d(17),"recette","caisse","ventes","Ventes de la semaine",2210000);
+  add(d(18),"recette","mpesa","ventes","Ventes payées par M-Pesa",214000);
+  add(d(20),"depense","caisse","achats_m","Conserves et savon",380,"USD",true,{tiers:"Ets Mukoko"});
+  add(d(24),"recette","caisse","ventes","Ventes de la semaine",2460000);
+  add(d(27),"depense","mpesa","autres_d","Livraison par moto",25000,"CDF",false);
+  return {
+    rate:2850,
+    ent:{nom:"Alimentation Maman Nsimba",activite:"Commerce de détail, alimentation générale",commune:"Lingwala, Kinshasa",nif:"démo A0000000",resp:"Mme Nsimba (fictif)"},
+    opening:{caisse:1850000,mpesa:240000,orange:60000,banque:3900000,stock:6500000},
+    entries:E,
+    creances:[
+      {id:1,date:`${YEAR-1}-12-20`,facture:"V-118",nom:"Restaurant Chez Tantine",montant:520000,paid:`${YEAR}-01-12`,compte:"caisse"},
+      {id:2,date:`${YEAR-1}-12-28`,facture:"V-121",nom:"École primaire Lisanga",montant:280000,paid:`${YEAR}-02-03`,compte:"banque"},
+      {id:3,date:d(9,9),facture:"V-204",nom:"Restaurant Chez Tantine",montant:610000,paid:null,compte:null},
+      {id:4,date:d(11),facture:"V-219",nom:"Paroisse Saint-Pierre, kermesse",montant:385000,paid:null,compte:null},
+      {id:5,date:d(22),facture:"V-226",nom:"M. Kalala, voisin",montant:74000,paid:null,compte:null}],
+    dettes:[
+      {id:1,date:`${YEAR-1}-12-23`,facture:"F-3390",nom:"Ets Mukoko",montant:1150000,paid:`${YEAR}-01-08`,compte:"caisse"},
+      {id:2,date:d(21),facture:"F-5120",nom:"Ets Mukoko",montant:1480000,paid:null,compte:null},
+      {id:3,date:d(25),facture:"B-0877",nom:"Dépôt boissons Lingwala",montant:690000,paid:null,compte:null}],
+    immos:[{id:1,date:"2023-03-10",designation:"Étagères métalliques",montant:1800000,duree:5,auto:false},{id:2,date:"2024-06-02",designation:"Balance électronique",montant:420000,duree:5,auto:false},{id:3,date:d(27,9),designation:"Congélateur pour les boissons",montant:0,duree:5,auto:true,entryId:congel}],
+    stockFinal:7350000,
+    validation:null,nextId:1000
+  };
+}
+let S;
+function load(){try{const r=localStorage.getItem("mbongo-v2");if(r){S=JSON.parse(r);return}}catch(e){}S=seed()}
+function save(){try{localStorage.setItem("mbongo-v2",JSON.stringify(S))}catch(e){}}
+load();
+
+const fmt=n=>{const s=Math.round(Math.abs(n)).toLocaleString("fr-FR").replace(/ | /g," ");return (n<0?"−":"")+s};
+const fc=n=>fmt(n)+" FC";
+const cdf=e=>e.devise==="USD"?e.montant*S.rate:e.montant;
+const orig=e=>e.devise==="USD"?`${fmt(e.montant)} $ au taux ${fmt(S.rate)}`:"";
+const ddmm=s=>{const [y,m,dd]=s.split("-");return `${dd}/${m}/${y}`};
+const todayISO=()=>{const t=new Date();return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`};
+const refDate=()=>{const t=todayISO();const last=S.entries.reduce((m,e)=>e.date>m?e.date:m,"");return t<`${YEAR}-12-31`&&t>=`${YEAR}-01-01`?t:last};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const accLabel=id=>ACCTS.find(a=>a.id===id)?.label||id;
+
+function balances(upto){
+  const b={...S.opening};delete b.stock;
+  S.entries.filter(e=>!upto||e.date<=upto).forEach(e=>{const v=cdf(e);
+    if(e.type==="recette")b[e.compte]+=v;else if(e.type==="depense")b[e.compte]-=v;else{b[e.compte]-=v;b[e.vers]+=v}});
+  return b;
+}
+function mt(i){if(i.entryId){const e=S.entries.find(x=>x.id===i.entryId);if(e)return cdf(e)}return i.montant}
+function amortYear(i){const y0=+i.date.slice(0,4);if(y0>YEAR)return 0;const used=YEAR-y0;return used<i.duree?mt(i)/i.duree:0}
+function immoNet(i,endOfYear){const y0=+i.date.slice(0,4);const years=Math.min(i.duree,(endOfYear?YEAR:YEAR-1)-y0+1);return Math.max(0,mt(i)-mt(i)/i.duree*Math.max(0,years))}
+function compute(){
+  const yr=S.entries.filter(e=>e.date.startsWith(String(YEAR)));
+  const sum=c=>yr.filter(e=>e.cat===c).reduce((s,e)=>s+cdf(e),0);
+  const A1=sum("ventes"),A2=sum("autres_r"),A=A1+A2;
+  const B={achats:sum("achats_m")+sum("achats_f"),loyers:sum("loyers"),salaires:sum("salaires"),impots:sum("impots"),interets:0,autres:sum("autres_d")};
+  const Bt=Object.values(B).reduce((a,b)=>a+b,0);const C=A-Bt;
+  const jan=`${YEAR}-01-01`,ref=refDate();
+  const open=(L)=>L.filter(x=>x.date<jan&&(!x.paid||x.paid>=jan)).reduce((s,x)=>s+x.montant,0);
+  const close=(L)=>L.filter(x=>!x.paid).reduce((s,x)=>s+x.montant,0);
+  const CI=open(S.creances),CF=close(S.creances),DI=open(S.dettes),DF=close(S.dettes);
+  const SI=S.opening.stock,SF=S.stockFinal;
+  const D=(SI-SF)+(CI-CF),E=(DI-DF);
+  const F=S.immos.reduce((s,i)=>s+amortYear(i),0);
+  const G=C-D+E-F;
+  const bal=balances();const caisse=bal.caisse,banque=bal.mpesa+bal.orange+bal.banque;
+  const immosEnd=S.immos.reduce((s,i)=>s+immoNet(i,true),0),immosOpen=S.immos.filter(i=>+i.date.slice(0,4)<YEAR).reduce((s,i)=>s+immoNet(i,false),0);
+  const cashOpen=S.opening.caisse+S.opening.mpesa+S.opening.orange+S.opening.banque;
+  const apports=sum("apport"),prelev=sum("prelev");
+  const CEopen=cashOpen+SI+CI+immosOpen-DI;const CE=CEopen+apports-prelev;
+  const actif=immosEnd+SF+CF+caisse+banque,passif=CE+G+0+DF;
+  return {A1,A2,A,B,Bt,C,SI,SF,CI,CF,DI,DF,D,E,F,G,caisse,banque,immosEnd,CE,CEopen,apports,prelev,actif,passif,bal};
+}
+
+let role="com",tab="accueil",draft=null,jAcct="caisse",jMonth=null,tiersTab="creances",etat="cr",selClient=0;
+const view=document.getElementById("view");
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast._);toast._=setTimeout(()=>t.hidden=true,2400)}
+
+const ICONS={accueil:'<path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',saisir:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/>',journal:'<path d="M6 4h11a1 1 0 0 1 1 1v15H7a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6M9 16h4"/>',tiers:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/><path d="M15.5 6.5a3 3 0 0 1 0 5.6M17.5 14.8c1.6.6 2.6 2 3 4.2"/>',etats:'<path d="M5 20V10M10 20V4M15 20v-7M20 20V8"/>'};
+const TABS=[["accueil","Accueil"],["saisir","Saisir"],["journal","Journal"],["tiers","Clients"],["etats","États"]];
+
+function render(){
+  document.querySelectorAll(".roles button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.role===role)));
+  if(role==="com")renderCom();else if(role==="ass")renderAss();else renderExp();
+}
+
+function renderCom(){
+  const body={accueil:scrAccueil,saisir:scrSaisir,journal:scrJournal,tiers:scrTiers,etats:scrEtats}[tab]();
+  view.innerHTML=`<div class="phone"><div class="phone-head"><div class="who">${esc(S.ent.resp)} · ${esc(S.ent.commune)}</div><h2>${esc(S.ent.nom)}</h2></div>
+  <div class="screen">${body}</div>
+  <nav class="tabs" aria-label="Navigation">${TABS.map(([k,l])=>`<button data-tab="${k}" ${k===tab?'aria-current="page"':""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${l}</button>`).join("")}</nav></div>`;
+  bindCom();
+}
+
+function scrAccueil(){
+  const R=compute(),b=R.bal;const ref=refDate();const m=ref.slice(0,7);
+  const mo=S.entries.filter(e=>e.date.startsWith(m));
+  const rin=mo.filter(e=>e.type==="recette"&&e.cat!=="apport").reduce((s,e)=>s+cdf(e),0);
+  const rout=mo.filter(e=>e.type==="depense"&&e.cat!=="prelev"&&e.cat!=="materiel").reduce((s,e)=>s+cdf(e),0);
+  const byCat={};mo.filter(e=>e.type==="depense").forEach(e=>byCat[e.cat]=(byCat[e.cat]||0)+cdf(e));
+  const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]).slice(0,5);const mx=Math.max(1,...cats.map(c=>c[1]));
+  const total=b.caisse+b.mpesa+b.orange+b.banque;
+  const recent=[...S.entries].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,4);
+  return `<div class="hero"><div class="lbl">Argent disponible, tous comptes</div><div class="big">${fc(total)}</div><div class="sub">Au ${ddmm(ref)} · taux de démonstration 1 $ = ${fmt(S.rate)} FC</div></div>
+  <div class="accts">${ACCTS.map(a=>`<div class="acct"><div class="n">${a.label}</div><div class="v ${b[a.id]<0?"neg":""}">${fc(b[a.id])}</div></div>`).join("")}</div>
+  <div class="duo"><button class="big-act in" data-go="recette"><strong>+ Recette</strong><span>Mbongo ekoti</span></button><button class="big-act out" data-go="depense"><strong>− Dépense</strong><span>Mbongo ebimi</span></button></div>
+  <h3 class="sec-t">Mois de ${MONTHS[+m.slice(5)-1]} <small>hors apports, prélèvements et matériel</small></h3>
+  <div class="kpis"><div class="kpi"><div class="n">Entré</div><div class="v amt-in">${fmt(rin)}</div></div><div class="kpi"><div class="n">Sorti</div><div class="v amt-out">${fmt(rout)}</div></div><div class="kpi"><div class="n">Reste</div><div class="v">${fmt(rin-rout)}</div></div></div>
+  <div class="kpis"><div class="kpi"><div class="n">On me doit</div><div class="v">${fmt(R.CF)}</div></div><div class="kpi"><div class="n">Je dois</div><div class="v">${fmt(R.DF)}</div></div><div class="kpi"><div class="n">Stock compté</div><div class="v">${fmt(R.SF)}</div></div></div>
+  <h3 class="sec-t">Où part l'argent ce mois <small>en FC</small></h3>
+  <div class="bars">${cats.map(([c,v])=>`<div class="bar"><span>${CATS[c]}</span><div class="track"><div class="fill" style="width:${(v/mx*100).toFixed(1)}%"></div></div><span class="num">${fmt(v)}</span></div>`).join("")||'<p class="hint">Aucune dépense ce mois.</p>'}</div>
+  <h3 class="sec-t">Dernières saisies <button class="btn sm ghost" data-tab-go="journal">Tout voir</button></h3>
+  <div class="list">${recent.map(rowEntry).join("")}</div>`;
+}
+function rowEntry(e){
+  const v=cdf(e),sign=e.type==="recette"?"+":e.type==="depense"?"−":"↔";
+  const cls=e.type==="recette"?"amt-in":e.type==="depense"?"amt-out":"";
+  const where=e.type==="transfert"?`${accLabel(e.compte)} → ${accLabel(e.vers)}`:accLabel(e.compte);
+  return `<div class="row"><div class="l">${esc(e.libelle)}</div><div class="num ${cls}">${sign} ${fmt(v)}</div>
+  <div class="meta"><span>${ddmm(e.date)}</span><span>${where}</span><span>${CATS[e.cat]}</span>${e.devise==="USD"?`<span>${fmt(e.montant)} $</span>`:""}${e.piece?"":'<span class="pill warn">Pièce manquante</span>'}</div></div>`;
+}
+
+function scrSaisir(){
+  if(!draft)draft={type:"recette",montant:"",devise:"CDF",compte:"caisse",vers:"banque",cat:"ventes",libelle:"",date:todayISO(),piece:false,credit:false,tiers:"",facture:""};
+  const cats=draft.type==="recette"?CAT_IN:draft.type==="depense"?CAT_OUT:[];
+  const credOk=draft.type!=="transfert";
+  return `<form id="f-saisie" novalidate>
+  <div class="seg" role="group" aria-label="Type d'opération">
+    <button type="button" class="t-in" data-type="recette" aria-pressed="${draft.type==="recette"}">Recette<small>Mbongo ekoti</small></button>
+    <button type="button" class="t-out" data-type="depense" aria-pressed="${draft.type==="depense"}">Dépense<small>Mbongo ebimi</small></button>
+    <button type="button" class="t-tr" data-type="transfert" aria-pressed="${draft.type==="transfert"}">Transfert<small>Entre comptes</small></button>
+  </div>
+  <div class="amount-row"><label class="f" for="i-montant">Montant<input id="i-montant" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(draft.montant)}"></label>
+  <label class="f" for="i-devise">Devise<select id="i-devise"><option value="CDF" ${draft.devise==="CDF"?"selected":""}>FC</option><option value="USD" ${draft.devise==="USD"?"selected":""}>$ US</option></select></label></div>
+  <p class="err" id="e-montant" hidden></p>
+  ${credOk?`<label class="check" for="i-credit"><input type="checkbox" id="i-credit" ${draft.credit?"checked":""}><span>${draft.type==="recette"?"Vente à crédit : le client paiera plus tard":"Achat à crédit : je paierai plus tard"}<br><small class="hint">L'opération va dans ${draft.type==="recette"?"les créances":"les dettes"}, pas dans la caisse.</small></span></label>`:""}
+  ${draft.credit&&credOk?`<div class="two"><label class="f" for="i-tiers">${draft.type==="recette"?"Client":"Fournisseur"}<input id="i-tiers" value="${esc(draft.tiers)}" placeholder="Nom"></label><label class="f" for="i-fact">N° de facture<input id="i-fact" value="${esc(draft.facture)}" placeholder="Facultatif"></label></div><p class="err" id="e-tiers" hidden></p>`
+  :`<div class="two"><label class="f" for="i-compte">${draft.type==="transfert"?"Depuis":"Compte"}<select id="i-compte">${ACCTS.map(a=>`<option value="${a.id}" ${a.id===draft.compte?"selected":""}>${a.label}</option>`).join("")}</select></label>
+  ${draft.type==="transfert"?`<label class="f" for="i-vers">Vers<select id="i-vers">${ACCTS.map(a=>`<option value="${a.id}" ${a.id===draft.vers?"selected":""}>${a.label}</option>`).join("")}</select></label>`:`<label class="f" for="i-cat">Nature<select id="i-cat">${cats.map(([k,l])=>`<option value="${k}" ${k===draft.cat?"selected":""}>${l}</option>`).join("")}</select></label>`}</div>`}
+  ${draft.credit&&credOk&&draft.type==="depense"?`<label class="f" for="i-cat">Nature<select id="i-cat">${CAT_OUT.filter(c=>!["prelev","materiel"].includes(c[0])).map(([k,l])=>`<option value="${k}" ${k===draft.cat?"selected":""}>${l}</option>`).join("")}</select></label>`:""}
+  <p class="err" id="e-vers" hidden></p>
+  <label class="f" for="i-lib">Libellé<input id="i-lib" value="${esc(draft.libelle)}" placeholder="${draft.type==="recette"?"Ex. ventes de la journée":draft.type==="depense"?"Ex. sacs de riz chez le grossiste":"Ex. dépôt à la banque"}"></label>
+  <div class="two"><label class="f" for="i-date">Date<input type="date" id="i-date" value="${draft.date}" min="${YEAR}-01-01" max="${YEAR}-12-31"></label>
+  <label class="f" for="i-piece">Pièce justificative<input type="file" id="i-piece" accept="image/*,application/pdf"></label></div>
+  ${draft.cat==="materiel"&&!draft.credit?'<p class="hint">Le matériel entre au registre des immobilisations, amorti sur 5 ans sans prorata. Il ne compte pas comme une charge du mois.</p>':""}
+  <button class="btn" type="submit">Enregistrer</button></form>`;
+}
+
+function scrJournal(){
+  const months=[...new Set(S.entries.filter(e=>e.compte===jAcct||e.vers===jAcct).map(e=>e.date.slice(0,7)))].sort();
+  if(!jMonth||!months.includes(jMonth))jMonth=months[months.length-1]||`${YEAR}-10`;
+  const start=jMonth+"-01";
+  const prev=S.entries.filter(e=>e.date<start);
+  let report=S.opening[jAcct];prev.forEach(e=>{const v=cdf(e);if(e.type==="recette"&&e.compte===jAcct)report+=v;else if(e.type==="depense"&&e.compte===jAcct)report-=v;else if(e.type==="transfert"){if(e.compte===jAcct)report-=v;if(e.vers===jAcct)report+=v}});
+  const rows=S.entries.filter(e=>e.date.startsWith(jMonth)&&(e.compte===jAcct||e.vers===jAcct)).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+  let solde=report,tr=0,td=0;
+  const vr={ventes:0,autres_r:0,apport:0},vd={achats_m:0,achats_f:0,loyers:0,salaires:0,impots:0,autres_d:0,materiel:0,prelev:0};
+  const body=rows.map(e=>{const v=cdf(e);let r=0,d=0;
+    if(e.type==="recette"){r=v;vr[e.cat]+=v}else if(e.type==="depense"){d=v;vd[e.cat]+=v}else if(e.compte===jAcct)d=v;else r=v;
+    solde+=r-d;tr+=r;td+=d;
+    return `<tr><td class="num">${ddmm(e.date).slice(0,5)}</td><td>${esc(e.libelle)}${e.piece?"":' <span class="pill warn">sans pièce</span>'}</td><td class="r num">${r?fmt(r):""}</td><td class="r num">${d?fmt(d):""}</td><td class="r num">${fmt(solde)}</td></tr>`}).join("");
+  return `<div class="filters" role="group" aria-label="Compte">${ACCTS.map(a=>`<button class="chip" data-acct="${a.id}" aria-pressed="${a.id===jAcct}">${a.label}</button>`).join("")}</div>
+  <label class="f" for="i-mois">Mois<select id="i-mois">${months.map(m=>`<option value="${m}" ${m===jMonth?"selected":""}>${MONTHS[+m.slice(5)-1]} ${m.slice(0,4)}</option>`).join("")}</select></label>
+  <div class="doc"><h3>Journal de trésorerie SMT · ${accLabel(jAcct)}</h3><div class="doc-h"><span>Mois de <b>${MONTHS[+jMonth.slice(5)-1]} ${jMonth.slice(0,4)}</b></span><span>Montants en <b>FC</b></span></div>
+  <div class="tablewrap"><table><thead><tr><th>Date</th><th>Libellés</th><th class="r">Recettes</th><th class="r">Dépenses</th><th class="r">Solde</th></tr></thead>
+  <tbody><tr class="sub"><td></td><td>Report à nouveau</td><td></td><td></td><td class="r num">${fmt(report)}</td></tr>${body||'<tr><td colspan="5" class="hint">Aucun mouvement ce mois.</td></tr>'}
+  <tr class="total"><td></td><td>Solde à reporter</td><td class="r num">${fmt(tr)}</td><td class="r num">${fmt(td)}</td><td class="r num">${fmt(solde)}</td></tr></tbody></table></div>
+  <h3 style="margin-top:14px">Ventilation</h3><div class="tablewrap"><table><tbody>
+  ${[["Ventes",vr.ventes],["Autres recettes",vr.autres_r],["Compte exploitant, apports",vr.apport]].map(([l,v])=>`<tr><td>${l}</td><td class="r num amt-in">${v?fmt(v):"·"}</td></tr>`).join("")}
+  ${[["Achats marchandises",vd.achats_m],["Achats matières et fournitures",vd.achats_f],["Loyers",vd.loyers],["Salaires",vd.salaires],["Impôts et taxes",vd.impots],["Autres",vd.autres_d],["Matériel et mobilier",vd.materiel],["Compte exploitant, prélèvements",vd.prelev]].map(([l,v])=>`<tr><td>${l}</td><td class="r num amt-out">${v?fmt(v):"·"}</td></tr>`).join("")}
+  </tbody></table></div></div>
+  <p class="hint">Un journal par caisse, par banque et par compte de monnaie électronique, comme le prévoit le modèle SMT de l'AUDCIF (Titre X, note 4).</p>`;
+}
+
+function scrTiers(){
+  const L=tiersTab==="creances"?S.creances:S.dettes;const ref=refDate();
+  const open=L.filter(x=>!x.paid).sort((a,b)=>a.date.localeCompare(b.date)),done=L.filter(x=>x.paid).sort((a,b)=>b.paid.localeCompare(a.paid));
+  const age=x=>Math.round((new Date(ref)-new Date(x.date))/864e5);
+  const tot=open.reduce((s,x)=>s+x.montant,0);
+  return `<div class="filters" role="group" aria-label="Journal de suivi"><button class="chip" data-tt="creances" aria-pressed="${tiersTab==="creances"}">Créances impayées</button><button class="chip" data-tt="dettes" aria-pressed="${tiersTab==="dettes"}">Dettes à payer</button></div>
+  <div class="hero" style="padding:13px 16px"><div class="lbl">${tiersTab==="creances"?"Les clients me doivent":"Je dois aux fournisseurs"}</div><div class="big" style="font-size:23px">${fc(tot)}</div><div class="sub">${open.length} facture${open.length>1?"s":""} en attente</div></div>
+  <div class="list">${open.map(x=>{const a=age(x);return `<div class="row"><div class="l"><b style="font-weight:600">${esc(x.nom)}</b></div><div class="num">${fmt(x.montant)}</div>
+  <div class="meta"><span>${ddmm(x.date)}</span><span>${esc(x.facture||"sans n°")}</span><span class="pill ${a>30?"bad":a>14?"warn":"info"}">${a} jours</span>
+  <span style="flex-basis:100%;display:flex;gap:6px;align-items:center;flex-wrap:wrap">${tiersTab==="creances"?"Encaissé sur":"Payé depuis"} <select id="pay-${x.id}" aria-label="Compte" style="border:1px solid var(--line-strong);border-radius:8px;padding:3px 6px;background:var(--surface)">${ACCTS.map(a=>`<option value="${a.id}">${a.label}</option>`).join("")}</select><button class="btn sm" data-pay="${x.id}">${tiersTab==="creances"?"Marquer encaissé":"Marquer payé"}</button></span></div></div>`}).join("")||'<div class="row"><div class="l hint">Rien en attente.</div></div>'}</div>
+  <h3 class="sec-t">Réglées <small>${done.length}</small></h3>
+  <div class="list">${done.slice(0,5).map(x=>`<div class="row"><div class="l">${esc(x.nom)}</div><div class="num">${fmt(x.montant)}</div><div class="meta"><span>${esc(x.facture)}</span><span>réglée le ${ddmm(x.paid)}</span><span class="pill ok">${accLabel(x.compte)}</span></div></div>`).join("")}</div>
+  <p class="hint">L'encaissement crée automatiquement la recette dans le journal du compte choisi. C'est le journal de suivi des ${tiersTab==="creances"?"créances impayées":"dettes à payer"} du SMT.</p>`;
+}
+
+function etatHead(t){return `<h3>${t}</h3><div class="doc-h"><span>Entité : <b>${esc(S.ent.nom)}</b></span><span>Exercice clos le <b>31-12-${YEAR}</b></span><span>N° d'identification : <b>${esc(S.ent.nif)}</b></span><span>Durée : <b>12 mois</b></span></div>`}
+function etatsHTML(R,which){
+  const v=n=>`<td class="r num">${fmt(n)}</td>`;
+  const cr=`<div class="doc">${etatHead("Compte de résultat SMT")}<div class="tablewrap"><table><thead><tr><th>Rubriques</th><th>Note</th><th class="r">Exercice ${YEAR}</th></tr></thead><tbody>
+  <tr><td>Recettes sur ventes ou prestations de services</td><td>4</td>${v(R.A1)}</tr><tr><td>Autres recettes sur activités</td><td>4</td>${v(R.A2)}</tr>
+  <tr class="total"><td>Total des recettes sur produits (A)</td><td></td>${v(R.A)}</tr>
+  <tr><td>Dépenses sur achats</td><td>4</td>${v(R.B.achats)}</tr><tr><td>Dépenses sur loyers</td><td>4</td>${v(R.B.loyers)}</tr><tr><td>Dépenses sur salaires</td><td>4</td>${v(R.B.salaires)}</tr><tr><td>Dépenses sur impôts et taxes</td><td>4</td>${v(R.B.impots)}</tr><tr><td>Charges d'intérêts</td><td></td>${v(R.B.interets)}</tr><tr><td>Autres dépenses sur activités</td><td>4</td>${v(R.B.autres)}</tr>
+  <tr class="total"><td>Total dépenses sur charges (B)</td><td></td>${v(R.Bt)}</tr>
+  <tr class="sub"><td>Solde : excédent ou insuffisance de recettes (C = A − B)</td><td></td>${v(R.C)}</tr>
+  <tr><td>− Variation des stocks N / N-1</td><td>2</td>${v(R.SI-R.SF)}</tr><tr><td>− Variation des créances N / N-1</td><td>3</td>${v(R.CI-R.CF)}</tr><tr><td>+ Variation des dettes d'exploitation N / N-1</td><td>3</td>${v(R.DI-R.DF)}</tr>
+  <tr><td>Dotations amortissements (F)</td><td>1</td>${v(R.F)}</tr>
+  <tr class="res"><td>Résultat exercice (G = C − D + E − F)</td><td></td>${v(R.G)}</tr></tbody></table></div>
+  <p class="hint" style="margin-top:8px">Variations calculées en N-1 moins N, de sorte que G = C − D + E − F. Exercice en cours : arrêté provisoire au ${ddmm(refDate())}.</p></div>`;
+  const bil=`<div class="doc">${etatHead(`Bilan SMT au 31 décembre ${YEAR}`)}<div class="tablewrap"><table><thead><tr><th>Actif</th><th>Note</th><th class="r">Exercice ${YEAR}</th></tr></thead><tbody>
+  <tr><td>Immobilisations (valeur nette)</td><td>1</td>${v(R.immosEnd)}</tr><tr><td>Stocks</td><td>2</td>${v(R.SF)}</tr><tr><td>Clients et débiteurs divers</td><td>3</td>${v(R.CF)}</tr><tr><td>Caisse</td><td></td>${v(R.caisse)}</tr><tr><td>Banque et monnaie électronique (en + ou en −)</td><td></td>${v(R.banque)}</tr>
+  <tr class="total"><td>Total actif</td><td></td>${v(R.actif)}</tr></tbody></table></div>
+  <div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Passif</th><th>Note</th><th class="r">Exercice ${YEAR}</th></tr></thead><tbody>
+  <tr><td>Compte exploitant</td><td>1</td>${v(R.CE)}</tr><tr><td>Résultat exercice</td><td></td>${v(R.G)}</tr><tr><td>Emprunt</td><td></td>${v(0)}</tr><tr><td>Fournisseurs et créditeurs divers</td><td>3</td>${v(R.DF)}</tr>
+  <tr class="total"><td>Total passif</td><td></td>${v(R.passif)}</tr></tbody></table></div>
+  <p class="hint" style="margin-top:8px">${Math.round(R.actif)===Math.round(R.passif)?'<span class="pill ok">Bilan équilibré</span>':'<span class="pill bad">Écart à analyser</span>'} Compte exploitant : ${fmt(R.CEopen)} à l'ouverture, plus ${fmt(R.apports)} d'apports, moins ${fmt(R.prelev)} de prélèvements.</p></div>`;
+  const notes=`<div class="doc">${etatHead("Notes annexes 1 à 3")}<h3 style="font-size:13.5px">Note 1 · Matériel, mobilier et cautions</h3><div class="tablewrap"><table><thead><tr><th>Date</th><th>Désignation</th><th class="r">Montant</th><th class="r">Dotation ${YEAR}</th></tr></thead><tbody>${S.immos.map(i=>`<tr><td class="num">${ddmm(i.date)}</td><td>${esc(i.designation)}</td>${v(mt(i))}${v(amortYear(i))}</tr>`).join("")}</tbody></table></div>
+  <h3 style="font-size:13.5px;margin-top:12px">Note 2 · État des stocks</h3><div class="tablewrap"><table><tbody><tr><td>Valeur du stock final (inventaire)</td><td class="r"><input id="i-sf" inputmode="numeric" value="${S.stockFinal}" aria-label="Valeur du stock final" style="width:130px;text-align:right;font-family:var(--mono);border:1px solid var(--line-strong);border-radius:8px;padding:4px 6px;background:var(--surface)"></td></tr><tr><td>Valeur du stock initial</td>${v(R.SI)}</tr></tbody></table></div>
+  <h3 style="font-size:13.5px;margin-top:12px">Note 3 · Créances et dettes non échues</h3><div class="tablewrap"><table><thead><tr><th></th><th class="r">Au 31 décembre</th><th class="r">Au 1er janvier</th><th class="r">Variation</th></tr></thead><tbody>
+  <tr><td>Total des créances</td>${v(R.CF)}${v(R.CI)}<td class="r num">${R.CI?((R.CF-R.CI)/R.CI*100).toFixed(0)+" %":"n.s."}</td></tr><tr><td>Total des dettes</td>${v(R.DF)}${v(R.DI)}<td class="r num">${R.DI?((R.DF-R.DI)/R.DI*100).toFixed(0)+" %":"n.s."}</td></tr></tbody></table></div></div>`;
+  return which==="cr"?cr:which==="bil"?bil:which==="notes"?notes:cr+bil+notes;
+}
+function scrEtats(){
+  const R=compute();
+  return `<div class="filters" role="group" aria-label="État"><button class="chip" data-etat="cr" aria-pressed="${etat==="cr"}">Compte de résultat</button><button class="chip" data-etat="bil" aria-pressed="${etat==="bil"}">Bilan</button><button class="chip" data-etat="notes" aria-pressed="${etat==="notes"}">Notes</button></div>
+  ${etatsHTML(R,etat)}
+  <div class="stamp ${S.validation?"":"pending"}">${S.validation?`États arrêtés le ${ddmm(S.validation)} par l'expert-comptable partenaire.`:"En attente d'arrêté par l'expert-comptable partenaire. Mbongo prépare, il ne certifie pas."}</div>`;
+}
+
+function bindCom(){
+  view.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render();window.scrollTo(0,0)});
+  view.querySelectorAll("[data-tab-go]").forEach(b=>b.onclick=()=>{tab=b.dataset.tabGo;render()});
+  view.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{draft=null;scrSaisir();draft.type=b.dataset.go;draft.cat=b.dataset.go==="recette"?"ventes":"achats_m";tab="saisir";render()});
+  view.querySelectorAll("[data-acct]").forEach(b=>b.onclick=()=>{jAcct=b.dataset.acct;jMonth=null;render()});
+  const im=document.getElementById("i-mois");if(im)im.onchange=()=>{jMonth=im.value;render()};
+  view.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{tiersTab=b.dataset.tt;render()});
+  view.querySelectorAll("[data-etat]").forEach(b=>b.onclick=()=>{etat=b.dataset.etat;render()});
+  const sf=document.getElementById("i-sf");if(sf)sf.onchange=()=>{const n=parseFloat(sf.value.replace(/\s/g,"").replace(",","."));if(!isNaN(n)&&n>=0){S.stockFinal=Math.round(n);save();render();toast("Stock final mis à jour")}};
+  view.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>{
+    const id=+b.dataset.pay,L=tiersTab==="creances"?S.creances:S.dettes,x=L.find(y=>y.id===id),acc=document.getElementById("pay-"+id).value;
+    const d=refDate();x.paid=d;x.compte=acc;
+    S.entries.push({id:S.nextId++,date:d,type:tiersTab==="creances"?"recette":"depense",compte:acc,cat:tiersTab==="creances"?"ventes":(x.cat||"achats_m"),libelle:`${tiersTab==="creances"?"Encaissement":"Règlement"} facture ${x.facture||""}, ${x.nom}`,montant:x.montant,devise:"CDF",piece:true});
+    save();render();toast(tiersTab==="creances"?"Encaissement enregistré":"Règlement enregistré")});
+  const f=document.getElementById("f-saisie");if(!f)return;
+  const sync=()=>{const g=id=>document.getElementById(id);
+    if(g("i-montant"))draft.montant=g("i-montant").value;if(g("i-devise"))draft.devise=g("i-devise").value;
+    if(g("i-compte"))draft.compte=g("i-compte").value;if(g("i-vers"))draft.vers=g("i-vers").value;if(g("i-cat"))draft.cat=g("i-cat").value;
+    if(g("i-lib"))draft.libelle=g("i-lib").value;if(g("i-date"))draft.date=g("i-date").value;if(g("i-tiers"))draft.tiers=g("i-tiers").value;if(g("i-fact"))draft.facture=g("i-fact").value;
+    if(g("i-credit"))draft.credit=g("i-credit").checked};
+  f.querySelectorAll("[data-type]").forEach(b=>b.onclick=()=>{sync();draft.type=b.dataset.type;draft.cat=draft.type==="recette"?"ventes":draft.type==="depense"?"achats_m":"transfert";if(draft.type==="transfert")draft.credit=false;render()});
+  ["i-credit","i-cat"].forEach(id=>{const el=document.getElementById(id);if(el)el.onchange=()=>{sync();render()}});
+  f.querySelectorAll("input,select").forEach(el=>{el.addEventListener("input",()=>{const e=document.getElementById("e-"+(el.id==="i-montant"?"montant":el.id==="i-tiers"?"tiers":"vers"));if(e)e.hidden=true})});
+  const pc=document.getElementById("i-piece");if(pc)pc.onchange=()=>{draft.piece=pc.files.length>0};
+  f.onsubmit=ev=>{ev.preventDefault();sync();
+    const n=parseFloat(String(draft.montant).replace(/\s/g,"").replace(",","."));let bad=false;
+    if(!(n>0)){const e=document.getElementById("e-montant");e.textContent="Saisissez un montant supérieur à zéro.";e.hidden=false;bad=true}
+    if(draft.type==="transfert"&&draft.compte===draft.vers){const e=document.getElementById("e-vers");e.textContent="Choisissez deux comptes différents.";e.hidden=false;bad=true}
+    if(draft.credit&&!draft.tiers.trim()){const e=document.getElementById("e-tiers");e.textContent="Indiquez le nom du "+(draft.type==="recette"?"client.":"fournisseur.");e.hidden=false;bad=true}
+    if(!draft.date||!draft.date.startsWith(String(YEAR))){toast("La date doit être dans l'exercice "+YEAR);bad=true}
+    if(bad)return;
+    const lib=draft.libelle.trim()||(draft.type==="transfert"?`Transfert ${accLabel(draft.compte)} vers ${accLabel(draft.vers)}`:CATS[draft.cat]);
+    const amtCDF=draft.devise==="USD"?n*S.rate:n;
+    if(draft.credit){const L=draft.type==="recette"?S.creances:S.dettes;L.push({id:S.nextId++,date:draft.date,facture:draft.facture.trim(),nom:draft.tiers.trim(),montant:Math.round(amtCDF),paid:null,compte:null,cat:draft.cat});
+      tiersTab=draft.type==="recette"?"creances":"dettes";toast(draft.type==="recette"?"Créance enregistrée":"Dette enregistrée");draft=null;tab="tiers"}
+    else{const eid=S.nextId++;S.entries.push({id:eid,date:draft.date,type:draft.type,compte:draft.compte,vers:draft.type==="transfert"?draft.vers:undefined,cat:draft.type==="transfert"?"transfert":draft.cat,libelle:lib,montant:n,devise:draft.devise,piece:draft.piece});
+      if(draft.cat==="materiel"&&draft.type==="depense")S.immos.push({id:S.nextId++,date:draft.date,designation:lib,montant:Math.round(amtCDF),duree:5,auto:true,entryId:eid});
+      jAcct=draft.compte;jMonth=draft.date.slice(0,7);toast("Enregistré dans le journal "+accLabel(draft.compte));draft=null;tab="journal"}
+    save();render();window.scrollTo(0,0)};
+}
+
+/* ---------- espace assistant ---------- */
+function anomalies(){
+  const A=[];const ref=refDate();
+  const sansPiece=S.entries.filter(e=>!e.piece&&e.date.startsWith(String(YEAR)));
+  if(sansPiece.length)A.push({lvl:"warn",t:`${sansPiece.length} opération${sansPiece.length>1?"s":""} sans pièce justificative`,d:sansPiece.slice(-3).map(e=>`${ddmm(e.date)} · ${e.libelle}`).join(" ; ")});
+  const days=new Set(S.entries.filter(e=>e.type==="recette"&&e.cat==="ventes").map(e=>e.date));
+  let gap=0,c=new Date(ref);for(let i=0;i<10;i++){const s=c.toISOString().slice(0,10);if(days.has(s))break;if(c.getUTCDay()!==0)gap++;c.setDate(c.getDate()-1)}
+  if(gap>=5)A.push({lvl:"warn",t:`${gap} jours ouvrés sans vente saisie`,d:"Les ventes sont saisies par semaine. Demander une saisie quotidienne de la caisse."});
+  const b=balances();ACCTS.forEach(a=>{if(b[a.id]<0)A.push({lvl:"bad",t:`Solde négatif : ${a.label}`,d:`${fc(b[a.id])}. Une caisse ne peut pas être négative : opération oubliée ou erreur de compte.`})});
+  const old=S.creances.filter(x=>!x.paid&&(new Date(ref)-new Date(x.date))/864e5>30);
+  if(old.length)A.push({lvl:"bad",t:`${old.length} créance${old.length>1?"s":""} de plus de 30 jours`,d:old.map(x=>`${x.nom} (${fmt(x.montant)} FC)`).join(" ; ")});
+  const usd=S.entries.filter(e=>e.devise==="USD").length;if(usd)A.push({lvl:"ok",t:`${usd} opérations en dollars converties au taux de ${fmt(S.rate)} FC`,d:"Taux à confirmer avec l'expert-comptable avant l'arrêté des états."});
+  return A;
+}
+const CLIENTS=[
+  {nom:"Alimentation Maman Nsimba",act:"Alimentation générale",forf:"Essentiel",live:true},
+  {nom:"Salon de coiffure Elikia",act:"Services",forf:"Essentiel",last:"2026-10-28",nb:0,bad:0,ca:"9,4 M FC"},
+  {nom:"Quincaillerie La Paix",act:"Négoce",forf:"Plus",last:"2026-10-27",nb:2,bad:1,ca:"41,2 M FC"},
+  {nom:"Atelier de couture Bikeko",act:"Artisanat",forf:"Essentiel",last:"2026-10-19",nb:3,bad:0,ca:"6,1 M FC"},
+  {nom:"Restaurant Chez Tantine",act:"Services",forf:"Plus",last:"2026-10-28",nb:1,bad:0,ca:"22,7 M FC"},
+  {nom:"Cabine Airtel Money Mapasa",act:"Services",forf:"Essentiel",last:"2026-10-11",nb:4,bad:2,ca:"3,8 M FC"}];
+function clientState(c){
+  if(c.live){const A=anomalies(),last=S.entries.reduce((m,e)=>e.date>m?e.date:m,""),R=compute();return {last,nb:A.filter(a=>a.lvl!=="ok").length,bad:A.filter(a=>a.lvl==="bad").length,ca:(R.A1/1e6).toFixed(1).replace(".",",")+" M FC"}}
+  return c;
+}
+function status(st){return st.bad?'<span class="pill bad">À traiter</span>':st.nb?'<span class="pill warn">À revoir</span>':'<span class="pill ok">À jour</span>'}
+function renderAss(){
+  const rows=CLIENTS.map((c,i)=>({c,st:clientState(c),i}));
+  const tot=rows.length,ok=rows.filter(r=>!r.st.nb).length,tr=rows.filter(r=>r.st.bad).length;
+  const sel=rows[selClient];
+  const detail=sel.c.live?anomalies():[{lvl:"ok",t:"Détail non chargé dans le prototype",d:"Seul le premier client est relié à l'appli du commerçant dans cette démonstration."}];
+  view.innerHTML=`<div class="wide"><section class="panel"><h2>Portefeuille clients</h2><p class="lead">Assistante : Mlle Bokele (fictif). Chaque client tient sa caisse dans l'appli ; l'assistant contrôle, relance et prépare l'inventaire de fin d'exercice.</p>
+  <div class="sumrow"><div class="kpi"><div class="n">Clients suivis</div><div class="v">${tot}</div></div><div class="kpi"><div class="n">À jour</div><div class="v amt-in">${ok}</div></div><div class="kpi"><div class="n">À traiter</div><div class="v amt-out">${tr}</div></div><div class="kpi"><div class="n">Prochaine échéance</div><div class="v" style="font-size:12.5px;font-family:var(--body)">Inventaire au 31/12</div></div></div>
+  <div class="tablewrap"><table><thead><tr><th>Client</th><th>Activité</th><th>Formule</th><th>Dernière saisie</th><th class="r">Ventes ${YEAR}</th><th>État</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr class="clientline" tabindex="0" data-cl="${r.i}" aria-selected="${r.i===selClient}"><td><b style="font-weight:600">${esc(r.c.nom)}</b></td><td>${r.c.act}</td><td>${r.c.forf}</td><td class="num">${ddmm(r.st.last)}</td><td class="r num">${r.st.ca}</td><td>${status(r.st)}</td></tr>`).join("")}</tbody></table></div>
+  <p class="hint">Les cinq autres clients sont des exemples statiques. Le premier est relié en direct : toute saisie faite dans l'espace commerçant change ses contrôles ici.</p></section>
+  <section class="panel"><h2>${esc(sel.c.nom)}</h2><p class="lead">Contrôles automatiques du journal</p>
+  ${detail.map(a=>`<div class="alert ${a.lvl}"><span class="dot" aria-hidden="true"></span><span>${esc(a.t)}</span><small>${esc(a.d)}</small></div>`).join("")||'<div class="alert ok"><span class="dot"></span><span>Aucune anomalie</span></div>'}
+  ${sel.c.live?`<div class="tablewrap"><table><tbody><tr><td>Taux de conversion du dollar</td><td class="r"><input id="i-rate" inputmode="numeric" value="${S.rate}" aria-label="Taux du dollar" style="width:90px;text-align:right;font-family:var(--mono);border:1px solid var(--line-strong);border-radius:8px;padding:4px 6px;background:var(--surface)"> FC</td></tr><tr><td>Stock final déclaré</td><td class="r num">${fmt(S.stockFinal)}</td></tr><tr><td>Résultat provisoire</td><td class="r num">${fmt(compute().G)}</td></tr></tbody></table></div>
+  <button class="btn" id="b-relance">Envoyer un rappel au commerçant</button><p class="hint" id="relance-out" hidden></p>`:""}
+  </section></div>`;
+  view.querySelectorAll("[data-cl]").forEach(t=>{const go=()=>{selClient=+t.dataset.cl;renderAss()};t.onclick=go;t.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
+  const rt=document.getElementById("i-rate");if(rt)rt.onchange=()=>{const n=parseFloat(rt.value.replace(/\s/g,"").replace(",","."));if(n>0){S.rate=Math.round(n);save();renderAss();toast("Taux mis à jour, états recalculés")}};
+  const rl=document.getElementById("b-relance");if(rl)rl.onclick=()=>{const o=document.getElementById("relance-out");o.hidden=false;o.textContent="Rappel préparé pour WhatsApp : « Mbote Maman Nsimba, pensez à saisir la caisse de chaque jour et à photographier les factures sans pièce. Merci. » (simulation, aucun message n'est envoyé)"};
+}
+
+/* ---------- espace expert ---------- */
+function renderExp(){
+  const R=compute();
+  view.innerHTML=`<div class="wide"><section class="panel"><h2>États à arrêter</h2><p class="lead">Expert-comptable inscrit au tableau de l'ONEC, lié à la structure par convention. Il reçoit les états préparés, les revoit et les arrête. Exemple : ${esc(S.ent.nom)}.</p>
+  ${etatsHTML(R,"all")}</section>
+  <section class="panel"><h2>Décision</h2>
+  <div class="stamp ${S.validation?"":"pending"}">${S.validation?`Arrêtés le ${ddmm(S.validation)}.`:"Non arrêtés."}</div>
+  <div class="kpis" style="grid-template-columns:1fr 1fr"><div class="kpi"><div class="n">Résultat</div><div class="v">${fmt(R.G)}</div></div><div class="kpi"><div class="n">Équilibre</div><div class="v">${Math.round(R.actif)===Math.round(R.passif)?"Oui":"Non"}</div></div></div>
+  <button class="btn" id="b-val">${S.validation?"Annuler l'arrêté":"Arrêter les états"}</button>
+  <div class="rights"><div><h4>La structure Mbongo</h4><ul><li>fournit l'appli et forme le commerçant</li><li>contrôle les saisies et les pièces</li><li>prépare l'inventaire et les états</li></ul></div>
+  <div><h4>L'expert-comptable partenaire</h4><ul><li>tenue déléguée et conseil comptable</li><li>assistance fiscale et déclarations</li><li>arrêté et, s'il le faut, certification</li></ul></div></div>
+  <p class="hint">Répartition fondée sur l'article 43 de la loi n° 15/002 du 12 février 2015 : les actes réservés passent par l'expert-comptable inscrit.</p></section></div>`;
+  document.getElementById("b-val").onclick=()=>{S.validation=S.validation?null:refDate();save();renderExp();toast(S.validation?"États arrêtés":"Arrêté annulé")};
+}
+
+document.querySelectorAll(".roles button").forEach(b=>b.onclick=()=>{role=b.dataset.role;render();window.scrollTo(0,0)});
+document.getElementById("reset").onclick=()=>{S=seed();save();draft=null;tab="accueil";render();toast("Données de départ restaurées")};
+render();
+</script>
