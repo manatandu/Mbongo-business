@@ -4,7 +4,6 @@
  */
 import { Route, Router, Switch } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
-import { MENTION_ETATS } from '../moteur';
 import type { RoleBureau } from '../donnees/types';
 import { Client } from './Client';
 import { Clients } from './Clients';
@@ -45,7 +44,7 @@ function Coquille() {
         </Switch>
       </main>
 
-      <footer className="ecran-seul text-center text-text-dim py-3">{MENTION_ETATS} Données de cet ordinateur.</footer>
+      <footer className="ecran-seul text-center text-text-dim py-3">Données de cet ordinateur.</footer>
     </div>
   );
 }

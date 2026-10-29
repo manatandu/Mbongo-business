@@ -22,8 +22,6 @@ function entete(e: Etats, titre: string): SheetData {
   ];
 }
 
-const pied = (e: Etats): SheetData => [[], [{ value: e.mention, fontWeight: 'bold' }]];
-
 export interface FeuilleEtats {
   sheet: string;
   data: SheetData;
@@ -43,7 +41,6 @@ function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
     ['Recettes en espèces', '', '', '', nombre(l.ressourcesEspeces, 'bold')],
     ['Recettes par un autre mode', '', '', '', nombre(l.ressourcesAutres, 'bold')],
     ['Dépenses', '', '', '', '', nombre(l.emplois, 'bold')],
-    ...pied(e),
   ];
   const r = registreAchats(d);
   const achats: SheetData = [
@@ -54,7 +51,6 @@ function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
     [gras('Récapitulation')],
     ...r.parMois.map((m): Cell[] => [`${m.mois.slice(5, 7)}/${m.mois.slice(0, 4)}`, '', '', '', nombre(m.total)]),
     [gras(`Total ${r.annee}`), '', '', '', nombre(r.total, 'bold')],
-    ...pied(e),
   ];
   return [
     { sheet: 'Livre', data: livre, columns: [{ width: 12 }, { width: 40 }, { width: 18 }, { width: 12 }, { width: 16 }, { width: 16 }] },
@@ -88,7 +84,6 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     ligne("+ Variation des dettes d'exploitation N / N-1", '3', r.variationDettes),
     ligne('Dotations amortissements (F)', '1', r.F),
     ligne('Résultat exercice (G = C − D + E − F)', '', r.G, true),
-    ...pied(e),
   ];
 
   const bilan: SheetData = [
@@ -107,7 +102,6 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     ligne('Emprunt', '', b.passif.emprunt),
     ligne('Fournisseurs et créditeurs divers', '3', b.passif.dettes),
     ligne('Total passif', '', b.passif.total, true),
-    ...pied(e),
   ];
 
   const notes: SheetData = [
@@ -132,7 +126,6 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     [gras('Note 3 · Créances et dettes non échues'), gras('Au 31 décembre'), gras('Au 1er janvier')],
     ['Total des créances', nombre(n.note3.creances.cloture), nombre(n.note3.creances.ouverture)],
     ['Total des dettes', nombre(n.note3.dettes.cloture), nombre(n.note3.dettes.ouverture)],
-    ...pied(e),
   ];
 
   const livres = d ? feuillesLivres(e, d) : [];

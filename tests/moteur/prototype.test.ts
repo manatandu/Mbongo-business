@@ -3,7 +3,7 @@
  * Valeurs obtenues en exécutant la fonction compute() de prototype/index.html sur son jeu de départ.
  */
 import { describe, expect, it } from 'vitest';
-import { calculerEtats, MENTION_ETATS, soldesTresorerie, valider } from '../../src/moteur';
+import { calculerEtats, soldesTresorerie, valider } from '../../src/moteur';
 import { jeuPrototype } from './jeu-prototype';
 
 describe('jeu du prototype', () => {
@@ -71,9 +71,7 @@ describe('jeu du prototype', () => {
     expect(etats.notes.note3.creances.variation).toBeCloseTo(0.33625, 5);
   });
 
-  it('porte la mention fixe et la version du moteur', () => {
-    expect(etats.mention).toBe(MENTION_ETATS);
-    expect(etats.mention).toBe('Mbongo prépare, il ne certifie pas.');
+  it('porte la version du moteur', () => {
     expect(etats.versionMoteur).toMatch(/^\d+\.\d+\.\d+$/);
     expect(etats.provisoire).toBe(false);
   });

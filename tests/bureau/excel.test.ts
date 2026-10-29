@@ -15,9 +15,8 @@ describe('export Excel des états', () => {
     expect(v).toContain(21_961_500);
   });
 
-  it("contient un bilan équilibré et la mention fixe sur chaque feuille", () => {
+  it('contient un bilan équilibré', () => {
     expect(valeurs(1).filter((x) => x === 31_003_500)).toHaveLength(2);
-    for (let i = 0; i < 3; i++) expect(valeurs(i)).toContain('Mbongo prépare, il ne certifie pas.');
   });
 
   it('produit un vrai fichier .xlsx', async () => {
@@ -37,7 +36,6 @@ describe('export Excel avec le livre et le registre des achats', () => {
     expect(feuilles.map((f) => f.sheet)).toEqual(['Compte de résultat', 'Bilan', 'Notes', 'Livre', 'Registre des achats']);
     expect(texte(3)).toContain('Recettes en espèces');
     expect(texte(4)).toContain('Récapitulation');
-    for (const i of [3, 4]) expect(texte(i)).toContain('Mbongo prépare, il ne certifie pas.');
   });
 
   it('produit toujours un vrai fichier .xlsx', async () => {

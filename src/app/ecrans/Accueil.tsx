@@ -33,7 +33,7 @@ export function Accueil() {
   const { chargement, dateRef, taux, aujourdhui } = useDossier();
   const prochaine = useEcheances(30)[0];
   const { t, mois } = useLangue();
-  const { dossier, comptes } = chargement;
+  const { dossier } = chargement;
 
   const vue = useMemo(() => {
     const soldes = soldesTresorerie(dossier, dateRef);
@@ -54,11 +54,12 @@ export function Accueil() {
   return (
     <>
       {aujourdhui > chargement.exercice.fin && <FinAnnee />}
-      <div className="hero">
+      {/* Le total seulement : le détail par compte est au Journal, d'un toucher. */}
+      <Link href="/journal" className="hero lien-carte">
         <div className="lbl">{t('accueil.disponible')}</div>
         <div className="big">{fmtMontant(totalFC, 'CDF')}</div>
         <div className="sub">{t('accueil.au', { date: fmtDate(dateRef) })}</div>
-      </div>
+      </Link>
 
       <div className="duo">
         <Link href="/saisir/recette" className="grand-bouton in">
@@ -87,15 +88,6 @@ export function Accueil() {
           </span>
         </Link>
       )}
-
-      <div className="comptes">
-        {vue.soldes.map((s) => (
-          <Link key={s.compte.id} href={`/journal/${s.compte.id}`} className="compte">
-            <div className="n">{s.compte.libelle}</div>
-            <div className={`v ${s.natif < 0 ? 'neg' : ''}`}>{fmtMontant(s.natif, s.compte.devise)}</div>
-          </Link>
-        ))}
-      </div>
 
       <div className="comptes">
         <Link href="/journal" className="kpi lien-carte">

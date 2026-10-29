@@ -1,6 +1,6 @@
 /**
  * États SMT : compte de résultat, bilan, notes 1 à 3.
- * Toujours en français : c'est le vocabulaire officiel. Mention fixe : « Mbongo prépare, il ne certifie pas. »
+ * Toujours en français : c'est le vocabulaire officiel.
  */
 import { useMemo, useState } from 'react';
 import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteur';
@@ -239,10 +239,7 @@ export function Etats() {
       {vue === 'bilan' && <Bilan e={e} />}
       {vue === 'notes' && <Notes e={e} />}
       <hr className="filet-cloture" />
-      <div className={`tampon ${arrete ? 'ok' : ''}`}>
-        {arrete ? '' : `${t('etats.attente')} `}
-        {e.mention}
-      </div>
+      <div className={`tampon ${arrete ? 'ok' : ''}`}>{arrete ? t('etats.arretes', { date: fmtDate(chargement.exercice.arreteLe ?? e.auDate) }) : t('etats.attente')}</div>
       <button className="bouton discret pas-imprime" onClick={() => window.print()}>
         {t('etats.imprimer')}
       </button>

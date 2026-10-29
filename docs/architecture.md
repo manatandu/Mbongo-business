@@ -36,7 +36,7 @@ Ce que le logiciel ne fait pas : la comptabilité à la place du commerçant, le
 
 ## 2. Trois contraintes
 
-**Le droit.** Loi n° 15/002, art. 43 et 71 : la tenue de la comptabilité des tiers est réservée à l'expert-comptable inscrit. Le commerçant saisit lui-même. Le bureau ne modifie jamais ses saisies : il n'a aucun bouton pour le faire. Seul l'expert arrête les états. Mention fixe sur les états : « Mbongo prépare, il ne certifie pas. » (`docs/cadre-juridique.md`).
+**Le droit.** Loi n° 15/002, art. 43 et 71 : la tenue de la comptabilité des tiers est réservée à l'expert-comptable inscrit. Le commerçant saisit lui-même. Le bureau ne modifie jamais ses saisies : il n'a aucun bouton pour le faire. Seul l'expert arrête les états ; ils portent leur statut, « Non arrêtés » ou « Arrêtés le … » (`docs/cadre-juridique.md`).
 
 **Le terrain.** Android d'entrée de gamme, data chère, réseau qui va et vient, coupures. L'appli marche sans réseau, pèse peu, ne télécharge rien d'inutile.
 
@@ -136,7 +136,7 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 
 | Écran | Contenu |
 |---|---|
-| Accueil | argent disponible, Recette et Dépense, deux alertes au plus, la prochaine échéance, les comptes, entré et sorti du mois, on me doit, je dois |
+| Accueil | argent disponible (le total ; le détail par compte est au Journal), Recette et Dépense, deux alertes au plus, la prochaine échéance, entré et sorti du mois, on me doit, je dois |
 | Saisir | recette, dépense, transfert, change de dollars ; payé ou à crédit ; photo ; le reste sous « Plus d'options » |
 | Journal | un compte, un mois, en liste lisible : début du mois, entré, sorti, fin du mois |
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois ; pour chaque créance, un dossier imprimable (facture, paiements, reste dû, délai, reconnaissance de dette) |
@@ -150,7 +150,7 @@ Même kit de design que le bureau (§ 8.4) : bandeau à l'encre et filet jaune, 
 
 1. **Clients** : un tableau. Entreprise, secteur, dernière saisie, ventes de l'année, résultat provisoire, et ce qu'il y a à faire (à traiter, à revoir, rien à signaler, états arrêtés, états d'une année passée à arrêter).
 2. **Contrôles d'un client** : la liste de ce qui cloche, à voir avec le commerçant. C'est lui qui corrige, depuis son téléphone.
-3. **États d'un client** : compte de résultat, bilan, notes 1 à 3, mention fixe. Imprimer ou enregistrer en PDF, exporter en Excel.
+3. **États d'un client** : compte de résultat, bilan, notes 1 à 3, statut de l'arrêté. Imprimer ou enregistrer en PDF, exporter en Excel.
 
 Un client suivi depuis plus d'un an a un choix d'exercice. Un sélecteur « Je suis : assistant / expert-comptable partenaire » en haut. Pas de comptes ni de mots de passe tant qu'il n'y a pas de serveur.
 
@@ -161,7 +161,7 @@ Un bouton, réservé à l'expert : « Arrêter les états ». Il s'ouvre quand t
 ### 8.3 Exports
 
 - **PDF** : la page des états est prévue pour l'impression A4 ; « Enregistrer en PDF » du navigateur. Aucune bibliothèque.
-- **Excel** : un classeur de trois feuilles (compte de résultat, bilan, notes), montants en vrais nombres, mention fixe en pied de chaque feuille. Deux feuilles de plus : le livre des recettes et des dépenses et le registre des achats. Bibliothèque `write-excel-file`, chargée au clic seulement (environ 20 Ko compressés). Le téléphone ne la télécharge jamais.
+- **Excel** : un classeur de trois feuilles (compte de résultat, bilan, notes), montants en vrais nombres. Deux feuilles de plus : le livre des recettes et des dépenses et le registre des achats. Bibliothèque `write-excel-file`, chargée au clic seulement (environ 20 Ko compressés). Le téléphone ne la télécharge jamais.
 
 ### 8.4 Habillage
 
@@ -236,7 +236,7 @@ Une micro-entreprise saisit 1 000 à 5 000 opérations par an. Le moteur recalcu
 | invariant | Vitest + fast-check | actif = passif sur des milliers d'exercices tirés au hasard |
 | non-régression | Vitest | le jeu du prototype redonne ses montants |
 | données | Vitest + fake-indexeddb | saisie validée, annulations, démonstration valide chaque jour de 2026 à 2028, arrêté, passage à l'année suivante |
-| bureau | Vitest | le classeur Excel reprend les montants des états et porte la mention |
+| bureau | Vitest | le classeur Excel reprend les montants des états |
 | mode avion | Playwright, `npm run essai:hors-ligne` | sur un téléphone simulé (360 px, processeur ralenti quatre fois) : l'appli s'ouvre sans réseau, la démonstration se charge, une vente s'enregistre et reste après réouverture, le bureau n'est pas en cache |
 | parcours | Playwright, `npm run scenario` | les 19 étapes de la soutenance, téléphone et bureau, de la vente du jour à l'arrêté ; captures, classeur Excel et vidéos |
 
@@ -278,7 +278,7 @@ Allègements décidés le 29 octobre 2026 : bureau réduit à trois écrans ; ar
 | erreur de calcul devant le jury | moteur isolé, test de propriété, non-régression |
 | réseau absent le jour de la soutenance | tout est local |
 | bureau qui écrit à la place du commerçant (art. 71) | aucun écran du bureau n'écrit dans les saisies |
-| confusion avec un cabinet (art. 42) | vocabulaire surveillé, mention fixe sur les états |
+| confusion avec un cabinet (art. 42) | vocabulaire surveillé, arrêté réservé à l'expert |
 | téléphone perdu ou base effacée | `storage.persist()`, appli installée, copie de sauvegarde |
 | commerçant qui ne saisit pas | contrôles des jours sans vente, saisie en deux gestes |
 | périmètre qui gonfle | ce plan ; une étape à la fois |

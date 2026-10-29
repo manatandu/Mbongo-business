@@ -12,8 +12,6 @@ import { ErreurDossier, verifierDossier } from './validation';
 import { VERSION_MOTEUR } from './version';
 import type { DateISO, DossierExercice, Entreprise, Exercice, LigneStock, Montant } from './types';
 
-/** Mention portée sur tous les états (loi n° 15/002, art. 42 et 43). */
-export const MENTION_ETATS = 'Mbongo prépare, il ne certifie pas.';
 
 export interface CompteDeResultat {
   recettesVentes: Montant;
@@ -91,7 +89,6 @@ export interface Etats {
   notes: Notes;
   /** Écart de réévaluation des comptes en dollars (D3), signé. */
   ecartChange: Montant;
-  mention: string;
   versionMoteur: string;
 }
 
@@ -262,7 +259,6 @@ export function calculerEtats(dossier: DossierExercice, options: { auDate?: Date
       },
     },
     ecartChange,
-    mention: MENTION_ETATS,
     versionMoteur: VERSION_MOTEUR,
   };
 }

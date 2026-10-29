@@ -21,7 +21,8 @@ Conséquences pour le produit :
 
 1. **Le commerçant saisit lui-même ses opérations.** Le logiciel le guide ; la structure l'assiste (formation, contrôle des saisies et des pièces, aide à l'inventaire). Elle ne tient pas la comptabilité à sa place.
 2. Tenue déléguée, conseil comptable, fiscal, arrêté et certification des états passent par un **expert-comptable inscrit, partenaire par convention**. Il a son propre accès dans le logiciel.
-3. Aucun écran, texte ou nom ne présente la structure comme un cabinet d'expertise comptable. Mention fixe sur les états : « Mbongo prépare, il ne certifie pas. »
+3. Aucun écran, texte ou nom ne présente la structure comme un cabinet d'expertise comptable. Les états portent leur statut : « Non arrêtés » ou « Arrêtés le … » par l'expert.
+4. Fiscalité : l'IRPP des micro et petites entreprises seulement (rappels d'échéances, jamais de déclaration).
 
 ## Référentiel comptable : Système minimal de trésorerie (SMT)
 

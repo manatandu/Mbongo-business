@@ -36,7 +36,7 @@ Le téléphone et l'ordinateur ont chacun leur base : sans serveur, le bureau ne
 | 5 | Vente à crédit : 240 000, client, n° de facture | « Une vente à crédit ne touche pas la caisse. Elle va dans "On me doit". » |
 | 6 | Clients, Encaisser 100 000 | « Le client paie en deux fois. Il reste 140 000. C'est la réalité du marché. » |
 | 7 | Journal | « Le journal de trésorerie du mois, compte par compte, comme le modèle SMT. » |
-| 8 | Plus, États | « Ses états SMT provisoires, sur son téléphone. Avec la mention : Mbongo prépare, il ne certifie pas. » |
+| 8 | Plus, États | « Ses états SMT provisoires, sur son téléphone. Ils restent « Non arrêtés » tant que l'expert-comptable ne les a pas arrêtés. » |
 | 9 | Réglages, Lingala, puis Accueil | « Toute l'appli existe en lingala. » Revenir en français. |
 
 Point à faire passer : le commerçant tient ses comptes lui-même, simplement. Le logiciel fait les calculs.

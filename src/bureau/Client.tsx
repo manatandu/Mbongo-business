@@ -145,7 +145,6 @@ export function Client() {
             ))}
           </Carte>
           <hr className="filet-cloture text-text" />
-          <p className="m-0 text-center font-semibold">{vue.etats.mention}</p>
           <div className="ecran-seul flex gap-2 flex-wrap">
             <button className="btn btn-neutre" onClick={() => window.print()}>
               Imprimer ou enregistrer en PDF

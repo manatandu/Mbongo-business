@@ -83,7 +83,7 @@ L'AUDCIF (art. 2) vise les entités soumises à l'AUDCG. L'entreprenant doit-il 
 
 - AUDCG, art. 44 : immatriculation au RCCM dans le premier mois d'activité. Art. 14 et 59 : numéro RCCM sur les livres et les factures.
 - AUDCG, art. 9 : le commerce est incompatible avec la qualité d'expert-comptable. L'expert partenaire ne peut donc pas être associé commerçant de la structure.
-- AUSCGIE, art. 376 : commissaire aux comptes obligatoire dans une SARL si deux critères sur trois sont dépassés (bilan 125 M FCFA, CA 250 M FCFA, 50 salariés). Une SARL au SMT n'y arrive jamais par le CA : pas de certification légale. Cela confirme « Mbongo prépare, il ne certifie pas ».
+- AUSCGIE, art. 376 : commissaire aux comptes obligatoire dans une SARL si deux critères sur trois sont dépassés (bilan 125 M FCFA, CA 250 M FCFA, 50 salariés). Une SARL au SMT n'y arrive jamais par le CA : pas de certification légale.
 - AUSCGIE, art. 140 et 348 : assemblée dans les six mois de la clôture. Art. 269 : dépôt au RCCM dans le mois de l'approbation. Art. 139 : état des cautionnements et sûretés donnés. Art. 346 : réserve légale. Art. 371 : capitaux propres sous la moitié du capital.
 - AUSCOOP, art. 204 et 121 : la société coopérative simplifiée (cinq personnes au moins, sans commissaire aux comptes obligatoire) peut grouper des petits commerçants. Pas de besoin pour la version 1.
 
@@ -105,7 +105,7 @@ Source principale : skill `fiscalite-rdc` (compilation DGI à jour au 19 juillet
 
 La loi n° 23/053 du 30 novembre 2023 abroge l'impôt sur les bénéfices et profits (IBP) et l'ordonnance-loi 13/006 sur les entreprises de petite taille (art. 152 et 153).
 
-- **Le régime forfaitaire ne vise que les entreprises individuelles** soumises à l'IRPP (art. 105). Une SARL relève de l'impôt sur les sociétés : 30 % du bénéfice, minimum 1 % du CA (art. 56 et 57).
+**Périmètre retenu pour Mbongo : l'IRPP des micro et petites entreprises, rien d'autre** (ni impôt sur les sociétés, ni régime réel, ni TVA). Le régime vise les entreprises individuelles soumises à l'IRPP (art. 105).
 - **Micro-entreprise** (CA au plus 25 M FC, art. 107) : forfait annuel égal à l'équivalent de 30 USD, payé au plus tard le 30 avril de l'année suivante (AM n° 015/CAB/MIN/FINANCES/2025 du 19 février 2025). Pas de minimum de 1 % (art. 122).
 - **Petite entreprise** (25 M à 300 M FC, art. 109) : 1 % du CA pour la vente, 2 % pour les services, selon l'activité principale (art. 127). Paiement en deux fois : 60 % avec la déclaration au plus tard le 31 janvier, 40 % au plus tard le 30 avril (LPF, art. 57 quater).
 - Hors régime et exemptés : marchands ambulants, cireurs, petits vendeurs à domicile dispensés de patente (art. 108 et 64.3).
@@ -114,9 +114,9 @@ La loi n° 23/053 du 30 novembre 2023 abroge l'impôt sur les bénéfices et pro
 - **Facture normalisée** pour chaque transaction, « sous réserve des dispositions particulières applicables aux entreprises de petite taille » (LPF, art. 23, modifié par la LF 25/060). Mentions à fixer par voie réglementaire.
 - **Rappel d'impôt** possible sur l'exercice en cours et les quatre années précédentes (LPF, art. 43).
 
-### 3.2 TVA
+### 3.2 Hors périmètre
 
-Assujettissement à partir de 80 M FC de CA annuel HT (OL 10/001, art. 14). Une entreprise existante se juge sur le CA de l'année précédente (décret 011/42, art. 43). La LF 2026 crée un taux réduit de 1 % pour 24 positions, dont le riz, le sucre, le sel iodé et les savons.
+La TVA (assujettissement à partir de 80 M FC, OL 10/001, art. 14), l'impôt sur les sociétés et l'option pour le régime réel relèvent de l'expert-comptable partenaire. Mbongo ne les traite pas.
 
 ### 3.3 Retenues que le commerçant doit faire
 
@@ -139,12 +139,11 @@ Toute marchandise importée se déclare, même exonérée (code des douanes, art
 | Date | Quoi | Texte |
 |---|---|---|
 | le 10 de chaque mois | retenue sur loyer (DGRK) ; déclaration ONEM | arrêté provincial 015/2023 ; AM 028/2025 |
-| le 15 de chaque mois | cotisations CNSS ; paiement ONEM ; retenue IRPP des salariés | AM 146 ; AM 028/2025 ; LPF art. 18 |
-| le 15 après chaque trimestre | retenue forfaitaire des salariés d'une micro-entreprise | AM 019/2025 |
-| 31 janvier | 1re quotité de l'impôt (60 %) ; situation annuelle de la main-d'œuvre | LPF art. 57 quater ; arrêté 087/2023 |
-| 1er février | option pour le régime réel | loi 23/053, art. 110 |
+| le 15 de chaque mois | cotisations CNSS ; paiement ONEM ; IRPP retenu sur les salaires (petite entreprise) | AM 146 ; AM 028/2025 ; LPF art. 18 |
+| le 15 après chaque trimestre | IRPP des salariés, forfait (micro-entreprise) | AM 019/2025 |
+| 31 janvier | IRPP de la petite entreprise : déclaration et 60 % ; situation annuelle de la main-d'œuvre | LPF art. 57 quater ; arrêté 087/2023 |
 | 31 mars | déclaration annuelle des salaires | LPF art. 22 ter |
-| 30 avril | 2e quotité (40 %) ; forfait de la micro-entreprise ; INPP du 1er trimestre | LPF art. 57 quater ; AM 015/2025 ; ord. 84/186 |
+| 30 avril | IRPP : solde de 40 % (petite entreprise) ou forfait (micro-entreprise) ; INPP du 1er trimestre | LPF art. 57 quater ; AM 015/2025 ; ord. 84/186 |
 | 31 juillet, 31 octobre, 31 janvier | INPP des trimestres suivants | ord. 84/186, art. 3 |
 | fin avril à fin juin | dépôt des états (DGI, Économie, CPCC) | support CPCC 2020 |
 
@@ -252,7 +251,7 @@ Rien de tout cela ne bloque la soutenance (pas de serveur, données fictives). T
 | livre des ressources et emplois, registre des achats (format) | AUDCG, art. 31 et 32 | oui, pour tout commerçant |
 | tenue en francs congolais | AUDCIF, art. 17-1 | états en FC, dollars convertis |
 | la structure ne redresse pas | loi 15/002, art. 43.1 | le bureau n'a aucun bouton d'écriture |
-| pas de confusion avec un cabinet | loi 15/002, art. 42 | mention fixe, vocabulaire surveillé |
+| pas de confusion avec un cabinet | loi 15/002, art. 42 | vocabulaire surveillé, arrêté réservé à l'expert |
 
 ---
 

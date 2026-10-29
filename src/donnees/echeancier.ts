@@ -1,5 +1,6 @@
 /**
  * Échéancier fiscal et social du petit commerçant : des rappels, jamais des montants ni des déclarations.
+ * Fiscalité limitée à l'IRPP des micro et petites entreprises.
  * Les déclarations fiscales se font avec l'expert-comptable partenaire (loi n° 15/002, art. 43.6 à 43.8).
  * Dates relevées dans les skills fiscaux et sociaux (docs/cadre-petites-entreprises.md, § 3.6), à revoir chaque année.
  */
@@ -10,6 +11,8 @@ export type CleEcheance =
   | 'loyer'
   | 'onemDeclaration'
   | 'cotisations'
+  | 'cotisationsMicro'
+  | 'irppSalaries'
   | 'inpp'
   | 'impotPremier'
   | 'impotSolde'
@@ -28,12 +31,11 @@ export interface Echeance {
 export interface ProfilEcheancier {
   salaries: boolean;
   loyer: boolean;
-  /** Fisc (loi n° 23/053) : micro-entreprise au plus 25 M CDF de CA, petite entreprise jusqu'à 300 M CDF. */
-  regime: 'micro' | 'petite' | 'autre';
+  /** IRPP (loi n° 23/053) : micro-entreprise au plus 25 M CDF de CA, petite entreprise au-delà. Rien d'autre : le SMT s'arrête avant 300 M CDF. */
+  regime: 'micro' | 'petite';
 }
 
 export const SEUIL_MICRO = 25_000_000;
-export const SEUIL_PETITE = 300_000_000;
 
 export function profilEcheancier(dossier: DossierExercice, date: DateISO): ProfilEcheancier {
   const natures = new Set(dossier.operations.map((o) => o.nature));
@@ -41,7 +43,7 @@ export function profilEcheancier(dossier: DossierExercice, date: DateISO): Profi
   return {
     salaries: natures.has('salaires'),
     loyer: natures.has('loyers'),
-    regime: ca <= SEUIL_MICRO ? 'micro' : ca <= SEUIL_PETITE ? 'petite' : 'autre',
+    regime: ca <= SEUIL_MICRO ? 'micro' : 'petite',
   };
 }
 
@@ -55,14 +57,17 @@ function duMois(a: number, m: number, p: ProfilEcheancier): Echeance[] {
   if (p.loyer) r.push({ date: d(10), cle: 'loyer', texte: 'arrêté provincial n° 015/2023 (Kinshasa)' });
   if (p.salaries) {
     r.push({ date: d(10), cle: 'onemDeclaration', texte: 'arrêté n° 028/2025, art. 2' });
-    r.push({ date: d(15), cle: 'cotisations', texte: 'CNSS, AM 146 ; ONEM, AM 028/2025 ; LPF, art. 18' });
+    // Petite entreprise : l'IRPP retenu sur les salaires part chaque mois avec les cotisations (LPF, art. 18).
+    // Micro-entreprise : un forfait par salarié, chaque trimestre (AM n° 019/2025).
+    r.push({ date: d(15), cle: p.regime === 'petite' ? 'cotisations' : 'cotisationsMicro', texte: 'CNSS, AM 146 ; ONEM, AM 028/2025 ; LPF, art. 18' });
+    if (p.regime === 'micro' && [1, 4, 7, 10].includes(m)) r.push({ date: d(15), cle: 'irppSalaries', texte: 'AM n° 019/2025' });
     if ([1, 4, 7, 10].includes(m)) r.push({ date: d(31), cle: 'inpp', texte: 'ordonnance n° 84/186, art. 3' });
   }
   if (m === 1) {
     if (p.regime === 'petite') r.push({ date: d(31), cle: 'impotPremier', texte: 'LPF, art. 57 quater' });
     if (p.salaries) r.push({ date: d(31), cle: 'mainOeuvre', texte: 'arrêté n° 087/2023, art. 3' });
   }
-  if (m === 3 && p.salaries) r.push({ date: d(31), cle: 'salairesAnnuel', texte: 'LPF, art. 22 ter' });
+  if (m === 3 && p.salaries && p.regime === 'petite') r.push({ date: d(31), cle: 'salairesAnnuel', texte: 'LPF, art. 22 ter' });
   if (m === 4) {
     if (p.regime === 'petite') r.push({ date: d(30), cle: 'impotSolde', texte: 'LPF, art. 57 quater' });
     if (p.regime === 'micro') r.push({ date: d(30), cle: 'forfaitMicro', texte: 'AM n° 015/2025' });

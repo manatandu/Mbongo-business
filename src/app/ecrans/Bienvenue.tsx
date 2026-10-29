@@ -52,9 +52,6 @@ export function Bienvenue() {
           <strong>{t('bienvenue.creer')}</strong>
         </Link>
       </div>
-      <p className="aide" style={{ marginTop: 'auto' }}>
-        {t('app.mention')}
-      </p>
     </div>
   );
 }

@@ -21,11 +21,21 @@ describe('échéancier', () => {
   it("suit le régime fiscal pour l'impôt annuel", () => {
     expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'petite' })).toEqual(['2027-01-31 impotPremier', '2027-04-30 impotSolde']);
     expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'micro' })).toEqual(['2027-04-30 forfaitMicro']);
-    expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'autre' })).toEqual([]);
   });
 
   it('passe le cap de l’année', () => {
-    expect(cles('2026-12-20', 30, { salaries: true, loyer: false, regime: 'micro' })).toEqual(['2027-01-10 onemDeclaration', '2027-01-15 cotisations']);
+    expect(cles('2026-12-20', 30, { salaries: true, loyer: false, regime: 'petite' })).toEqual(['2027-01-10 onemDeclaration', '2027-01-15 cotisations']);
+  });
+
+  it("micro-entreprise : IRPP des salariés au forfait chaque trimestre, pas de retenue mensuelle", () => {
+    expect(cles('2027-01-01', 31, { salaries: true, loyer: false, regime: 'micro' })).toEqual([
+      '2027-01-10 onemDeclaration',
+      '2027-01-15 cotisationsMicro',
+      '2027-01-15 irppSalaries',
+      '2027-01-31 inpp',
+      '2027-01-31 mainOeuvre',
+    ]);
+    expect(cles('2027-03-01', 31, { salaries: true, loyer: false, regime: 'micro' })).not.toContain('2027-03-31 salairesAnnuel');
   });
 
   it('tire le profil des saisies', () => {

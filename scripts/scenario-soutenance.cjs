@@ -98,7 +98,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       'etats-telephone',
       async () => {
         await tel.goto(`${BASE}#/etats`);
-        await tel.waitForSelector('text=Mbongo prépare, il ne certifie pas.');
+        await tel.waitForSelector('text=Non arrêtés.');
       },
       { pleinePage: true },
     );
