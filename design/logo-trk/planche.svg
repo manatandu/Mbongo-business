@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="984" viewBox="0 0 1600 984"><defs><filter id="grey"><feColorMatrix type="saturate" values="0"/></filter></defs><rect width="1600" height="984" fill="#f7f7f4"/><text x="60" y="78" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#161616">TRK Consulting · pistes de logo</text><text x="60" y="116" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="20" fill="#6b6b6b">Noir et blanc d&#x27;abord : on juge la forme, pas la couleur</text><rect x="60" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#161616" stroke-width="2"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="90" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste A</title>
+<path d="M16 64 A48 48 0 0 1 64 16 H192 A48 48 0 0 1 240 64 V68 H16 Z"/>
+<path d="M16 92 H116 V240 H64 A48 48 0 0 1 16 192 Z"/>
+<path d="M140 92 H240 V192 A48 48 0 0 1 192 240 H140 Z"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" x="90" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste A, horizontal</title>
+<g><path d="M16 64 A48 48 0 0 1 64 16 H192 A48 48 0 0 1 240 64 V68 H16 Z"/>
+<path d="M16 92 H116 V240 H64 A48 48 0 0 1 16 192 Z"/>
+<path d="M140 92 H240 V192 A48 48 0 0 1 192 240 H140 Z"/></g>
+<g transform="translate(300 8) scale(0.62)"><path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/></g>
+<text x="302" y="204" font-size="40" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="600" letter-spacing="14">CONSULTING</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="90" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste A</title>
+<path d="M16 64 A48 48 0 0 1 64 16 H192 A48 48 0 0 1 240 64 V68 H16 Z"/>
+<path d="M16 92 H116 V240 H64 A48 48 0 0 1 16 192 Z"/>
+<path d="M140 92 H240 V192 A48 48 0 0 1 192 240 H140 Z"/>
+</svg>
+</g><text x="122" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="180" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste A</title>
+<path d="M16 64 A48 48 0 0 1 64 16 H192 A48 48 0 0 1 240 64 V68 H16 Z"/>
+<path d="M16 92 H116 V240 H64 A48 48 0 0 1 16 192 Z"/>
+<path d="M140 92 H240 V192 A48 48 0 0 1 192 240 H140 Z"/>
+</svg>
+</g><text x="196" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" x="238" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste A</title>
+<path d="M16 64 A48 48 0 0 1 64 16 H192 A48 48 0 0 1 240 64 V68 H16 Z"/>
+<path d="M16 92 H116 V240 H64 A48 48 0 0 1 16 192 Z"/>
+<path d="M140 92 H240 V192 A48 48 0 0 1 192 240 H140 Z"/>
+</svg>
+</g><text x="246" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="90.0" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">A · Compte en T</text><text x="90.0" y="808" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#161616" letter-spacing="1.5">RECOMMANDÉ</text><text x="90.0" y="842" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">Une tuile coupée en trois pavés : l&#x27;en-tête</text><text x="90.0" y="868" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">et deux colonnes d&#x27;un compte, la page du</text><text x="90.0" y="894" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">journal.</text><rect x="562.667" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#e4e4e0" stroke-width="1"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532 256" x="592.667" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste B</title>
+<path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/>
+<path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 256" x="592.667" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste B, horizontal</title>
+<g transform="translate(0 0)"><path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/><path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/></g>
+<text x="568" y="208" font-size="40" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="600" letter-spacing="10">CONSULTING</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532 256" x="592.667" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste B</title>
+<path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/>
+<path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/>
+</svg>
+</g><text x="624.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532 256" x="682.667" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste B</title>
+<path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/>
+<path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/>
+</svg>
+</g><text x="698.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 532 256" x="740.667" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste B</title>
+<path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/>
+<path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/>
+</svg>
+</g><text x="748.667" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="592.6666666666667" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">B · Filet de clôture</text><text x="592.6666666666667" y="814" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">TRK souligné du trait qui clôt un total,</text><text x="592.6666666666667" y="840" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">interrompu comme dans Mbongo.</text><rect x="1065.33" y="150" width="474.667" height="774" rx="18" fill="#fff" stroke="#e4e4e0" stroke-width="1"/><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 256" x="1095.33" y="190" width="414.667" height="300" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste C</title>
+<path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/>
+<path d="M120 96 H152 V208 H120 Z"/>
+<path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/>
+<path d="M232 40 H264 V208 H232 Z"/>
+<path d="M264 144 L312 96 H360 L264 192 Z"/>
+<path d="M296 160 L320 136 L392 208 H344 Z"/>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 256" x="1095.33" y="514" width="414.667" height="120" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste C, horizontal</title>
+<g><path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/><path d="M120 96 H152 V208 H120 Z"/><path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/><path d="M232 40 H264 V208 H232 Z"/><path d="M264 144 L312 96 H360 L264 192 Z"/><path d="M296 160 L320 136 L392 208 H344 Z"/></g>
+<text x="432" y="208" font-size="44" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="500" letter-spacing="4">consulting</text>
+</svg>
+</g><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 256" x="1095.33" y="660" width="64" height="64" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste C</title>
+<path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/>
+<path d="M120 96 H152 V208 H120 Z"/>
+<path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/>
+<path d="M232 40 H264 V208 H232 Z"/>
+<path d="M264 144 L312 96 H360 L264 192 Z"/>
+<path d="M296 160 L320 136 L392 208 H344 Z"/>
+</svg>
+</g><text x="1127.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">64px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 256" x="1185.33" y="692" width="32" height="32" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste C</title>
+<path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/>
+<path d="M120 96 H152 V208 H120 Z"/>
+<path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/>
+<path d="M232 40 H264 V208 H232 Z"/>
+<path d="M264 144 L312 96 H360 L264 192 Z"/>
+<path d="M296 160 L320 136 L392 208 H344 Z"/>
+</svg>
+</g><text x="1201.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">32px</text><g filter="url(#grey)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 256" x="1243.33" y="708" width="16" height="16" preserveAspectRatio="xMidYMid meet"><title>TRK Consulting, piste C</title>
+<path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/>
+<path d="M120 96 H152 V208 H120 Z"/>
+<path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/>
+<path d="M232 40 H264 V208 H232 Z"/>
+<path d="M264 144 L312 96 H360 L264 192 Z"/>
+<path d="M296 160 L320 136 L392 208 H344 Z"/>
+</svg>
+</g><text x="1251.33" y="744" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">16px</text><text x="1095.3333333333335" y="780" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="#161616">C · trk qui se tiennent</text><text x="1095.3333333333335" y="814" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">La barre du t rejoint le r : les lettres se</text><text x="1095.3333333333335" y="840" font-family="system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="19" fill="#555">tiennent, la proximité.</text></svg>

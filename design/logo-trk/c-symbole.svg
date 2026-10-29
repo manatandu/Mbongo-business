@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 392 256" width="392" height="256"><title>TRK Consulting, piste C</title>
+<path d="M24 40 H56 V96 H152 V128 H56 V160 A16 16 0 0 0 72 176 H96 V208 H72 A48 48 0 0 1 24 160 V128 H0 V96 H24 Z"/>
+<path d="M120 96 H152 V208 H120 Z"/>
+<path d="M120 160 A64 64 0 0 1 184 96 H200 V128 H184 A32 32 0 0 0 152 160 Z"/>
+<path d="M232 40 H264 V208 H232 Z"/>
+<path d="M264 144 L312 96 H360 L264 192 Z"/>
+<path d="M296 160 L320 136 L392 208 H344 Z"/>
+</svg>

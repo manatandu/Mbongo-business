@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 256" width="1000" height="256"><title>TRK Consulting, piste B, horizontal</title>
+<g transform="translate(0 0)"><path d="M0 48 H128 V84 H82 V208 H46 V84 H0 Z"/><path fill-rule="evenodd" d="M152 48 H212 A52 52 0 0 1 212 152 H188 V208 H152 Z M188 84 H212 A16 16 0 0 1 212 116 H188 Z"/><path d="M200 152 H248 L304 208 H256 Z"/><path d="M328 48 H364 V208 H328 Z"/><path d="M364 104 L420 48 H468 L364 152 Z"/><path d="M396 120 L420 96 L532 208 H484 Z"/><path d="M0 228 H246 V240 H0 Z M286 228 H532 V240 H286 Z"/></g>
+<text x="568" y="208" font-size="40" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="600" letter-spacing="10">CONSULTING</text>
+</svg>
