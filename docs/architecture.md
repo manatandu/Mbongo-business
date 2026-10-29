@@ -423,6 +423,37 @@ Un bouton « Démonstration » charge le jeu fictif de la boutique Maman Nsimba 
 | dates | chaînes ISO et quelques fonctions maison | pas de moment ni de date-fns |
 | Supabase | `@supabase/supabase-js`, chargé à la demande | pas téléchargé en mode démo |
 
+### 8.5 Charte du bureau
+
+Le bureau reprend la méthode du kit de design « logiciel de gestion » tiré de l'interface d'OmegaX (même éditeur), adaptée à Mbongo :
+
+- **gardé** : la structure (barre de titre, menus, barre d'outils, fenêtre active, barre d'état), la densité (12 px, chiffres alignés), trois boutons, trois ombres, des grilles blanches à en-tête plein sans zébrure, des animations courtes coupées sous mouvement réduit, l'aide dans une bulle « ? » ;
+- **changé** : les couleurs, au bleu et au jaune de Mbongo (encre , accent , filet de l'étoile  sous le bandeau) ; la police, celle du système seulement, sans fichier à télécharger, pour les postes modestes et la data chère ;
+- **retiré** : ce qui sert OmegaX et pas Mbongo (tuiles d'accueil, fiches d'imputation, éditions de structures, polices IBM Plex, montants forcés à deux décimales : Mbongo compte les francs en entiers et le dollar au centime).
+
+Contrastes remesurés sur la nouvelle palette (WCAG 2.1, AA : 4,5:1 pour le texte, 3:1 pour un élément non textuel). Script : relancer la mesure à chaque changement de couleur.
+
+| Couple | Rapport |
+|---|---|
+| text sur blanc | 17,52:1 |
+| text-dim sur blanc | 6,23:1 |
+| text-dim sur bg | 5,34:1 |
+| text-dim sur fenetre | 5,80:1 |
+| sel (a600) sur blanc | 6,28:1 |
+| blanc sur a700 (en-tête) | 8,35:1 |
+| blanc sur a900 (encre) | 14,31:1 |
+| chrome-text sur encre | 12,57:1 |
+| chrome-text-dim sur encre | 7,67:1 |
+| chrome-text-dim sur a800 | 5,70:1 |
+| blanc sur a500 (haut du bouton) | 4,79:1 |
+| a900 sur a50 (total) | 12,91:1 |
+| sel sur a50 | 5,67:1 |
+| positive sur blanc | 6,12:1 |
+| warning sur blanc | 6,14:1 |
+| danger sur blanc | 6,21:1 |
+| étoile sur encre (non textuel) | 8,51:1 |
+| anneau de focus (accent 75 %) | 3,75:1 |
+
 ---
 
 ## 9. Devises et taux de change

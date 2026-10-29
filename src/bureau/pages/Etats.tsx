@@ -5,7 +5,7 @@ import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteu
 import { fmt, fmtDate } from '../../ui/format';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { Chargement, dateRefDe, Page, Pastille, useBureau, useDossierBureau } from '../contexte';
+import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 const L = ({ l, n, v, c }: { l: string; n?: string; v: Montant; c?: string }) => (
   <tr className={c}>
@@ -22,8 +22,8 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
   const pct = (v: number | null) => (v === null ? 'n.s.' : `${Math.round(v * 100)} %`);
   return (
     <div className="grid grid-cols-2 gap-2.5 items-start">
-      <div className="panneau">
-        <div className="panneau-titre">Compte de résultat SMT · exercice {e.exercice.annee}</div>
+      <div className="encart">
+        <div className="encart-titre">Compte de résultat SMT · exercice {e.exercice.annee}</div>
         <table className="grille">
           <thead>
             <tr>
@@ -53,10 +53,10 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
         </table>
       </div>
       <div className="flex flex-col gap-2.5">
-        <div className="panneau">
-          <div className="panneau-titre">
+        <div className="encart">
+          <div className="encart-titre">
             <span>Bilan SMT au 31 décembre {e.exercice.annee}</span>
-            {b.equilibre ? <Pastille ton="ok">ÉQUILIBRÉ</Pastille> : <Pastille ton="danger">ÉCART</Pastille>}
+            {b.equilibre ? <Pastille ton="ok">équilibré</Pastille> : <Pastille ton="danger">écart</Pastille>}
           </div>
           <table className="grille">
             <thead>
@@ -90,8 +90,8 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
             </tbody>
           </table>
         </div>
-        <div className="panneau">
-          <div className="panneau-titre">Notes 2 et 3</div>
+        <div className="encart">
+          <div className="encart-titre">Notes 2 et 3</div>
           <table className="grille">
             <thead>
               <tr>
@@ -133,20 +133,21 @@ export function Etats() {
   const { aujourdhui } = useBureau();
   const c = useDossierBureau(id);
   const [aLaCloture, setALaCloture] = useState(false);
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const e = useMemo(() => (c ? calculerEtats(c.dossier, aLaCloture ? {} : { auDate: dateRefDe(c, aujourdhui) }) : null), [c, aujourdhui, aLaCloture]);
   if (!c || !e) return <Chargement etat={c} />;
   return (
-    <Page titre="États SMT" sousTitre={`${c.entreprise.nom} · NIF ${c.entreprise.nif || 'néant'} · ${e.provisoire ? `situation provisoire au ${fmtDate(e.auDate)}` : 'états définitifs'}`}>
+    <Fenetre titre="États SMT" sousTitre={`${c.entreprise.nom} · NIF ${c.entreprise.nif || 'néant'} · ${e.provisoire ? `situation provisoire au ${fmtDate(e.auDate)}` : 'états définitifs'}`}>
       <div className="flex items-center gap-3 text-[12px]">
         <label className="flex items-center gap-1.5">
           <input type="checkbox" checked={aLaCloture} onChange={(x) => setALaCloture(x.target.checked)} />
           Projeter au 31 décembre (toutes les saisies, inventaire et taux de clôture s'ils existent)
         </label>
-        {c.exercice.statut === 'arrete' ? <Pastille ton="ok">ARRÊTÉS PAR L'EXPERT</Pastille> : <Pastille ton="avert">EN ATTENTE D'ARRÊTÉ</Pastille>}
+        {c.exercice.statut === 'arrete' ? <Pastille ton="ok">Arrêtés par l'expert</Pastille> : <Pastille ton="avert">En attente d'arrêté</Pastille>}
       </div>
       <TablesEtats e={e} />
-      <p className="m-0 text-[12px] font-semibold">{e.mention}</p>
-    </Page>
+      <hr className="filet-cloture w-full text-text" />
+      <p className="m-0 text-[12px] font-semibold text-center">{e.mention}</p>
+    </Fenetre>
   );
 }

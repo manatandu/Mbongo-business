@@ -65,30 +65,4 @@ export function useDossierBureau(entrepriseId: string | undefined): Chargement |
 
 export const dateRefDe = (c: Chargement, aujourdhui: DateISO): DateISO => (aujourdhui > c.exercice.fin ? c.exercice.fin : aujourdhui);
 
-/** Cadre commun des pages : titre d'écran (15 px au plus) et contenu dense. */
-export function Page({ titre, sousTitre, children }: { titre: string; sousTitre?: string; children: ReactNode }) {
-  return (
-    <div className="p-2.5 flex flex-col gap-2.5">
-      <div className="flex items-baseline gap-3">
-        <h1 className="m-0 text-[15px] font-semibold">{titre}</h1>
-        {sousTitre && <span className="text-[11px] text-text-dim">{sousTitre}</span>}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-export function Pastille({ ton, children }: { ton: 'ok' | 'avert' | 'danger' | 'neutre'; children: ReactNode }) {
-  const c = {
-    ok: 'bg-positive-soft text-positive border-positive/40',
-    avert: 'bg-warning-soft text-warning border-warning/40',
-    danger: 'bg-danger-soft text-danger border-danger/40',
-    neutre: 'bg-chrome text-text-dim border-border',
-  }[ton];
-  return <span className={`pastille ${c}`}>{children}</span>;
-}
-
-export function Chargement({ etat }: { etat: unknown }) {
-  if (etat === undefined) return <div className="p-2.5 text-[12px] text-text-dim">Chargement…</div>;
-  return <div className="p-2.5 text-[12px] text-text-dim">Dossier introuvable sur ce poste.</div>;
-}
+export { Aide, Chargement, Fenetre, Message, Pastille } from './contexte-ui';

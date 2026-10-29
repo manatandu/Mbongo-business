@@ -9,6 +9,7 @@ import { Route, Router, Switch, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { MENTION_ETATS, VERSION_MOTEUR } from '../moteur';
 import { AppShell } from './chrome/AppShell';
+import { PortailModale } from './kit/PortailModale';
 import {
   IconAlert,
   IconBook,
@@ -39,12 +40,13 @@ const SECTEURS = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Service
 
 function APropos({ fermer }: { fermer: () => void }) {
   return (
-    <div className="fixed inset-0 z-30 bg-black/20 flex items-center justify-center" onClick={fermer}>
-      <div role="dialog" aria-label="À propos de Mbongo" className="w-[420px] bg-surface border border-border-dark" onClick={(e) => e.stopPropagation()}>
-        <div className="h-[26px] flex items-center px-2 text-white text-[11.5px]" style={{ background: 'linear-gradient(180deg, var(--titlebar-from), var(--titlebar-to))' }}>
-          À propos de Mbongo
-        </div>
-        <div className="p-3 text-[12px] flex flex-col gap-2">
+    <PortailModale>
+      <div className="anim-voile fixed inset-0 z-40 bg-[rgba(11,42,82,0.28)] flex justify-center p-4 voile-centre-sur" onClick={fermer}>
+        <div role="dialog" aria-modal="true" aria-label="À propos de Mbongo" className="anim-modale modale-bornee w-[440px] bg-surface shadow-dominante overflow-hidden" onClick={(e) => e.stopPropagation()}>
+          <div className="h-8 flex items-center px-3 text-white text-[12.5px] font-semibold" style={{ background: 'var(--bandeau)' }}>
+            À propos de Mbongo
+          </div>
+          <div className="p-4 text-[12px] flex flex-col gap-2">
           <p className="m-0 font-semibold">Mbongo · bureau de la structure</p>
           <p className="m-0">Moteur de calcul SMT {VERSION_MOTEUR} (AUDCIF révisé, art. 13 et Titre X).</p>
           <p className="m-0 text-text-dim">
@@ -53,14 +55,15 @@ function APropos({ fermer }: { fermer: () => void }) {
           </p>
           <p className="m-0 font-semibold">{MENTION_ETATS}</p>
           <p className="m-0 text-text-dim">Données de ce poste uniquement : le serveur partagé arrive à l'étape 3.</p>
-          <div className="flex justify-end">
-            <button className="bouton" onClick={fermer}>
-              Fermer
-            </button>
+            <div className="flex justify-end pt-1">
+              <button className="btn btn-neutre" onClick={fermer}>
+                Fermer
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </PortailModale>
   );
 }
 
@@ -122,11 +125,11 @@ function Coquille() {
   ];
 
   const navGroupes: NavGroupe[] = [
-    { titre: 'PORTEFEUILLE', items: [{ to: '/', label: 'Clients suivis', Icon: IconUsers, exact: true }] },
+    { titre: 'Portefeuille', items: [{ to: '/', label: 'Clients suivis', Icon: IconUsers, exact: true }] },
     ...(idDossier
       ? [
           {
-            titre: 'DOSSIER',
+            titre: 'Dossier',
             items: [
               { to: d('controles'), label: 'Contrôles', Icon: IconAlert },
               { to: d('journaux'), label: 'Journaux', Icon: IconBook },
@@ -138,9 +141,9 @@ function Coquille() {
           },
         ]
       : []),
-    { titre: 'RÉFÉRENCES', items: [{ to: '/taux', label: 'Taux du dollar', Icon: IconCoins }] },
+    { titre: 'Références', items: [{ to: '/taux', label: 'Taux du dollar', Icon: IconCoins }] },
     {
-      titre: 'EXPERT-COMPTABLE',
+      titre: 'Expert-comptable',
       items: [
         ...(expert && idDossier ? [{ to: d('arrete'), label: 'Revue et arrêté', Icon: IconStamp }] : []),
         { to: '/interventions', label: 'Interventions', Icon: IconHistory },

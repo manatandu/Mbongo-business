@@ -7,7 +7,7 @@ import { SEUILS_SMT_FCFA, seuilEnFrancs } from '../../moteur';
 import { fmt, fmtDate, lireTaux } from '../../ui/format';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { db, Page, Pastille, useBureau } from '../contexte';
+import { db, Fenetre, Message, Pastille, useBureau } from '../contexte';
 
 const SOURCE = { demo: 'Démonstration', assistant: 'Assistant', commercant: 'Commerçant' } as const;
 
@@ -19,7 +19,7 @@ export function Taux() {
   const [valeur, setValeur] = useState('');
   const [fcfaTexte, setFcfaTexte] = useState('');
   const [erreur, setErreur] = useState('');
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
 
   async function ajouter(e: FormEvent) {
     e.preventDefault();
@@ -42,10 +42,14 @@ export function Taux() {
   }
 
   return (
-    <Page titre="Taux du dollar" sousTitre="Saisi par l'assistant, proposé aux commerçants, confirmé par l'expert avant l'arrêté">
+    <Fenetre
+      titre="Taux du dollar"
+      sousTitre="Références du bureau"
+      aide="L'assistant saisit le taux du jour ; les téléphones le proposent au commerçant pour ses opérations en dollars ; l'expert confirme chaque taux avant l'arrêté. La conversion FCFA sert à exprimer les seuils du SMT (AUDCIF, art. 13) en francs congolais."
+    >
       <div className="flex gap-2.5 items-start">
-        <div className="panneau flex-1 overflow-auto">
-          <div className="panneau-titre">Historique</div>
+        <div className="encart flex-1 overflow-auto">
+          <div className="encart-titre">Historique</div>
           <table className="grille">
             <thead>
               <tr>
@@ -73,8 +77,8 @@ export function Taux() {
           </table>
         </div>
         <div className="w-[320px] flex flex-col gap-2.5">
-          <form onSubmit={ajouter} className="panneau">
-            <div className="panneau-titre">Taux du jour</div>
+          <form onSubmit={ajouter} className="encart">
+            <div className="encart-titre">Taux du jour</div>
             <div className="p-2 flex flex-col gap-2">
               <label>
                 <span className="libelle">Date</span>
@@ -84,16 +88,16 @@ export function Taux() {
                 <span className="libelle">FC pour 1 $</span>
                 <input className="champ w-full text-right font-mono" inputMode="decimal" value={valeur} onChange={(e) => setValeur(e.target.value)} />
               </label>
-              <button className="bouton-principal" type="submit" disabled={role !== 'assistant'}>
+              <button className="btn btn-principal" type="submit" disabled={role !== 'assistant'}>
                 Enregistrer
               </button>
-              {role !== 'assistant' && <p className="m-0 text-[11px] text-text-dim">Saisie réservée au rôle Assistant (menu Affichage).</p>}
+              {role !== 'assistant' && <Message ton="avert">Saisie réservée au rôle Assistant (menu Affichage).</Message>}
             </div>
           </form>
-          <form onSubmit={enregistrerFcfa} className="panneau">
-            <div className="panneau-titre">
+          <form onSubmit={enregistrerFcfa} className="encart">
+            <div className="encart-titre">
               <span>Seuils SMT en francs congolais</span>
-              {fcfa ? <Pastille ton="ok">1 FCFA = {String(fcfa).replace('.', ',')} FC</Pastille> : <Pastille ton="avert">NON SAISI</Pastille>}
+              {fcfa ? <Pastille ton="ok">1 FCFA = {String(fcfa).replace('.', ',')} FC</Pastille> : <Pastille ton="avert">Non saisi</Pastille>}
             </div>
             <div className="p-2 flex flex-col gap-2">
               <table className="grille">
@@ -111,14 +115,14 @@ export function Taux() {
                 <span className="libelle">FC pour 1 FCFA</span>
                 <input className="champ w-full text-right font-mono" inputMode="decimal" value={fcfaTexte} onChange={(e) => setFcfaTexte(e.target.value)} />
               </label>
-              <button className="bouton" type="submit">
+              <button className="btn btn-neutre" type="submit">
                 Enregistrer la conversion
               </button>
             </div>
           </form>
-          {erreur && <p className="m-0 text-[12px] text-danger">{erreur}</p>}
+          {erreur && <Message ton="danger">{erreur}</Message>}
         </div>
       </div>
-    </Page>
+    </Fenetre>
   );
 }

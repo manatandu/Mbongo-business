@@ -20,11 +20,11 @@ export interface AppShellProps {
 function ShellInterieur(props: AppShellProps) {
   const { groupes, droite } = useRibbonContext();
   return (
-    <div className="h-screen flex flex-col bg-bg text-text">
+    <div className="h-screen flex flex-col text-text">
       <Ribbon nomApp={props.nomApp} contexte={props.contexte} menus={props.menus} groupes={groupes} droite={droite} />
       <div className="flex-1 flex min-h-0">
         <TreeNav groupes={props.navGroupes} enTete={props.navEnTete} statut={props.navStatut} />
-        <main className="flex-1 min-w-0 overflow-auto">{props.children}</main>
+        <main className="flex-1 min-w-0 overflow-auto p-4">{props.children}</main>
       </div>
       <StatusBar gauche={props.statusGauche} droite={props.statusDroite} />
     </div>

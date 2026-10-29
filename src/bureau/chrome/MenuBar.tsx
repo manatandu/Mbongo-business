@@ -39,20 +39,21 @@ export function MenuBar({ menus }: { menus: MenuDef[] }) {
   }, []);
 
   return (
-    <div ref={ref} className="h-6 flex items-center gap-1 px-2.5 border-b border-border">
+    <div ref={ref} className="h-7 flex items-center gap-1 px-2 bg-surface border-b border-border">
       {menus.map((m) => (
         <div key={m.titre} className="relative">
           <button
             type="button"
             onClick={() => setOuvert(ouvert === m.titre ? null : m.titre)}
-            className={`text-[11.5px] px-1.5 py-0.5 ${ouvert === m.titre ? 'bg-sel text-white' : 'hover:bg-chrome-alt'}`}
+            aria-expanded={ouvert === m.titre}
+            className={`px-2 h-6 rounded text-[12px] ${ouvert === m.titre ? 'bg-sel-soft text-sel' : 'hover:bg-sel-soft'}`}
           >
             {m.titre}
           </button>
           {ouvert === m.titre && (
-            <div className="absolute left-0 top-full z-20 min-w-[210px] bg-surface border border-border-dark py-1">
+            <div className="panneau-menu anim-menu absolute left-0 top-[calc(100%+2px)] z-20 min-w-[230px] rounded-lg border border-border py-1">
               {m.items.length === 0 ? (
-                <div className="px-3 py-1.5 text-[11.5px] text-text-dim italic">Pas encore disponible</div>
+                <div className="px-3 py-1.5 text-[12px] text-text-dim italic">Pas encore disponible</div>
               ) : (
                 m.items.map((it) => (
                   <button
@@ -64,7 +65,7 @@ export function MenuBar({ menus }: { menus: MenuDef[] }) {
                       it.onClick?.();
                       setOuvert(null);
                     }}
-                    className="w-full flex items-center justify-between gap-3 text-left px-3 py-1.5 text-[11.5px] hover:enabled:bg-chrome-alt disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-[calc(100%-8px)] mx-1 rounded flex items-center justify-between gap-3 text-left px-2.5 py-1.5 text-[12px] hover:enabled:bg-sel-soft disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <span>{it.label}</span>
                     {it.indication && <span className="text-[10px] text-text-dim italic">{it.indication}</span>}

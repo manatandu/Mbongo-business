@@ -10,7 +10,7 @@ import { enregistrerInventaire, ErreurSaisie } from '../../donnees/saisie';
 import { fmt, lireMontant } from '../../ui/format';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { Chargement, db, Page, Pastille, useBureau, useDossierBureau } from '../contexte';
+import { Chargement, db, Fenetre, Message, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 export function Inventaire() {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +19,7 @@ export function Inventaire() {
   const lignes = useLiveQuery(() => (c ? db.inventaires.where('exerciceId').equals(c.exercice.id).sortBy('ordre') : []), [c?.exercice.id]) ?? [];
   const [ajout, setAjout] = useState({ designation: '', quantite: '', prix: '' });
   const [erreur, setErreur] = useState('');
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   if (!c) return <Chargement etat={c} />;
   const valide = c.exercice.stockFinal !== null;
   const total = lignes.reduce((s, l) => s + l.montant, 0);
@@ -53,7 +53,11 @@ export function Inventaire() {
   }
 
   return (
-    <Page titre="Inventaire du stock" sousTitre={`Note 2 · exercice ${c.exercice.annee}`}>
+    <Fenetre
+      titre="Inventaire du stock"
+      sousTitre={`Note 2 · exercice ${c.exercice.annee}`}
+      aide="L'assistant prépare l'inventaire avec le commerçant au 31 décembre. Seul le commerçant le valide, depuis son téléphone : le total devient alors le stock final."
+    >
       <div className="flex gap-2.5 text-[12px] items-center">
         <span>
           Stock initial : <b className="font-mono">{fmt(c.exercice.stockInitial)} FC</b>
@@ -61,9 +65,9 @@ export function Inventaire() {
         <span>
           Total compté : <b className="font-mono">{fmt(total)} FC</b>
         </span>
-        {valide ? <Pastille ton="ok">VALIDÉ PAR LE COMMERÇANT : {fmt(c.exercice.stockFinal ?? 0)} FC</Pastille> : <Pastille ton="avert">BROUILLON, VALIDATION SUR LE TÉLÉPHONE</Pastille>}
+        {valide ? <Pastille ton="ok">Validé par le commerçant : {fmt(c.exercice.stockFinal ?? 0)} FC</Pastille> : <Pastille ton="avert">Brouillon, validation sur le téléphone</Pastille>}
       </div>
-      <div className="panneau overflow-auto">
+      <div className="encart overflow-auto">
         <table className="grille">
           <thead>
             <tr>
@@ -85,7 +89,7 @@ export function Inventaire() {
                 <td className="m">{fmt(l.montant)}</td>
                 {!valide && (
                   <td>
-                    <button className="bouton h-[20px] px-1.5 text-[11px]" onClick={() => void ecrire(lignes.filter((x) => x.id !== l.id), `Ligne retirée : ${l.designation}`)}>
+                    <button className="btn btn-neutre h-[22px] px-2 text-[11.5px]" onClick={() => void ecrire(lignes.filter((x) => x.id !== l.id), `Ligne retirée : ${l.designation}`)}>
                       Retirer
                     </button>
                   </td>
@@ -101,7 +105,7 @@ export function Inventaire() {
         </table>
       </div>
       {!valide && (
-        <form onSubmit={ajouter} className="panneau p-2 flex items-end gap-2">
+        <form onSubmit={ajouter} className="encart p-2 flex items-end gap-2">
           <label className="flex-1">
             <span className="libelle">Article</span>
             <input className="champ w-full" value={ajout.designation} onChange={(e) => setAjout({ ...ajout, designation: e.target.value })} />
@@ -114,12 +118,12 @@ export function Inventaire() {
             <span className="libelle">Prix unitaire (FC)</span>
             <input className="champ w-32 text-right font-mono" value={ajout.prix} onChange={(e) => setAjout({ ...ajout, prix: e.target.value })} />
           </label>
-          <button className="bouton-principal" type="submit">
+          <button className="btn btn-principal" type="submit">
             Ajouter
           </button>
         </form>
       )}
-      {erreur && <p className="m-0 text-[12px] text-danger">{erreur}</p>}
-    </Page>
+      {erreur && <Message ton="danger">{erreur}</Message>}
+    </Fenetre>
   );
 }

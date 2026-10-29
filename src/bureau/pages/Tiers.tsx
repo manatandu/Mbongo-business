@@ -5,13 +5,13 @@ import { situationTiers, type GenreTiers, type SituationTiers } from '../../mote
 import { fmtDate, fmtMontant } from '../../ui/format';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { Chargement, dateRefDe, Page, Pastille, useBureau, useDossierBureau } from '../contexte';
+import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 function Tableau({ titre, lignes }: { titre: string; lignes: SituationTiers[] }) {
   const ouvertes = lignes.filter((s) => s.encours > 0);
   return (
-    <div className="panneau flex-1 min-w-0 overflow-auto">
-      <div className="panneau-titre">
+    <div className="encart flex-1 min-w-0 overflow-auto">
+      <div className="encart-titre">
         <span>{titre}</span>
         <span className="font-normal text-text-dim">{ouvertes.length} en attente</span>
       </div>
@@ -36,7 +36,7 @@ function Tableau({ titre, lignes }: { titre: string; lignes: SituationTiers[] })
               <td className="m">{fmtMontant(s.ligne.montant, s.ligne.devise)}</td>
               <td className="m">{s.regle ? fmtMontant(s.regle, s.ligne.devise) : ''}</td>
               <td className="m font-semibold">{s.encours ? fmtMontant(s.encours, s.ligne.devise) : ''}</td>
-              <td className="m">{s.soldee ? <Pastille ton="ok">SOLDÉE</Pastille> : s.ageJours > 30 ? <Pastille ton="danger">{s.ageJours} j</Pastille> : `${s.ageJours} j`}</td>
+              <td className="m">{s.soldee ? <Pastille ton="ok">soldée</Pastille> : s.ageJours > 30 ? <Pastille ton="danger">{s.ageJours} j</Pastille> : `${s.ageJours} j`}</td>
             </tr>
           ))}
           {lignes.length === 0 && (
@@ -56,7 +56,7 @@ export function Tiers() {
   const { id } = useParams<{ id: string }>();
   const { aujourdhui } = useBureau();
   const c = useDossierBureau(id);
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const vue = useMemo(() => {
     if (!c) return null;
     const ref = dateRefDe(c, aujourdhui);
@@ -65,11 +65,11 @@ export function Tiers() {
   }, [c, aujourdhui]);
   if (!c || !vue) return <Chargement etat={c} />;
   return (
-    <Page titre="Créances et dettes" sousTitre={`Journaux de suivi au ${fmtDate(vue.ref)}`}>
+    <Fenetre titre="Créances et dettes" sousTitre={`Journaux de suivi au ${fmtDate(vue.ref)}`}>
       <div className="flex gap-2.5 items-start">
         <Tableau titre="Créances impayées (clients)" lignes={vue.creances} />
         <Tableau titre="Dettes à payer (fournisseurs)" lignes={vue.dettes} />
       </div>
-    </Page>
+    </Fenetre>
   );
 }

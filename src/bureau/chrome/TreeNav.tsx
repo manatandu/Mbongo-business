@@ -31,11 +31,11 @@ export function TreeNav({ groupes, enTete, statut }: TreeNavProps) {
   const couleurStatut = statut?.couleur === 'warning' ? 'bg-warning' : statut?.couleur === 'danger' ? 'bg-danger' : 'bg-positive';
 
   return (
-    <aside className="w-[200px] flex-shrink-0 bg-chrome border-r border-border flex flex-col">
+    <aside className="w-[210px] flex-shrink-0 flex flex-col text-chrome-text" style={{ background: 'var(--bandeau)' }}>
       {enTete && (
-        <div className="px-2.5 py-2 border-b border-border bg-surface-alt">
-          <div className="text-[11px] font-bold truncate">{enTete.titre}</div>
-          {enTete.sousTitre && <div className="font-mono text-[10px] tracking-wide text-text-dim">{enTete.sousTitre}</div>}
+        <div className="px-3 py-2.5 border-b border-white/10">
+          <div className="text-[12px] font-semibold truncate">{enTete.titre}</div>
+          {enTete.sousTitre && <div className="text-[11px] text-chrome-text-dim">{enTete.sousTitre}</div>}
         </div>
       )}
 
@@ -43,7 +43,7 @@ export function TreeNav({ groupes, enTete, statut }: TreeNavProps) {
         {groupes.map((g) => (
           <div key={g.titre}>
             <div className="px-2.5 pt-2.5 pb-1">
-              <span className="font-mono text-[10px] font-semibold tracking-wider text-text-dim">{g.titre}</span>
+              <span className="text-[10.5px] font-semibold tracking-wider text-chrome-text-dim">{g.titre}</span>
             </div>
             {g.items.map((item) => {
               const actif = item.exact ? chemin === item.to : chemin === item.to || chemin.startsWith(`${item.to}/`);
@@ -52,9 +52,10 @@ export function TreeNav({ groupes, enTete, statut }: TreeNavProps) {
                   key={item.to}
                   href={item.to}
                   aria-current={actif ? 'page' : undefined}
-                  className={`flex items-center gap-2.5 pl-4 pr-2.5 py-1.5 text-[12.5px] border-l-2 no-underline ${
-                    actif ? 'bg-chrome-alt border-sel text-text font-semibold' : 'border-transparent text-text-dim hover:bg-chrome-alt/60'
+                  className={`mx-1.5 flex items-center gap-2.5 pl-3 pr-2 py-1.5 rounded text-[12.5px] no-underline ${
+                    actif ? 'font-semibold' : 'text-chrome-text-dim hover:text-chrome-text'
                   }`}
+                  style={{ background: actif ? 'var(--bandeau-survol)' : undefined, color: actif ? '#ffffff' : undefined }}
                 >
                   <item.Icon width={14} height={14} />
                   <span className="truncate">{item.label}</span>
@@ -66,9 +67,9 @@ export function TreeNav({ groupes, enTete, statut }: TreeNavProps) {
       </nav>
 
       {statut && (
-        <div className="px-2.5 py-2 border-t border-border flex items-center gap-1.5">
+        <div className="px-3 py-2 border-t border-white/10 flex items-center gap-1.5">
           <span className={`w-1.5 h-1.5 rounded-full ${couleurStatut}`} />
-          <span className="text-[10px] text-text-dim">{statut.label}</span>
+          <span className="text-[11px] text-chrome-text-dim">{statut.label}</span>
         </div>
       )}
     </aside>

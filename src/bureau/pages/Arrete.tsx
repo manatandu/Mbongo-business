@@ -11,7 +11,7 @@ import { calculerEtats, centimesEnFrancs, MENTION_ETATS } from '../../moteur';
 import { fmt, fmtDate, fmtMontant, lireTaux } from '../../ui/format';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { Chargement, dateRefDe, db, Page, Pastille, useBureau, useDossierBureau } from '../contexte';
+import { Chargement, dateRefDe, db, Fenetre, Message, Pastille, useBureau, useDossierBureau } from '../contexte';
 import { TablesEtats } from './Etats';
 
 const EXPERT = 'Expert-comptable partenaire (fictif)';
@@ -25,7 +25,7 @@ export function Arrete() {
   const [cloture, setCloture] = useState('');
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [integrite, setIntegrite] = useState<Record<string, boolean>>({});
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
 
   const vue = useMemo(() => {
     if (!c) return null;
@@ -36,9 +36,9 @@ export function Arrete() {
   if (!c || !vue) return <Chargement etat={c} />;
   if (role !== 'expert') {
     return (
-      <Page titre="Revue et arrêté des états">
-        <p className="m-0 text-[12px]">Écran réservé à l'expert-comptable partenaire (menu Affichage, rôle Expert-comptable).</p>
-      </Page>
+      <Fenetre titre="Revue et arrêté des états">
+        <Message ton="avert">Écran réservé à l'expert-comptable partenaire : menu Affichage, rôle Expert-comptable.</Message>
+      </Fenetre>
     );
   }
   const arrete = c.exercice.statut === 'arrete';
@@ -56,18 +56,22 @@ export function Arrete() {
   };
 
   return (
-    <Page titre="Revue et arrêté des états" sousTitre={`${c.entreprise.nom} · exercice ${c.exercice.annee}`}>
-      <div className="grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.5fr)] gap-2.5 items-start">
-        <div className="panneau">
-          <div className="panneau-titre">
+    <Fenetre
+      titre="Revue et arrêté des états"
+      sousTitre={`${c.entreprise.nom} · exercice ${c.exercice.annee}`}
+      aide="L'arrêté fige les états tels que vous les voyez, avec leur empreinte SHA-256 et la version du moteur. Le téléphone ne peut plus saisir sur l'exercice. Une réouverture exige un motif et reste tracée dans le journal des interventions."
+    >
+      <div className="grid grid-cols-[330px_minmax(0,1fr)] gap-3 items-start">
+        <div className="encart">
+          <div className="encart-titre">
             <span>Conditions de l'arrêté</span>
-            {arrete ? <Pastille ton="ok">ARRÊTÉ</Pastille> : pret ? <Pastille ton="ok">PRÊT</Pastille> : <Pastille ton="avert">INCOMPLET</Pastille>}
+            {arrete ? <Pastille ton="ok">Arrêté</Pastille> : pret ? <Pastille ton="ok">Prêt</Pastille> : <Pastille ton="avert">Incomplet</Pastille>}
           </div>
           <table className="grille">
             <tbody>
               {vue.conditions.map((x) => (
                 <tr key={x.libelle}>
-                  <td className="w-6">{x.ok ? <span className="text-positive font-bold">✓</span> : <span className="text-danger font-bold">✗</span>}</td>
+                  <td className="w-6">{x.ok ? <span className="text-positive font-bold" aria-label="remplie">✓</span> : <span className="text-danger font-bold" aria-label="manquante">✗</span>}</td>
                   <td>{x.libelle}</td>
                   <td className="text-text-dim">{x.detail ?? ''}</td>
                 </tr>
@@ -81,7 +85,7 @@ export function Arrete() {
                 <input className="champ w-full text-right font-mono" value={cloture} onChange={(e) => setCloture(e.target.value)} disabled={arrete} />
               </label>
               <button
-                className="bouton"
+                className="btn btn-neutre"
                 disabled={arrete}
                 onClick={() => {
                   const t = lireTaux(cloture);
@@ -93,11 +97,11 @@ export function Arrete() {
               </button>
             </div>
             <div className="flex gap-2">
-              <button className="bouton-principal" disabled={arrete || !pret} onClick={() => void agir(() => arreterEtats(db, c.exercice.id, EXPERT, aujourdhui), `États ${c.exercice.annee} arrêtés`)}>
+              <button className="btn btn-principal" disabled={arrete || !pret} onClick={() => void agir(() => arreterEtats(db, c.exercice.id, EXPERT, aujourdhui), `États ${c.exercice.annee} arrêtés`)}>
                 Arrêter les états
               </button>
               <button
-                className="bouton"
+                className="btn btn-neutre"
                 disabled={!arrete}
                 onClick={() => {
                   const motif = window.prompt('Motif de la réouverture :') ?? '';
@@ -108,15 +112,15 @@ export function Arrete() {
               </button>
             </div>
             {erreurs.map((x) => (
-              <p key={x} className="m-0 text-[12px] text-danger">
+              <Message key={x} ton="danger">
                 {x}
-              </p>
+              </Message>
             ))}
           </div>
         </div>
 
-        <div className="panneau overflow-auto">
-          <div className="panneau-titre">
+        <div className="encart overflow-auto">
+          <div className="encart-titre">
             <span>Opérations en dollars : taux à confirmer</span>
             <span className="font-normal text-text-dim">{vue.usd.filter((o) => !confirmes.has(o.id)).length} restante(s)</span>
           </div>
@@ -153,7 +157,7 @@ export function Arrete() {
                             onChange={(e) => setSaisies({ ...saisies, [o.id]: e.target.value })}
                           />
                           <button
-                            className="bouton h-[22px] px-1.5 text-[11px]"
+                            className="btn btn-neutre h-[22px] px-2 text-[11.5px]"
                             onClick={() => {
                               const t = lireTaux(saisies[o.id] || String(o.taux ?? ''));
                               if (!t) return setErreurs(['Taux invalide.']);
@@ -181,8 +185,8 @@ export function Arrete() {
       </div>
 
       {arretes.length > 0 && (
-        <div className="panneau overflow-auto">
-          <div className="panneau-titre">Arrêtés enregistrés</div>
+        <div className="encart overflow-auto">
+          <div className="encart-titre">Arrêtés enregistrés</div>
           <table className="grille">
             <thead>
               <tr>
@@ -204,13 +208,13 @@ export function Arrete() {
                   <td className="font-mono text-[10.5px]">{a.empreinte}</td>
                   <td>
                     {integrite[a.id] === undefined ? (
-                      <button className="bouton h-[20px] px-1.5 text-[11px]" onClick={() => void verifierArrete(db, a.id).then((ok) => setIntegrite({ ...integrite, [a.id]: ok }))}>
+                      <button className="btn btn-neutre h-[22px] px-2 text-[11.5px]" onClick={() => void verifierArrete(db, a.id).then((ok) => setIntegrite({ ...integrite, [a.id]: ok }))}>
                         Vérifier
                       </button>
                     ) : integrite[a.id] ? (
-                      <Pastille ton="ok">INTACT</Pastille>
+                      <Pastille ton="ok">Intact</Pastille>
                     ) : (
-                      <Pastille ton="danger">ALTÉRÉ</Pastille>
+                      <Pastille ton="danger">Altéré</Pastille>
                     )}
                   </td>
                 </tr>
@@ -221,7 +225,8 @@ export function Arrete() {
       )}
 
       <TablesEtats e={vue.etats} />
-      <p className="m-0 text-[12px] font-semibold">{MENTION_ETATS}</p>
-    </Page>
+      <hr className="filet-cloture w-full text-text" />
+      <p className="m-0 text-[12px] font-semibold text-center">{MENTION_ETATS}</p>
+    </Fenetre>
   );
 }

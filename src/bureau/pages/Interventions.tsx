@@ -2,7 +2,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { IconPrint } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { db, LIBELLE_ROLE, Page } from '../contexte';
+import { db, LIBELLE_ROLE, Fenetre } from '../contexte';
 
 const ACTION = {
   taux_saisi: 'Taux du jour saisi',
@@ -14,13 +14,13 @@ const ACTION = {
 } as const;
 
 export function Interventions() {
-  useRibbon([{ titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
+  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const lignes = useLiveQuery(() => db.interventions.orderBy('le').reverse().toArray(), []) ?? [];
   const entreprises = useLiveQuery(() => db.entreprises.toArray(), []) ?? [];
   const nom = (eid: string | null) => (eid ? (entreprises.find((e) => e.id === eid)?.nom ?? 'dossier retiré') : 'tous les dossiers');
   return (
-    <Page titre="Journal des interventions" sousTitre="Qui a fait quoi, quand · aucune ligne ne s'efface">
-      <div className="panneau overflow-auto">
+    <Fenetre titre="Journal des interventions" sousTitre="Qui a fait quoi, quand · aucune ligne ne s'efface">
+      <div className="encart overflow-auto">
         <table className="grille">
           <thead>
             <tr>
@@ -51,6 +51,6 @@ export function Interventions() {
           </tbody>
         </table>
       </div>
-    </Page>
+    </Fenetre>
   );
 }

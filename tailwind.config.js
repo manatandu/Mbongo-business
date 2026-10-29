@@ -1,41 +1,50 @@
 /**
- * Tailwind, pour le bureau seulement (assistant, expert, administrateur).
- * Gabarit du skill « dense-desktop-design » (dépôt manatandu/Design_desktop_pro) :
- * seules la police de secours mono et la teinte d'accent changent (voir src/bureau/bureau.css).
- * L'appli du commerçant n'utilise pas Tailwind : le contenu analysé se limite au bureau.
+ * Tailwind du bureau seulement (l'appli du commerçant n'en a pas).
+ * Repris du kit de design « logiciel de gestion » et adapté à Mbongo : couleurs de la charte Mbongo,
+ * police du système uniquement. Les couleurs passent par leur canal `--x-rgb` pour accepter une opacité
+ * (`border-danger/30`) ; le texte garde la variable pleine pour ne jamais passer sous le contraste mesuré.
  */
+const COULEURS = [
+  'chrome',
+  'mica',
+  'chrome-alt',
+  'chrome-border',
+  'chrome-text',
+  'chrome-text-dim',
+  'bg',
+  'surface',
+  'surface-alt',
+  'border',
+  'border-dark',
+  'text',
+  'text-dim',
+  'sel',
+  'sel-soft',
+  'positive',
+  'positive-soft',
+  'warning',
+  'warning-soft',
+  'danger',
+  'danger-soft',
+];
+
+const SYSTEME = ['"Segoe UI Variable Text"', '"Segoe UI"', 'ui-sans-serif', 'system-ui', '-apple-system', 'Roboto', 'Arial', 'sans-serif'];
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./bureau.html', './src/bureau/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      fontFamily: {
-        // Registre « logiciel professionnel dense » : police système Windows, pas une police web.
-        sans: ['"Segoe UI"', 'Tahoma', 'Geneva', 'Verdana', 'system-ui', 'sans-serif'],
-        mono: ['Consolas', '"Courier New"', 'ui-monospace', 'monospace'],
-      },
-      colors: {
-        chrome: 'var(--chrome)',
-        'chrome-alt': 'var(--chrome-alt)',
-        'chrome-border': 'var(--chrome-border)',
-        bg: 'var(--bg)',
-        surface: 'var(--surface)',
-        'surface-alt': 'var(--surface-alt)',
-        border: 'var(--border)',
-        'border-dark': 'var(--border-dark)',
-        text: 'var(--text)',
-        'text-dim': 'var(--text-dim)',
-        sel: 'var(--sel)',
-        positive: 'var(--positive)',
-        'positive-soft': 'var(--positive-soft)',
-        warning: 'var(--warning)',
-        'warning-soft': 'var(--warning-soft)',
-        danger: 'var(--danger)',
-        'danger-soft': 'var(--danger-soft)',
-      },
-      borderRadius: {
-        // Coins carrés partout : un choix délibéré, pas un oubli.
-        DEFAULT: '2px',
+      // Une seule police : celle du système. Le nom Mbongo s'écrit dans la même, en gras.
+      fontFamily: { sans: SYSTEME, mono: SYSTEME, marque: SYSTEME },
+      colors: Object.fromEntries(COULEURS.map((n) => [n, `rgb(var(--${n}-rgb) / <alpha-value>)`])),
+      textColor: Object.fromEntries(COULEURS.map((n) => [n, `var(--${n})`])),
+      borderRadius: { DEFAULT: '4px' },
+      boxShadow: {
+        plate: 'var(--ombre-plate)',
+        posee: 'var(--ombre-posee)',
+        flottante: 'var(--ombre-flottante)',
+        dominante: 'var(--ombre-dominante)',
       },
     },
   },

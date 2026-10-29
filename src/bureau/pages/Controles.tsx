@@ -7,12 +7,12 @@ import { lireReglage } from '../../donnees/reglages';
 import { fmt, fmtDate } from '../../ui/format';
 import { IconBook, IconPrint, IconScale } from '../chrome/icons';
 import { useRibbon } from '../chrome/ribbon-context';
-import { Chargement, dateRefDe, db, Page, Pastille, useBureau, useDossierBureau } from '../contexte';
+import { Chargement, dateRefDe, db, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 const NIVEAU: Record<NiveauAnomalie, { libelle: string; ton: 'danger' | 'avert' | 'neutre' }> = {
-  a_traiter: { libelle: 'À TRAITER', ton: 'danger' },
-  a_revoir: { libelle: 'À REVOIR', ton: 'avert' },
-  information: { libelle: 'INFO', ton: 'neutre' },
+  a_traiter: { libelle: 'À traiter', ton: 'danger' },
+  a_revoir: { libelle: 'À revoir', ton: 'avert' },
+  information: { libelle: 'Information', ton: 'neutre' },
 };
 
 export function Controles() {
@@ -23,13 +23,13 @@ export function Controles() {
   const fcfa = useLiveQuery(() => lireReglage<number | null>(db, 'fcfaVersCdf', null), []);
   useRibbon([
     {
-      titre: 'DOSSIER',
+      titre: 'Dossier',
       boutons: [
         { label: 'Journaux', Icon: IconBook, onClick: () => aller(`/dossier/${id}/journaux`) },
         { label: 'États SMT', Icon: IconScale, onClick: () => aller(`/dossier/${id}/etats`) },
       ],
     },
-    { titre: 'SORTIE', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] },
+    { titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] },
   ]);
 
   const vue = useMemo(() => {
@@ -45,7 +45,11 @@ export function Controles() {
   const usd = c.dossier.operations.filter((o) => o.devise === 'USD').length;
 
   return (
-    <Page titre="Contrôles automatiques" sousTitre={`Situation au ${fmtDate(vue.ref)}`}>
+    <Fenetre
+      titre="Contrôles automatiques"
+      sousTitre={`${c.entreprise.nom} · situation au ${fmtDate(vue.ref)}`}
+      aide="L'assistant n'écrit jamais une opération du commerçant : il le prévient, réclame la pièce, et c'est le commerçant qui corrige depuis son téléphone (loi n° 15/002, art. 43)."
+    >
       <div className="grid grid-cols-4 gap-2.5">
         {[
           ['Opérations de l’exercice', fmt(nb)],
@@ -53,14 +57,14 @@ export function Controles() {
           ['Chiffre d’affaires approché (FC)', fmt(vue.ca)],
           ['Part du seuil SMT', vue.seuil ? `${Math.round(vue.seuil.ratio * 100)} % de ${fmt(vue.seuil.seuil)} FC` : 'taux FCFA non saisi'],
         ].map(([l, v]) => (
-          <div key={l} className="panneau px-2 py-1.5">
-            <div className="text-[10px] uppercase tracking-wide text-text-dim">{l}</div>
-            <div className="font-mono text-[13px]">{v}</div>
+          <div key={l} className="encart px-3 py-2">
+            <div className="text-[11px] text-text-dim">{l}</div>
+            <div className="text-[14px] font-semibold">{v}</div>
           </div>
         ))}
       </div>
-      <div className="panneau">
-        <div className="panneau-titre">
+      <div className="encart">
+        <div className="encart-titre">
           <span>Anomalies relevées</span>
           <span className="font-normal text-text-dim">{vue.anomalies.length} ligne(s)</span>
         </div>
@@ -79,7 +83,7 @@ export function Controles() {
                 <td>
                   <Pastille ton={NIVEAU[a.niveau].ton}>{NIVEAU[a.niveau].libelle}</Pastille>
                 </td>
-                <td className="font-mono text-[11px] whitespace-nowrap">{a.code}</td>
+                <td className="text-text-dim whitespace-nowrap">{a.code.replace(/_/g, ' ')}</td>
                 <td>{a.message}</td>
                 <td className="m">{a.references.length || ''}</td>
               </tr>
@@ -87,17 +91,13 @@ export function Controles() {
             {vue.anomalies.length === 0 && (
               <tr>
                 <td colSpan={4} className="text-text-dim">
-                  Aucune anomalie.
+                  Aucune anomalie : les saisies sont à jour et justifiées.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <p className="m-0 text-[11px] text-text-dim">
-        L'assistant n'a pas de droit d'écriture sur les opérations du commerçant : il le prévient, réclame la pièce, et c'est le commerçant qui corrige depuis son
-        téléphone.
-      </p>
-    </Page>
+    </Fenetre>
   );
 }
