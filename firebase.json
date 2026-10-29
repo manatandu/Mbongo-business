@@ -32,7 +32,7 @@
       ]
     },
     {
-      "site": "trk-consulting",
+      "site": "trk-consulting-rdc",
       "public": "sites/trk-consulting",
       "ignore": ["**/.*"],
       "headers": [
