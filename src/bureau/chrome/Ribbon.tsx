@@ -49,6 +49,7 @@ export function Ribbon({ nomApp, contexte, menus, groupes, droite }: RibbonProps
 
       <MenuBar menus={menus} />
 
+      {(groupes.length > 0 || droite) && (
       <div className="flex items-stretch justify-between min-h-[52px] bg-chrome border-b border-chrome-border">
         <div className="flex items-stretch px-2 py-1">
           {groupes.map((g) => (
@@ -73,6 +74,7 @@ export function Ribbon({ nomApp, contexte, menus, groupes, droite }: RibbonProps
         </div>
         {droite && <div className="flex items-center px-3">{droite}</div>}
       </div>
+      )}
     </div>
   );
 }

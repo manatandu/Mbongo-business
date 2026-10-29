@@ -127,8 +127,9 @@ body {
   margin: 0;
   /* La police du système : Segoe UI sous Windows, celle du téléphone ailleurs. Rien à télécharger. */
   font-family: 'Segoe UI Variable Text', 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Roboto, Arial, sans-serif;
-  font-size: 12px;
-  line-height: 1.35;
+  /* 13 px : un cran au-dessus du kit, pour des écrans modestes et tous les yeux. */
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--text);
   /* Un aplat léger plutôt que des halos : moins de travail pour une carte graphique modeste. */
   background: linear-gradient(178deg, var(--n-50) 0%, var(--n-100) 100%) fixed;
@@ -192,7 +193,7 @@ main table {
 main table thead th {
   background-color: var(--a-700) !important;
   color: #ffffff !important;
-  font-size: 11.5px !important;
+  font-size: 12.5px !important;
   font-weight: 600 !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
@@ -217,7 +218,7 @@ main table tbody td {
 
   /* Boutons · trois registres, pas un de plus. */
   .btn {
-    @apply inline-flex items-center justify-center gap-1.5 px-3 h-[28px] text-[12px] font-semibold;
+    @apply inline-flex items-center justify-center gap-1.5 px-3 h-[32px] text-[13px] font-semibold;
     border-radius: 6px;
     border: 1px solid transparent;
     white-space: nowrap;
@@ -282,7 +283,7 @@ main table tbody td {
 
   /* Raccourcis des écrans du bureau. */
   .grille {
-    @apply w-full text-left text-[12px];
+    @apply w-full text-left text-[13px];
   }
   .grille th {
     @apply px-2 py-1.5 whitespace-nowrap;
@@ -305,20 +306,20 @@ main table tbody td {
     background-color: var(--a-700);
   }
   .champ {
-    @apply border border-border bg-surface px-2 h-[26px] text-[12px];
+    @apply border border-border bg-surface px-2 h-[30px] text-[13px];
   }
   .libelle {
-    @apply block text-[12px] mb-1;
+    @apply block text-[13px] mb-1;
   }
   .pastille {
-    @apply inline-block px-1.5 py-px rounded text-[10.5px] font-semibold border whitespace-nowrap;
+    @apply inline-block px-1.5 py-px rounded text-[12px] font-semibold border whitespace-nowrap;
   }
   .encart {
     @apply bg-surface border border-border rounded-lg;
     box-shadow: var(--ombre-plate);
   }
   .encart-titre {
-    @apply px-3 py-2 text-[12px] font-semibold flex items-center justify-between gap-2 border-b border-border;
+    @apply px-3 py-2 text-[13px] font-semibold flex items-center justify-between gap-2 border-b border-border;
   }
 }
 

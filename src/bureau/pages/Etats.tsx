@@ -3,8 +3,6 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'wouter';
 import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteur';
 import { fmt, fmtDate } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 const L = ({ l, n, v, c }: { l: string; n?: string; v: Montant; c?: string }) => (
@@ -133,7 +131,6 @@ export function Etats() {
   const { aujourdhui } = useBureau();
   const c = useDossierBureau(id);
   const [aLaCloture, setALaCloture] = useState(false);
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const e = useMemo(() => (c ? calculerEtats(c.dossier, aLaCloture ? {} : { auDate: dateRefDe(c, aujourdhui) }) : null), [c, aujourdhui, aLaCloture]);
   if (!c || !e) return <Chargement etat={c} />;
   return (
@@ -141,7 +138,7 @@ export function Etats() {
       <div className="flex items-center gap-3 text-[12px]">
         <label className="flex items-center gap-1.5">
           <input type="checkbox" checked={aLaCloture} onChange={(x) => setALaCloture(x.target.checked)} />
-          Projeter au 31 décembre (toutes les saisies, inventaire et taux de clôture s'ils existent)
+          Voir au 31 décembre
         </label>
         {c.exercice.statut === 'arrete' ? <Pastille ton="ok">Arrêtés par l'expert</Pastille> : <Pastille ton="avert">En attente d'arrêté</Pastille>}
       </div>

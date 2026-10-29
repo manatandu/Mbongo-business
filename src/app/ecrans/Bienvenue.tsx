@@ -49,11 +49,9 @@ export function Bienvenue() {
           }}
         >
           <strong>{t('bienvenue.demo')}</strong>
-          <span>{t('bienvenue.demoDetail')}</span>
         </button>
         <Link href="/creer" className="carte-choix">
           <strong>{t('bienvenue.creer')}</strong>
-          <span>{t('bienvenue.creerDetail')}</span>
         </Link>
       </div>
       <p className="aide" style={{ marginTop: 'auto' }}>
@@ -135,41 +133,16 @@ export function CreerEntreprise() {
         {t('creer.nom')}
         <input {...champ('nom')} autoComplete="organization" />
       </label>
-      <div className="deux-col">
-        <label className="champ">
-          {t('creer.responsable')}
-          <input {...champ('responsable')} autoComplete="name" />
-        </label>
-        <label className="champ">
-          {t('creer.telephone')}
-          <input {...champ('telephone')} inputMode="tel" autoComplete="tel" />
-        </label>
-      </div>
       <label className="champ">
-        {t('creer.activite')}
-        <input {...champ('activite')} />
-      </label>
-      <div className="deux-col">
-        <label className="champ">
-          {t('creer.secteur')}
-          <select value={secteur} onChange={(e) => setSecteur(e.target.value as SecteurSMT)}>
-            <option value="negoce">{t('secteur.negoce')}</option>
-            <option value="artisanat">{t('secteur.artisanat')}</option>
-            <option value="services">{t('secteur.services')}</option>
-          </select>
-        </label>
-        <label className="champ">
-          {t('creer.commune')}
-          <input {...champ('commune')} />
-        </label>
-      </div>
-      <label className="champ">
-        {t('creer.nif')}
-        <input {...champ('nif')} />
+        {t('creer.secteur')}
+        <select value={secteur} onChange={(e) => setSecteur(e.target.value as SecteurSMT)}>
+          <option value="negoce">{t('secteur.negoce')}</option>
+          <option value="artisanat">{t('secteur.artisanat')}</option>
+          <option value="services">{t('secteur.services')}</option>
+        </select>
       </label>
 
       <h2 className="titre-section">{t('creer.comptes')}</h2>
-      <p className="aide">{t('creer.comptesAide')}</p>
       {comptes.map((c, i) => (
         <div key={c.cle} className="case" style={{ alignItems: 'center' }}>
           <input
@@ -202,6 +175,31 @@ export function CreerEntreprise() {
         {t('creer.stock')}
         <input {...champ('stock')} inputMode="numeric" />
       </label>
+      <details className="replie">
+        <summary>{t('creer.facultatif')}</summary>
+        <div className="replie-contenu">
+          <label className="champ">
+            {t('creer.responsable')}
+            <input {...champ('responsable')} autoComplete="name" />
+          </label>
+          <label className="champ">
+            {t('creer.telephone')}
+            <input {...champ('telephone')} inputMode="tel" autoComplete="tel" />
+          </label>
+          <label className="champ">
+            {t('creer.activite')}
+            <input {...champ('activite')} />
+          </label>
+          <label className="champ">
+            {t('creer.commune')}
+            <input {...champ('commune')} />
+          </label>
+          <label className="champ">
+            {t('creer.nif')}
+            <input {...champ('nif')} />
+          </label>
+        </div>
+      </details>
       <p className="aide">{t('creer.reprise')}</p>
       <Erreurs messages={erreurs} />
       <button className="bouton" type="submit">

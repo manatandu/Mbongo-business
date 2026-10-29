@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 import { useParams } from 'wouter';
 import { calculerEtats } from '../../moteur';
 import { fmt, fmtDate } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 const CATEGORIE = { materiel: 'Matériel', mobilier: 'Mobilier', caution: 'Caution' } as Record<string, string>;
@@ -13,7 +11,6 @@ export function Materiel() {
   const { id } = useParams<{ id: string }>();
   const { aujourdhui } = useBureau();
   const c = useDossierBureau(id);
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const note1 = useMemo(() => (c ? calculerEtats(c.dossier, { auDate: dateRefDe(c, aujourdhui) }).notes.note1 : null), [c, aujourdhui]);
   if (!c || !note1) return <Chargement etat={c} />;
   const duree = (lid: string) => c.dossier.immobilisations.find((i) => i.id === lid)?.duree ?? 0;

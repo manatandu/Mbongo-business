@@ -80,14 +80,6 @@ function Coquille() {
   const expert = role === 'expert';
   const d = (page: string) => `/dossier/${idDossier ?? ''}/${page}`;
 
-  const pagesDossier: { page: string; label: string }[] = [
-    { page: 'controles', label: 'Contrôles' },
-    { page: 'journaux', label: 'Journaux de trésorerie' },
-    { page: 'tiers', label: 'Créances et dettes' },
-    { page: 'materiel', label: 'Registre du matériel' },
-    { page: 'inventaire', label: 'Inventaire du stock' },
-    { page: 'etats', label: 'États SMT' },
-  ];
   const menus: MenuDef[] = [
     {
       titre: 'Fichier',
@@ -98,27 +90,10 @@ function Coquille() {
       ],
     },
     {
-      titre: 'Dossier',
-      items: pagesDossier.map((p) => ({
-        label: p.label,
-        disabled: !idDossier,
-        indication: idDossier ? undefined : 'ouvrir un dossier',
-        onClick: () => aller(d(p.page)),
-      })),
-    },
-    { titre: 'Références', items: [{ label: 'Taux du dollar', onClick: () => aller('/taux') }] },
-    {
-      titre: 'Expert-comptable',
+      titre: 'Rôle',
       items: [
-        { label: 'Revue et arrêté des états', disabled: !expert || !idDossier, indication: !expert ? 'rôle expert' : !idDossier ? 'ouvrir un dossier' : undefined, onClick: () => aller(d('arrete')) },
-        { label: 'Journal des interventions', onClick: () => aller('/interventions') },
-      ],
-    },
-    {
-      titre: 'Affichage',
-      items: [
-        { label: `Rôle : ${LIBELLE_ROLE.assistant}`, disabled: role === 'assistant', indication: role === 'assistant' ? 'actif' : undefined, onClick: () => changerRole('assistant') },
-        { label: `Rôle : ${LIBELLE_ROLE.expert}`, disabled: expert, indication: expert ? 'actif' : undefined, onClick: () => changerRole('expert') },
+        { label: `Je suis ${LIBELLE_ROLE.assistant.toLowerCase()}`, disabled: role === 'assistant', indication: role === 'assistant' ? 'actif' : undefined, onClick: () => changerRole('assistant') },
+        { label: `Je suis ${LIBELLE_ROLE.expert.toLowerCase()}`, disabled: expert, indication: expert ? 'actif' : undefined, onClick: () => changerRole('expert') },
       ],
     },
     { titre: '?', items: [{ label: 'À propos de Mbongo', onClick: () => setAPropos(true) }] },
@@ -164,9 +139,9 @@ function Coquille() {
             ? { titre: entreprise.nom, sousTitre: `SMT · ${SECTEURS[entreprise.secteur]} · ${exercice.annee} · ${statut}` }
             : { titre: 'Portefeuille', sousTitre: LIBELLE_ROLE[role] }
         }
-        navStatut={{ label: 'Poste local, sans serveur', couleur: 'warning' }}
+        navStatut={{ label: 'Données de ce poste', couleur: 'warning' }}
         statusGauche={message}
-        statusDroite={`${LIBELLE_ROLE[role]} · Moteur SMT ${VERSION_MOTEUR} · ${MENTION_ETATS}`}
+        statusDroite={LIBELLE_ROLE[role]}
       >
         {/* La clé remonte la page à chaque changement de chemin : le ruban, déclaré au montage, reste juste. */}
         <Switch key={chemin}>

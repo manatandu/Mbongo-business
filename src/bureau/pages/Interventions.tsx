@@ -1,7 +1,5 @@
 /** Journal des interventions de l'assistant et de l'expert, en ajout seulement. */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { db, LIBELLE_ROLE, Fenetre } from '../contexte';
 
 const ACTION = {
@@ -14,7 +12,6 @@ const ACTION = {
 } as const;
 
 export function Interventions() {
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const lignes = useLiveQuery(() => db.interventions.orderBy('le').reverse().toArray(), []) ?? [];
   const entreprises = useLiveQuery(() => db.entreprises.toArray(), []) ?? [];
   const nom = (eid: string | null) => (eid ? (entreprises.find((e) => e.id === eid)?.nom ?? 'dossier retiré') : 'tous les dossiers');

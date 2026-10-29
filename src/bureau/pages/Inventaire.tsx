@@ -8,8 +8,6 @@ import { useParams } from 'wouter';
 import { tracer } from '../../donnees/bureau';
 import { enregistrerInventaire, ErreurSaisie } from '../../donnees/saisie';
 import { fmt, lireMontant } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, db, Fenetre, Message, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 export function Inventaire() {
@@ -19,7 +17,6 @@ export function Inventaire() {
   const lignes = useLiveQuery(() => (c ? db.inventaires.where('exerciceId').equals(c.exercice.id).sortBy('ordre') : []), [c?.exercice.id]) ?? [];
   const [ajout, setAjout] = useState({ designation: '', quantite: '', prix: '' });
   const [erreur, setErreur] = useState('');
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   if (!c) return <Chargement etat={c} />;
   const valide = c.exercice.stockFinal !== null;
   const total = lignes.reduce((s, l) => s + l.montant, 0);

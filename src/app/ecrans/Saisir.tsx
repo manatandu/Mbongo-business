@@ -63,6 +63,8 @@ export function Saisir() {
   const [duree, setDuree] = useState('5');
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [occupe, setOccupe] = useState(false);
+  // Date, détail, facture papier, report du cahier : rarement utiles, repliés par défaut.
+  const [options, setOptions] = useState(false);
 
   useEffect(() => {
     if (taux && !tauxTexte) setTauxTexte(String(taux));
@@ -161,35 +163,35 @@ export function Saisir() {
       <div className="seg" role="group" aria-label={t('nav.saisir')}>
         <button type="button" className="t-in" aria-pressed={type === 'recette'} onClick={() => choisirType('recette')}>
           {t('saisir.recette')}
-          <small>{t('saisir.recetteAide')}</small>
         </button>
         <button type="button" className="t-out" aria-pressed={type === 'depense'} onClick={() => choisirType('depense')}>
           {t('saisir.depense')}
-          <small>{t('saisir.depenseAide')}</small>
         </button>
         <button type="button" aria-pressed={type === 'transfert'} onClick={() => choisirType('transfert')}>
           {t('saisir.transfert')}
-          <small>{t('saisir.transfertAide')}</small>
         </button>
       </div>
 
-      <div className="ligne-montant">
+      <div className={credit ? 'ligne-montant' : ''}>
         <label className="champ">
-          {t('saisir.montant')}
-          <input inputMode="decimal" autoComplete="off" placeholder="0" value={montant} onChange={(e) => setMontant(e.target.value)} aria-invalid={erreurs.includes(t('saisir.erreur.montant'))} />
+          {t('saisir.montant')} ({devise === 'USD' ? '$' : 'FC'})
+          <input
+            className="montant"
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="0"
+            value={montant}
+            onChange={(e) => setMontant(e.target.value)}
+            aria-invalid={erreurs.includes(t('saisir.erreur.montant'))}
+          />
         </label>
-        {credit ? (
+        {credit && (
           <label className="champ">
             {t('saisir.devise')}
             <select value={deviseCredit} onChange={(e) => setDeviseCredit(e.target.value as Devise)}>
               <option value="CDF">FC</option>
-              <option value="USD">$ US</option>
+              <option value="USD">$</option>
             </select>
-          </label>
-        ) : (
-          <label className="champ">
-            {t('saisir.devise')}
-            <input value={devise === 'USD' ? '$ US' : 'FC'} readOnly tabIndex={-1} />
           </label>
         )}
       </div>
@@ -197,11 +199,7 @@ export function Saisir() {
       {creditPossible && (
         <label className="case">
           <input type="checkbox" checked={credit} onChange={(e) => choisirCredit(e.target.checked)} />
-          <span>
-            {t(type === 'recette' ? 'saisir.credit.recette' : 'saisir.credit.depense')}
-            <br />
-            <small className="aide">{t(type === 'recette' ? 'saisir.credit.aide.recette' : 'saisir.credit.aide.depense')}</small>
-          </span>
+          <span>{t(type === 'recette' ? 'saisir.credit.recette' : 'saisir.credit.depense')}</span>
         </label>
       )}
 
@@ -302,42 +300,42 @@ export function Saisir() {
               </label>
             </div>
           )}
-          <p className="aide">{t(nature === 'caution' ? 'saisir.cautionAide' : 'saisir.materielAide')}</p>
         </>
       )}
 
-      <label className="champ">
-        {t('saisir.libelle')}
-        <input value={libelle} onChange={(e) => setLibelle(e.target.value)} placeholder={t(`saisir.libelleAide.${type}` as Cle)} />
-      </label>
-
-      <div className="deux-col">
-        <label className="champ">
-          {t('saisir.date')}
-          <input type="date" value={date} min={exercice.debut} max={exercice.fin} onChange={(e) => setDate(e.target.value)} />
-        </label>
-        {!credit && (
-          <div className="champ">
-            {t('saisir.photo')}
-            <label className="photo-champ">
-              <input type="file" accept="image/*" capture="environment" onChange={(e) => void prendrePhoto(e.target.files?.[0])} />
-              <span className="bouton discret petit">{photo ? t('saisir.photoPrise', { taille: Math.round(photo.size / 1024) }) : t('saisir.photo')}</span>
-            </label>
-          </div>
-        )}
-      </div>
-
-      {!credit && !photo && (
-        <label className="case">
-          <input type="checkbox" checked={papier} onChange={(e) => setPapier(e.target.checked)} />
-          <span>{t('saisir.papier')}</span>
+      {!credit && (
+        <label className="photo-champ">
+          <input type="file" accept="image/*" capture="environment" onChange={(e) => void prendrePhoto(e.target.files?.[0])} />
+          <span className="bouton discret">{photo ? t('saisir.photoPrise', { taille: Math.round(photo.size / 1024) }) : t('saisir.photo')}</span>
         </label>
       )}
-      {!credit && type !== 'transfert' && (nature === 'ventes' || nature === 'achats_marchandises') && (
-        <label className="case">
-          <input type="checkbox" checked={reprise} onChange={(e) => setReprise(e.target.checked)} />
-          <span>{t('saisir.reprise')}</span>
-        </label>
+
+      <button type="button" className="lien-bouton" aria-expanded={options} onClick={() => setOptions(!options)}>
+        {t(options ? 'saisir.moinsOptions' : 'saisir.plusOptions')}
+      </button>
+      {options && (
+        <>
+          <label className="champ">
+            {t('saisir.date')}
+            <input type="date" value={date} min={exercice.debut} max={exercice.fin} onChange={(e) => setDate(e.target.value)} />
+          </label>
+          <label className="champ">
+            {t('saisir.libelle')}
+            <input value={libelle} onChange={(e) => setLibelle(e.target.value)} placeholder={t(`saisir.libelleAide.${type}` as Cle)} />
+          </label>
+          {!credit && !photo && (
+            <label className="case">
+              <input type="checkbox" checked={papier} onChange={(e) => setPapier(e.target.checked)} />
+              <span>{t('saisir.papier')}</span>
+            </label>
+          )}
+          {!credit && type !== 'transfert' && (nature === 'ventes' || nature === 'achats_marchandises') && (
+            <label className="case">
+              <input type="checkbox" checked={reprise} onChange={(e) => setReprise(e.target.checked)} />
+              <span>{t('saisir.reprise')}</span>
+            </label>
+          )}
+        </>
       )}
 
       <Erreurs messages={erreurs} />

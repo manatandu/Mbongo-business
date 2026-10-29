@@ -9,8 +9,6 @@ import { arreterEtats, conditionsArrete, confirmerTaux, definirTauxCloture, rouv
 import { ErreurSaisie } from '../../donnees/saisie';
 import { calculerEtats, centimesEnFrancs, MENTION_ETATS } from '../../moteur';
 import { fmt, fmtDate, fmtMontant, lireTaux } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, dateRefDe, db, Fenetre, Message, Pastille, useBureau, useDossierBureau } from '../contexte';
 import { TablesEtats } from './Etats';
 
@@ -25,7 +23,6 @@ export function Arrete() {
   const [cloture, setCloture] = useState('');
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [integrite, setIntegrite] = useState<Record<string, boolean>>({});
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
 
   const vue = useMemo(() => {
     if (!c) return null;
@@ -37,7 +34,7 @@ export function Arrete() {
   if (role !== 'expert') {
     return (
       <Fenetre titre="Revue et arrêté des états">
-        <Message ton="avert">Écran réservé à l'expert-comptable partenaire : menu Affichage, rôle Expert-comptable.</Message>
+        <Message ton="avert">Écran réservé à l'expert-comptable partenaire : choisissez-le dans le menu Rôle.</Message>
       </Fenetre>
     );
   }

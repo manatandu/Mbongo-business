@@ -5,8 +5,6 @@ import { resumeDossier } from '../../donnees/bureau';
 import { chargerDossier } from '../../donnees/dossier';
 import { exerciceCourant } from '../../donnees/entreprise';
 import { fmt, fmtDate } from '../../ui/format';
-import { IconPhone, IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { db, Fenetre, Pastille, useBureau } from '../contexte';
 
 const SECTEURS = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Services' } as const;
@@ -14,10 +12,6 @@ const SECTEURS = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Service
 export function Portefeuille() {
   const { aujourdhui } = useBureau();
   const [, aller] = useLocation();
-  useRibbon([
-    { titre: 'Dossiers', boutons: [{ label: 'Appli commerçant', Icon: IconPhone, onClick: () => window.open('./index.html', '_blank') }] },
-    { titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] },
-  ]);
 
   const lignes = useLiveQuery(async () => {
     const entreprises = await db.entreprises.toArray();
@@ -52,8 +46,6 @@ export function Portefeuille() {
               <th>Dernière saisie</th>
               <th className="m">Ventes cumulées (FC)</th>
               <th className="m">Résultat provisoire (FC)</th>
-              <th className="m">À traiter</th>
-              <th className="m">À revoir</th>
               <th>État</th>
             </tr>
           </thead>
@@ -76,14 +68,12 @@ export function Portefeuille() {
                 <td className="font-mono">{resume.derniereSaisie ? fmtDate(resume.derniereSaisie) : 'aucune'}</td>
                 <td className="m">{fmt(resume.ventes)}</td>
                 <td className="m">{fmt(resume.resultat)}</td>
-                <td className="m">{resume.aTraiter || ''}</td>
-                <td className="m">{resume.aRevoir || ''}</td>
-                <td className="whitespace-nowrap">{resume.aTraiter ? <Pastille ton="danger">À traiter</Pastille> : resume.aRevoir ? <Pastille ton="avert">À revoir</Pastille> : <Pastille ton="ok">À jour</Pastille>}</td>
+                <td className="whitespace-nowrap">{resume.aTraiter ? <Pastille ton="danger">À traiter ({resume.aTraiter})</Pastille> : resume.aRevoir ? <Pastille ton="avert">À revoir ({resume.aRevoir})</Pastille> : <Pastille ton="ok">À jour</Pastille>}</td>
               </tr>
             ))}
             {lignes && lignes.length === 0 && (
               <tr>
-                <td colSpan={10} className="text-text-dim">
+                <td colSpan={8} className="text-text-dim">
                   Aucun dossier sur ce poste. Ouvrez l'appli du commerçant (menu Fichier) et chargez la démonstration, ou créez une entreprise.
                 </td>
               </tr>

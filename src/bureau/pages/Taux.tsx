@@ -5,8 +5,6 @@ import { saisirTaux } from '../../donnees/bureau';
 import { ecrireReglage, lireReglage } from '../../donnees/reglages';
 import { SEUILS_SMT_FCFA, seuilEnFrancs } from '../../moteur';
 import { fmt, fmtDate, lireTaux } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { db, Fenetre, Message, Pastille, useBureau } from '../contexte';
 
 const SOURCE = { demo: 'Démonstration', assistant: 'Assistant', commercant: 'Commerçant' } as const;
@@ -19,7 +17,6 @@ export function Taux() {
   const [valeur, setValeur] = useState('');
   const [fcfaTexte, setFcfaTexte] = useState('');
   const [erreur, setErreur] = useState('');
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
 
   async function ajouter(e: FormEvent) {
     e.preventDefault();
@@ -91,7 +88,7 @@ export function Taux() {
               <button className="btn btn-principal" type="submit" disabled={role !== 'assistant'}>
                 Enregistrer
               </button>
-              {role !== 'assistant' && <Message ton="avert">Saisie réservée au rôle Assistant (menu Affichage).</Message>}
+              {role !== 'assistant' && <Message ton="avert">Saisie réservée à l'assistant : choisissez « Je suis assistant » dans le menu Rôle.</Message>}
             </div>
           </form>
           <form onSubmit={enregistrerFcfa} className="encart">

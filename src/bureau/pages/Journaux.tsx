@@ -4,8 +4,6 @@ import { useParams } from 'wouter';
 import { COLONNES_DEPENSE, COLONNES_RECETTE, journalMensuel, NATURES } from '../../moteur';
 import { moisEntre } from '../../moteur/dates';
 import { fmtDate, fmtNu } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -29,7 +27,6 @@ export function Journaux() {
   const c = useDossierBureau(id);
   const [compte, setCompte] = useState<string | null>(null);
   const [mois, setMois] = useState<string | null>(null);
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
 
   const tousMois = c ? moisEntre(c.exercice.debut.slice(0, 7), dateRefDe(c, aujourdhui).slice(0, 7)) : [];
   const compteId = compte ?? c?.comptes[0]?.id ?? '';

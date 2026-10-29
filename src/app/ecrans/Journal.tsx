@@ -1,12 +1,12 @@
 /** Journal de trésorerie mensuel, un par compte (modèle note 4). Toucher une ligne ouvre ses actions. */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Fragment, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useParams } from 'wouter';
-import { COLONNES_DEPENSE, COLONNES_RECETTE, journalMensuel } from '../../moteur';
+import { journalMensuel } from '../../moteur';
 import { moisEntre } from '../../moteur/dates';
-import { useLangue, type Cle } from '../../i18n';
+import { useLangue } from '../../i18n';
 import { ajouterPhoto, annulerOperation, ErreurSaisie } from '../../donnees/saisie';
-import { fmtJourMois, fmtNu } from '../../ui/format';
+import { fmtDate, fmtMontant } from '../../ui/format';
 import { Erreurs, Pastille } from '../composants';
 import { compresserPhoto } from '../photo';
 import { db, useDossier } from '../session';
@@ -64,10 +64,6 @@ export function Journal() {
   };
 
   const d = journal.devise;
-  const ventilation = [
-    ...COLONNES_RECETTE.map((k) => ({ cle: `vent.${k}` as Cle, v: journal.ventilation.recettes[k], sens: 'in' })),
-    ...COLONNES_DEPENSE.map((k) => ({ cle: `vent.${k}` as Cle, v: journal.ventilation.depenses[k], sens: 'out' })),
-  ].filter((x) => x.v !== 0);
 
   return (
     <>
@@ -89,115 +85,72 @@ export function Journal() {
         </select>
       </label>
 
-      <div className="doc">
-        <h2>
-          {t('journal.titre')} · {journal.compte.libelle}
-        </h2>
-        <div className="doc-entete">
-          <span>
-            {t('journal.mois')} <b>{nomMois(Number(mois.slice(5, 7)))} {mois.slice(0, 4)}</b>
-          </span>
-          <span>{t('journal.montantsEn', { devise: d === 'USD' ? '$ US' : 'FC' })}</span>
+      <h2 className="titre-section">
+        {journal.compte.libelle} · {nomMois(Number(mois.slice(5, 7)))} {mois.slice(0, 4)}
+      </h2>
+      <Erreurs messages={erreurs} />
+      <div className="kpis" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="kpi">
+          <div className="n">{t('journal.report')}</div>
+          <div className="v">{fmtMontant(journal.reportANouveau, d)}</div>
         </div>
-        <Erreurs messages={erreurs} />
-        <div className="tableau">
-          <table className="journal">
-            <thead>
-              <tr>
-                <th>
-                  {t('journal.date')} · {t('journal.libelle')}
-                </th>
-                <th className="d">{t('journal.recettes')}</th>
-                <th className="d">{t('journal.depenses')}</th>
-                <th className="d">{t('journal.solde')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="sous">
-                <td>{t('journal.report')}</td>
-                <td />
-                <td />
-                <td className="d num">{fmtNu(journal.reportANouveau, d)}</td>
-              </tr>
-              {journal.lignes.map((l) => {
-                const estAnnulee = annulees.has(l.operation);
-                const op = dossier.operations.find((o) => o.id === l.operation);
-                const annulable = !l.annulation && !estAnnulee && op?.nature !== 'cession_materiel';
-                return (
-                  <Fragment key={`${l.operation}-${l.recette}-${l.depense}`}>
-                    <tr className={`cliquable ${estAnnulee ? 'annulee' : ''}`} onClick={() => setOuverte(ouverte === l.operation ? null : l.operation)} aria-expanded={ouverte === l.operation}>
-                      <td className="libelle-journal">
-                        <span className="num date-journal">{fmtJourMois(l.date)}</span>
-                        {l.libelle} {!l.piece && <Pastille ton="warn">{t('journal.sansPiece')}</Pastille>} {l.annulation && <Pastille ton="info">{t('journal.annulation')}</Pastille>}
-                        {estAnnulee && <Pastille ton="info">{t('journal.annulee')}</Pastille>}
-                      </td>
-                      <td className="d num amt-in">{l.recette ? fmtNu(l.recette, d) : ''}</td>
-                      <td className="d num amt-out">{l.depense ? fmtNu(l.depense, d) : ''}</td>
-                      <td className="d num">{fmtNu(l.solde, d)}</td>
-                    </tr>
-                    {ouverte === l.operation && (
-                      <tr>
-                        <td colSpan={4}>
-                          <div className="filtres pas-imprime">
-                            {annulable && (
-                              <button className="bouton danger petit" onClick={() => void annuler(l.operation)}>
-                                {t('journal.annuler')}
-                              </button>
-                            )}
-                            {photoDe(l.operation) ? (
-                              <button className="bouton discret petit" onClick={() => voir(l.operation)}>
-                                {t('journal.voirPhoto')}
-                              </button>
-                            ) : (
-                              <label className="photo-champ">
-                                <input type="file" accept="image/*" capture="environment" onChange={(e) => void photo(l.operation, e.target.files?.[0])} />
-                                <span className="bouton discret petit">{t('journal.ajouterPhoto')}</span>
-                              </label>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                );
-              })}
-              {journal.lignes.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="aide">
-                    {t('journal.vide')}
-                  </td>
-                </tr>
+        <div className="kpi">
+          <div className="n">{t('journal.aReporter')}</div>
+          <div className={`v ${journal.soldeAReporter < 0 ? 'neg' : ''}`}>{fmtMontant(journal.soldeAReporter, d)}</div>
+        </div>
+      </div>
+      <div className="liste">
+        {journal.lignes.map((l) => {
+          const estAnnulee = annulees.has(l.operation);
+          const op = dossier.operations.find((o) => o.id === l.operation);
+          const annulable = !l.annulation && !estAnnulee && op?.nature !== 'cession_materiel';
+          const entree = l.recette - l.depense >= 0;
+          const ouvert = ouverte === l.operation;
+          return (
+            <div key={`${l.operation}-${l.recette}-${l.depense}`} className={`ligne ${estAnnulee ? 'annulee' : ''}`}>
+              <button type="button" className="ligne-bouton" aria-expanded={ouvert} onClick={() => setOuverte(ouvert ? null : l.operation)}>
+                <span className="l">{l.libelle}</span>
+                <span className={`num ${entree ? 'amt-in' : 'amt-out'}`}>
+                  {entree ? '+' : '−'} {fmtMontant(Math.abs(l.recette - l.depense), d)}
+                </span>
+                <span className="meta">
+                  <span>{fmtDate(l.date)}</span>
+                  <span>
+                    {t('journal.solde')} {fmtMontant(l.solde, d)}
+                  </span>
+                  {!l.piece && <Pastille ton="warn">{t('journal.sansPiece')}</Pastille>}
+                  {l.annulation && <Pastille ton="info">{t('journal.annulation')}</Pastille>}
+                  {estAnnulee && <Pastille ton="info">{t('journal.annulee')}</Pastille>}
+                </span>
+              </button>
+              {ouvert && (
+                <div className="actions">
+                  {photoDe(l.operation) ? (
+                    <button className="bouton discret" onClick={() => voir(l.operation)}>
+                      {t('journal.voirPhoto')}
+                    </button>
+                  ) : (
+                    <label className="photo-champ">
+                      <input type="file" accept="image/*" capture="environment" onChange={(e) => void photo(l.operation, e.target.files?.[0])} />
+                      <span className="bouton discret">{t('journal.ajouterPhoto')}</span>
+                    </label>
+                  )}
+                  {annulable && (
+                    <button className="bouton danger" onClick={() => void annuler(l.operation)}>
+                      {t('journal.annuler')}
+                    </button>
+                  )}
+                </div>
               )}
-              <tr className="total">
-                <td>{t('journal.aReporter')}</td>
-                <td className="d num">{fmtNu(journal.totalRecettes, d)}</td>
-                <td className="d num">{fmtNu(journal.totalDepenses, d)}</td>
-                <td className="d num">{fmtNu(journal.soldeAReporter, d)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        {ventilation.length > 0 && (
-          <>
-            <h3>{t('journal.ventilation')}</h3>
-            <div className="tableau">
-              <table>
-                <tbody>
-                  {ventilation.map((x) => (
-                    <tr key={`${x.sens}-${x.cle}`}>
-                      <td>
-                        {x.sens === 'in' ? t('journal.recettes') : t('journal.depenses')} · {t(x.cle)}
-                      </td>
-                      <td className={`d num ${x.sens === 'in' ? 'amt-in' : 'amt-out'}`}>{fmtNu(x.v, d)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
-          </>
+          );
+        })}
+        {journal.lignes.length === 0 && (
+          <div className="ligne">
+            <div className="l aide">{t('journal.vide')}</div>
+          </div>
         )}
       </div>
-      <p className="aide">{t('journal.aide')}</p>
     </>
   );
 }

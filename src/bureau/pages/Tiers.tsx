@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 import { useParams } from 'wouter';
 import { situationTiers, type GenreTiers, type SituationTiers } from '../../moteur';
 import { fmtDate, fmtMontant } from '../../ui/format';
-import { IconPrint } from '../chrome/icons';
-import { useRibbon } from '../chrome/ribbon-context';
 import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
 
 function Tableau({ titre, lignes }: { titre: string; lignes: SituationTiers[] }) {
@@ -56,7 +54,6 @@ export function Tiers() {
   const { id } = useParams<{ id: string }>();
   const { aujourdhui } = useBureau();
   const c = useDossierBureau(id);
-  useRibbon([{ titre: 'Sortie', boutons: [{ label: 'Imprimer', Icon: IconPrint, onClick: () => window.print() }] }]);
   const vue = useMemo(() => {
     if (!c) return null;
     const ref = dateRefDe(c, aujourdhui);

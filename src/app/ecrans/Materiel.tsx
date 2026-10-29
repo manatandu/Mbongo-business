@@ -132,7 +132,6 @@ export function Materiel() {
           </div>
         )}
       </div>
-      <p className="aide">{t('materiel.aide')}</p>
     </>
   );
 }

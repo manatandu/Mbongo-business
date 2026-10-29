@@ -1,8 +1,7 @@
 /** Langue, code d'accès, état des données sur le téléphone, copie de sauvegarde, démonstration. */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { VERSION_MOTEUR } from '../../moteur';
 import { useLangue } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
 import { retirerEntreprise } from '../../donnees/entreprise';
@@ -40,13 +39,8 @@ export function Reglages() {
   const [, aller] = useLocation();
   const [code, setCode] = useState('');
   const [erreurs, setErreurs] = useState<string[]>([]);
-  const [persistant, setPersistant] = useState<boolean | null>(null);
   const aCode = useLiveQuery(() => codeDefini(db), []);
   const nonEnvoyees = useLiveQuery(() => db.operations.where('entrepriseId').equals(entreprise.id).filter((o) => o.envoi === 'local').count(), [entreprise.id]);
-
-  useEffect(() => {
-    void navigator.storage?.persisted?.().then(setPersistant);
-  }, []);
 
   async function enregistrerCode() {
     try {
@@ -101,7 +95,6 @@ export function Reglages() {
       <p className="aide">
         {t('reglages.nonEnvoyees', { n: nonEnvoyees ?? 0 })} {t('reglages.pasDeServeur')}
       </p>
-      {persistant !== null && <p className="aide">{t('reglages.persistant', { etat: t(persistant ? 'reglages.oui' : 'reglages.non') })}</p>}
       <button className="bouton discret" onClick={() => void telechargerCopie(entreprise.id, entreprise.nom, aujourdhui)}>
         {t('reglages.copie')}
       </button>
@@ -132,7 +125,6 @@ export function Reglages() {
           </button>
         </>
       )}
-      <p className="aide">{t('reglages.version', { version: VERSION_MOTEUR })}</p>
     </>
   );
 }

@@ -86,7 +86,7 @@ export function Tiers() {
 
   const situation = useMemo(() => situationTiers(chargement.dossier, genre, dateRef), [chargement.dossier, genre, dateRef]);
   const enCours = situation.filter((s) => s.encours > 0).sort((a, b) => (a.ligne.date < b.ligne.date ? -1 : 1));
-  const soldees = situation.filter((s) => s.soldee).reverse().slice(0, 5);
+  const soldees = situation.filter((s) => s.soldee).reverse().slice(0, 3);
   const totaux = (['CDF', 'USD'] as Devise[]).map((d) => ({ d, v: enCours.filter((s) => s.ligne.devise === d).reduce((x, s) => x + s.encours, 0) })).filter((x) => x.v || x.d === 'CDF');
 
   return (
@@ -153,7 +153,6 @@ export function Tiers() {
           </div>
         </>
       )}
-      <p className="aide">{t(genre === 'creance' ? 'tiers.aide.creance' : 'tiers.aide.dette')}</p>
     </>
   );
 }

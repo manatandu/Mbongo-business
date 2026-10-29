@@ -74,13 +74,6 @@ function CompteDeResultat({ e }: { e: EtatsSMT }) {
           </tbody>
         </table>
       </div>
-      <p className="aide">
-        Variations calculées en N-1 moins N, de sorte que G = C − D + E − F.
-        {r.details.cessions ? ` Dont cessions de matériel : ${fmt(r.details.cessions)}.` : ''}
-        {r.details.gainChange ? ` Dont gain de change : ${fmt(r.details.gainChange)}.` : ''}
-        {r.details.perteChange ? ` Dont perte de change : ${fmt(r.details.perteChange)}.` : ''}
-        {r.details.valeurNetteSorties ? ` F comprend ${fmt(r.details.valeurNetteSorties)} de valeur nette des biens sortis.` : ''}
-      </p>
     </div>
   );
 }
@@ -128,8 +121,7 @@ function Bilan({ e }: { e: EtatsSMT }) {
         </table>
       </div>
       <p className="aide">
-        <span className={`pill ${b.equilibre ? 'ok' : 'bad'}`}>{b.equilibre ? 'Bilan équilibré' : 'Écart à analyser'}</span> Compte exploitant : {fmt(b.compteExploitant.ouverture)} à l'ouverture, plus{' '}
-        {fmt(b.compteExploitant.apports)} d'apports, moins {fmt(b.compteExploitant.prelevements)} de prélèvements.
+        <span className={`pill ${b.equilibre ? 'ok' : 'bad'}`}>{b.equilibre ? 'Bilan équilibré' : 'Écart à analyser'}</span>
       </p>
     </div>
   );
