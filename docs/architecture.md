@@ -112,7 +112,7 @@ Mbongo-business/
 └── site/                        site vitrine statique
 ```
 
-Règle de dépendance, vérifiée par le linter :
+Règle de dépendance, vérifiée par un test automatique :
 
 ```
 moteur  ←  donnees  ←  synchro  ←  app / bureau
@@ -143,6 +143,9 @@ cloturer(dossier, tauxCloture): OuvertureExerciceSuivant
 |---|---|
 | `types.ts` | types du domaine (voir 4.3) |
 | `montants.ts` | entiers, conversion USD → CDF, règle d'arrondi unique |
+| `dates.ts` | dates AAAA-MM-JJ en UTC, sans lecture de l'horloge |
+| `contexte.ts` | index interne d'un dossier (comptes, annulations, taux effectifs) |
+| `validation.ts` | refuse un dossier incohérent avant tout calcul |
 | `natures.ts` | liste fermée des natures SMT et leur place dans les états |
 | `tresorerie.ts` | soldes par compte à une date, journal mensuel (note 4), ventilation |
 | `tiers.ts` | encours des créances et dettes à une date, règlements partiels |
@@ -163,11 +166,10 @@ type Montant = number;                       // entier : FC, ou centimes de doll
 
 interface CompteTresorerie {
   id: string;
-  type: 'caisse' | 'banque' | 'mobile';      // mobile = M-Pesa, Orange Money, Airtel Money
+  type: 'caisse' | 'banque' | 'mobile' | 'tontine'; // mobile = M-Pesa, Orange, Airtel
   libelle: string;
-  devise: Devise;                            // voir décision D3
-  ligneBilan: 'caisse' | 'banque';           // le mobile money va sur la ligne Banque
-}
+  devise: Devise;                            // décision D3
+}                                            // ligne du bilan : Caisse pour une caisse, Banque sinon
 
 interface Operation {
   id: string;                                // UUID créé sur le téléphone
@@ -184,16 +186,14 @@ interface Operation {
   piece: boolean;
   annule?: string;                           // id de l'opération annulée
   reprise?: boolean;                         // report d'un cahier de caisse
-  reglementDe?: { genre: 'creance' | 'dette'; id: string };
+  reglementDe?: { genre: 'creance' | 'dette'; ligne: string };
 }
 
 interface PieceTiers {                       // une créance ou une dette
   id: string; date: DateISO; facture: string; nom: string;
   nature: Nature; montant: Montant; devise: Devise; taux: number | null;
+  regleAvant?: Montant;                      // part réglée avant l'ouverture
 }
-
-interface Reglement { id: string; genre: 'creance' | 'dette'; ligne: string;
-  operation: string; date: DateISO; montant: Montant; }
 
 interface Immobilisation { id: string; date: DateISO; designation: string;
   categorie: 'materiel' | 'mobilier' | 'caution'; montant: Montant; // en FC
@@ -206,10 +206,11 @@ interface DossierExercice {
   comptes: CompteTresorerie[];
   soldesOuverture: Record<string, Montant>;
   operations: Operation[];
-  creances: PieceTiers[]; dettes: PieceTiers[]; reglements: Reglement[];
+  creances: PieceTiers[]; dettes: PieceTiers[];
   immobilisations: Immobilisation[];
   stockInitial: Montant; stockFinal: Montant | null;
-  revisionsTaux: { operation: string; taux: number }[];
+  tauxOuverture: number | null; empruntOuverture: Montant;
+  confirmationsTaux: { operation: string; taux: number }[];
   tauxCloture: number | null;
 }
 ```
@@ -267,7 +268,6 @@ Même modèle côté téléphone (Dexie) et côté serveur (Postgres). Les noms 
 | `soldes_ouverture` | exercice, compte, montant | commerçant (premier exercice), clôture ensuite |
 | `operations` | voir `Operation` + auteur, créé sur l'appareil le, reçu le, `seq` | commerçant seul |
 | `creances`, `dettes` | voir `PieceTiers` + auteur | commerçant seul |
-| `reglements` | genre, ligne, opération, date, montant | commerçant seul |
 | `immobilisations` | voir `Immobilisation` | commerçant (créée aussi par une dépense « matériel ») |
 | `sorties_immobilisations` | immobilisation, date, prix de cession, opération | commerçant |
 | `inventaires` | exercice, date, statut (brouillon, validé), préparé par, validé par | assistant prépare, commerçant valide |
@@ -290,9 +290,9 @@ Même modèle côté téléphone (Dexie) et côté serveur (Postgres). Les noms 
 
 `utilisateurs` (profil lié au compte Auth : nom, téléphone, langue), `affectations` (utilisateur, entreprise, rôle, début, fin), `conventions` (expert, n° d'inscription ONEC, date, objet, document), `abonnements` (entreprise, formule, période, statut), `parametres` (seuils SMT, taux FCFA → CDF, jours fériés).
 
-### 5.4 Pourquoi des règlements séparés
+### 5.4 Règlements partiels
 
-Le prototype marque une créance « payée » d'un coup. Au marché, un client paie souvent en deux ou trois fois. Une table `reglements` gère le paiement partiel, garde l'historique, et évite de modifier la ligne de créance (règle d'ajout seulement). Chaque règlement crée l'opération de trésorerie correspondante dans la même transaction locale. Voir D4.
+Le prototype marque une créance « payée » d'un coup. Au marché, un client paie souvent en deux ou trois fois. Chaque règlement est une opération de trésorerie qui porte la référence de la créance ou de la dette (`reglementDe`). On en saisit autant qu'il faut, sans jamais modifier la ligne de créance (règle d'ajout seulement). L'encours à une date = montant de la facture − règlements effectués jusqu'à cette date. Pour une facture reportée d'un exercice précédent, la part déjà réglée est portée sur la ligne (`regleAvant`). Voir D4.
 
 ### 5.5 Corrections
 
@@ -301,7 +301,7 @@ Une opération fausse n'est jamais modifiée. Le commerçant, ou l'assistant via
 1. une opération d'annulation (`annule = id de l'opération fausse`, même montant, effet inverse) ;
 2. une nouvelle opération juste.
 
-Le moteur ignore la paire « opération + annulation » dans les journaux affichés au commerçant, mais le journal complet, lui, garde tout. Voir D5.
+L'annulation produit son effet à sa propre date, comme une contre-passation : elle apparaît dans le journal du mois où elle est saisie, en négatif dans la même colonne que l'opération d'origine. Un exercice arrêté n'est donc jamais modifié après coup. L'appli pourra masquer au commerçant une paire saisie et annulée le même mois ; le journal complet garde tout. Une cession de matériel ne s'annule pas en v1. Voir D5.
 
 ---
 
@@ -414,7 +414,7 @@ Un bouton « Démonstration » charge le jeu fictif de la boutique Maman Nsimba 
 
 | Besoin | Choix | Raison |
 |---|---|---|
-| interface | React 18 | demandé, connu |
+| interface | React 19 | demandé, version stable actuelle |
 | routage | wouter (2 Ko) | react-router pèse dix fois plus |
 | base locale | Dexie + dexie-react-hooks | l'écran se met à jour seul quand la base change |
 | validation | aucune bibliothèque au départ, fonctions de garde dans `donnees/` | zod ajoute environ 15 Ko ; à revoir si les formulaires se multiplient |
@@ -523,10 +523,10 @@ Budget de l'appli commerçant, compressé :
 
 | Élément | Budget |
 |---|---|
-| React + ReactDOM | ~45 Ko |
+| React + ReactDOM | ~60 Ko |
 | Dexie + hooks | ~30 Ko |
 | moteur + écrans + i18n | ~60 Ko |
-| **premier chargement** | **< 150 Ko**, puis zéro octet de réseau à l'ouverture suivante |
+| **premier chargement** | **< 160 Ko**, puis zéro octet de réseau à l'ouverture suivante |
 | Supabase (chargé après connexion) | ~50 Ko |
 
 Volume : une micro-entreprise saisit de 1 000 à 5 000 opérations par an. Le moteur recalcule tout l'exercice en quelques millisecondes ; pas besoin de cache compliqué. La base locale d'un exercice pèse moins d'un mégaoctet hors photos.
@@ -590,18 +590,20 @@ Règle du dépôt maintenue : tout calcul comptable a son test.
 
 Chaque décision validée est reportée ici avec sa date, puis appliquée.
 
-| N° | Question | Proposition | Statut |
+Toutes retenues le 29 octobre 2026. Les conventions comptables (D1, D2, D3, D6, D9) restent à faire confirmer par l'expert-comptable partenaire avant le pilote ; le moteur les isole pour qu'un changement reste local.
+
+| N° | Question | Décision | Statut |
 |---|---|---|---|
-| D1 | Cessions de matériel | prix de cession en autres recettes (A), valeur nette du bien sorti ajoutée à F ; à faire valider par l'expert | à décider |
-| D2 | Emprunts | natures « emprunt reçu », « remboursement » (hors A et B, ligne Emprunt du bilan) et « intérêts » (dans B) | à décider |
-| D3 | Devises | un compte par devise, réévaluation des soldes en dollars à la clôture, écart en autres recettes ou dépenses | à décider |
-| D4 | Paiements partiels | table `reglements`, plusieurs règlements par créance ou dette | à décider |
-| D5 | Corrections | annulation + nouvelle saisie, jamais de modification | à décider |
-| D6 | Cautions | catégorie de la note 1, non amortie, nature « caution versée » | à décider |
-| D7 | Connexion | démo : téléphone + mot de passe ; pilote : SMS ou WhatsApp, selon le coût | à décider |
-| D8 | Organisation du code | un projet Vite, deux points d'entrée (section 3) | à décider |
-| D9 | Tontines (likelemba) | très courantes à Lingwala ; traitement à définir avec l'expert (épargne versée = transfert vers un compte « tontine » ?) | question ouverte |
-| D10 | Matériel acheté à crédit | interdit en v1 : on saisit à la date de paiement. Sinon la dette fausserait E | à décider |
+| D1 | Cessions de matériel | prix de cession en autres recettes (A), valeur nette du bien sorti ajoutée à F ; pas de dotation l'année de la sortie. Le remboursement d'une caution suit la même règle | retenue |
+| D2 | Emprunts | natures « emprunt reçu » et « remboursement » (hors A et B, ligne Emprunt du bilan), « intérêts » (dans B, ligne Charges d'intérêts) ; remboursement au-delà du capital restant dû refusé ; emprunt en dollars non réévalué en v1 | retenue |
+| D3 | Devises | un compte par devise, journal tenu dans la devise du compte, change = transfert entre deux comptes avec les deux montants réels ; à la clôture, soldes en dollars au taux de clôture, écart net en autres recettes (gain) ou autres dépenses (perte) | retenue |
+| D4 | Paiements partiels | un règlement est une opération qui porte la référence de la créance ou de la dette ; plusieurs règlements possibles, jamais au-delà de l'encours | retenue |
+| D5 | Corrections | annulation par contre-passation à sa propre date (même contenu, effet inverse), puis nouvelle saisie ; jamais de modification | retenue |
+| D6 | Cautions | catégorie « caution » de la note 1, nature « caution versée », non amortie | retenue |
+| D7 | Connexion | démo : téléphone + mot de passe ; pilote : SMS ou WhatsApp, selon le coût | retenue |
+| D8 | Organisation du code | un projet Vite, deux points d'entrée (section 3) | retenue |
+| D9 | Tontines (likelemba) | un compte de trésorerie de type « tontine » ; cotisation = transfert vers ce compte, main reçue = transfert depuis ce compte. Solde présenté sur la ligne Banque (en + ou en −), hors résultat | retenue |
+| D10 | Matériel acheté à crédit | refusé en v1 : le matériel se saisit à la date du paiement. Une dette ne peut porter qu'une nature d'exploitation | retenue |
 
 ---
 
@@ -609,10 +611,10 @@ Chaque décision validée est reportée ici avec sa date, puis appliquée.
 
 Chaque étape se termine par un état de ce qui marche et de ce qui reste. On ne commence pas la suivante avant.
 
-**Étape 1. Moteur SMT et tests**
+**Étape 1. Moteur SMT et tests** · faite le 29 octobre 2026 (116 tests, invariant vérifié sur des centaines de milliers d'exercices aléatoires)
 Livrable : `src/moteur/` complet (sections 4, 9.2, 10.5, 11), jeu du prototype en non-régression, test de propriété sur l'invariant.
 Fini quand : tous les tests passent, le jeu du prototype redonne ses montants, aucune dépendance hors moteur.
-Prérequis : décisions D1 à D6 et D10.
+Prérequis : décisions D1 à D6, D9 et D10 (retenues).
 
 **Étape 2. Appli commerçant hors ligne**
 Livrable : PWA installable, base Dexie, saisie, journaux, clients et fournisseurs, matériel, stock, états, français et lingala, mode démonstration.

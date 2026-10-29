@@ -93,3 +93,18 @@ Compte exploitant d'ouverture = trésorerie d'ouverture + stock initial + créan
 ## 7. Devises
 
 Opérations en USD fréquentes à Kinshasa. Stocker le montant d'origine, la devise et le taux appliqué à la date de l'opération. États présentés en francs congolais. Le taux est saisi par l'assistant et confirmé par l'expert-comptable avant l'arrêté.
+
+## 8. Conventions complémentaires retenues (décisions D1 à D10)
+
+Le modèle SMT ne tranche pas ces cas. Conventions du moteur, à confirmer par l'expert-comptable partenaire avant le pilote. Détail dans `docs/architecture.md`, section 17.
+
+- **Cession de matériel (D1)** : le prix encaissé va dans les autres recettes sur activités (A). La valeur nette du bien sorti s'ajoute à F. Pas de dotation l'année de la sortie. Le remboursement d'une caution suit la même règle (prix = valeur nette, effet nul sur le résultat).
+- **Emprunts (D2)** : l'emprunt reçu et le remboursement du capital ne passent ni dans A ni dans B ; ils mouvementent la ligne Emprunt du bilan. Les intérêts vont dans B, ligne Charges d'intérêts. Le compte exploitant d'ouverture déduit l'emprunt restant dû. Un remboursement supérieur au capital restant dû est refusé. Limite de la v1 : un emprunt en dollars reste valorisé au taux de ses opérations, sans réévaluation (point à voir avec l'expert).
+- **Devises (D3)** : un compte de trésorerie par devise. Chaque opération en dollars compte en francs au taux figé à la saisie, ou au taux confirmé par l'expert. À la clôture, les soldes en dollars sont convertis au taux de clôture ; l'écart net avec leur valeur historique est un gain (autres recettes) ou une perte (autres dépenses). Les créances et dettes en dollars sont présentées au taux de clôture ; D et E reprennent ces valeurs. Un compte en dollars vide vaut zéro franc à toute date : l'écart laissé par un change est acquis tout de suite.
+- **Règlements partiels (D4)** : encours = montant de la facture − règlements effectués à la date considérée.
+- **Corrections (D5)** : contre-passation à la date de l'annulation, jamais de modification.
+- **Cautions (D6)** : note 1, non amorties.
+- **Tontines (D9)** : compte de trésorerie « tontine », présenté sur la ligne Banque, hors résultat.
+- **Matériel à crédit (D10)** : refusé ; une dette ne porte qu'une nature d'exploitation.
+- **Arrondis** : conversion arrondie au franc le plus proche, une fois par opération. Annuité = montant ÷ durée arrondi à l'entier inférieur ; la dernière annuité prend le reste.
+- **Situation en cours d'exercice** : sans inventaire, le stock final est pris égal au stock initial et les états sont marqués provisoires.

@@ -77,6 +77,12 @@ Seuils d'éligibilité (CA HT annuel) : négoce < 60 M FCFA, artisanat < 40 M, s
 - Libellés de l'interface simples, sans jargon pour le commerçant ; vocabulaire SMT exact sur les états.
 - Données de démonstration toujours marquées comme fictives.
 
+## Commandes
+
+- `npm test` : tous les tests (moteur, invariant, pureté). `TIRAGES=10000 npm test` pour un invariant plus poussé.
+- `npm run typage` : vérification TypeScript.
+- `npm run verifier` : les deux, à lancer avant chaque commit.
+
 ## Feuille de route
 
 1. Moteur SMT en TypeScript + tests (repris et durci depuis `prototype/index.html`).

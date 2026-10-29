@@ -1,0 +1,17 @@
+/**
+ * Moteur de calcul du Système minimal de trésorerie (AUDCIF révisé, art. 13 et Titre X).
+ * TypeScript pur : aucune dépendance à l'interface, à la base de données ou à l'horloge.
+ */
+export * from './types';
+export * from './natures';
+export { appliquerTaux, centimesEnFrancs, estMontant, estTaux, versFC } from './montants';
+export { estDateISO } from './dates';
+export { valider, verifierDossier, ErreurDossier } from './validation';
+export { soldesTresorerie, journalMensuel, ligneBilan, type SoldeCompte, type JournalTresorerie, type LigneJournal } from './tresorerie';
+export { situationTiers, encaisser, regler, type SituationTiers, type ParametresReglement } from './tiers';
+export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';
+export { calculerEtats, MENTION_ETATS, type Etats, type CompteDeResultat, type Bilan, type Notes, type LigneNote1 } from './etats';
+export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';
+export { SEUILS_SMT_FCFA, PART_ALERTE_SEUIL, seuilEnFrancs, evaluerSeuil, chiffreAffairesEstime, type NiveauSeuil } from './seuils';
+export { cloturer, dossierSuivant, type OuvertureSuivante } from './cloture';
+export { VERSION_MOTEUR } from './version';
