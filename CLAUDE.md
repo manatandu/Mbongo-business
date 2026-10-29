@@ -105,3 +105,4 @@ Plus tard, seulement s'il y a un pilote : serveur.
 - `docs/cadre-juridique.md` : partage des rôles structure / expert-comptable.
 - `docs/architecture.md` : plan du logiciel, conventions D1 à D10, feuille de route.
 - `docs/soutenance.md` : scénario de démonstration, questions du jury, plan B.
+- `docs/cadre-petites-entreprises.md` : textes OHADA, fiscaux, sociaux et professionnels qui touchent les micro et petites entreprises au SMT, et pistes pour le logiciel.
