@@ -76,7 +76,7 @@ Non. Le commerçant saisit lui-même (il tient sa propre comptabilité). La stru
 Le moteur de calcul est séparé de l'écran et couvert par 149 tests. L'un d'eux tire au hasard des milliers d'exercices complets et vérifie à chaque fois que le bilan s'équilibre au franc près. On ne montre pas qu'il s'équilibre sur un exemple : on montre qu'il ne peut pas être déséquilibré. Le jeu de données du prototype validé redonne exactement ses montants.
 
 **Et si l'entreprise dépasse les seuils du SMT ?**
-Le logiciel compare les ventes au seuil du secteur (60 millions FCFA pour le négoce, environ 240 millions FC au cours BCC de 2026). Il alerte à 80 %, puis au dépassement, et renvoie vers l'expert-comptable pour le passage au Système normal. Il ne gère pas le Système normal.
+Le logiciel compare les ventes au seuil du secteur (240 millions CDF pour le négoce en 2026). Il alerte à 80 %, puis au dépassement, et renvoie vers l'expert-comptable pour le passage au Système normal. Il ne gère pas le Système normal.
 
 **Les dollars ?**
 Un compte par devise : la caisse en dollars se tient en dollars, comme dans le tiroir. Chaque opération garde le taux du jour. À la clôture, un seul taux, celui du 31 décembre. L'écart est un gain ou une perte de change. Cette convention est à faire valider par l'expert partenaire.
@@ -98,7 +98,7 @@ Choix assumé pour la soutenance : pas de serveur, donc pas de panne réseau pos
 - Pas encore de pilote réel : rien n'a été testé par un vrai commerçant.
 - Le lingala est une traduction de travail, à faire relire.
 - Les conventions comptables D1 à D10 (cessions, emprunts, dollars, tontines) sont des choix à faire valider par l'expert-comptable partenaire.
-- L'équivalent FCFA en francs congolais pour le seuil est une valeur indicative.
+- Les seuils en francs congolais sont des équivalents à revoir chaque année.
 
 ---
 

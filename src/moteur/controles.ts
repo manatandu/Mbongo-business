@@ -5,7 +5,7 @@
 import { estAnnuleeAu, preparer, type Contexte } from './contexte';
 import { ajouterJours, jourSemaine, moisDe, moisEntre } from './dates';
 import { calculerSoldes, soldesQuotidiens } from './tresorerie';
-import { chiffreAffairesDepuisContexte, evaluerSeuil } from './seuils';
+import { chiffreAffairesDepuisContexte, evaluerSeuil, type SeuilsSMT } from './seuils';
 import { encoursA, situationDepuisContexte } from './tiers';
 import { verifierDossier } from './validation';
 import type { DateISO, Devise, DossierExercice, Montant, Operation } from './types';
@@ -41,8 +41,8 @@ export interface ParametresControle {
   joursSansVenteMax?: number;
   /** Ancienneté d'une créance avant alerte, en jours. 30 par défaut. */
   ageCreanceMax?: number;
-  /** Francs congolais pour 1 FCFA. Sans lui, le seuil SMT n'est pas contrôlé. */
-  fcfaVersCdf?: number | null;
+  /** Seuils du SMT en francs congolais (AUDCIF, art. 13). Sans eux, le seuil n'est pas contrôlé. */
+  seuilsSMT?: SeuilsSMT | null;
 }
 
 const pluriel = (n: number, mot: string): string => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -135,9 +135,9 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
   }
 
   // Seuil SMT
-  if (p.fcfaVersCdf) {
+  if (p.seuilsSMT) {
     const ca = chiffreAffairesDepuisContexte(ctx, ref);
-    const s = evaluerSeuil(dossier.entreprise.secteur, ca, p.fcfaVersCdf);
+    const s = evaluerSeuil(ca, p.seuilsSMT[dossier.entreprise.secteur]);
     const part = Math.round(s.ratio * 100);
     if (s.niveau === 'depasse') {
       anomalies.push({
@@ -157,11 +157,11 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
   }
 
   // Entreprenant : statut perdu après deux années de suite au-dessus du seuil (AUDCG, art. 30).
-  if (p.fcfaVersCdf && dossier.entreprise.statut === 'entreprenant') {
-    const s = evaluerSeuil(dossier.entreprise.secteur, chiffreAffairesDepuisContexte(ctx, ref), p.fcfaVersCdf);
+  if (p.seuilsSMT && dossier.entreprise.statut === 'entreprenant') {
+    const s = evaluerSeuil(chiffreAffairesDepuisContexte(ctx, ref), p.seuilsSMT[dossier.entreprise.secteur]);
     if (s.niveau === 'depasse') {
       const precedent = dossier.chiffreAffairesPrecedent;
-      const deuxAns = precedent != null && evaluerSeuil(dossier.entreprise.secteur, precedent, p.fcfaVersCdf).niveau === 'depasse';
+      const deuxAns = precedent != null && evaluerSeuil(precedent, s.seuil).niveau === 'depasse';
       anomalies.push(
         deuxAns
           ? {

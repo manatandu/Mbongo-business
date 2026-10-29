@@ -29,7 +29,7 @@ AUDCIF révisé (OHADA, 2017), art. 13 et Titre X. Détail complet dans `docs/re
 
 En bref : comptabilité de trésorerie (recettes / dépenses), un journal par caisse et par banque, journaux de suivi des créances et des dettes, inventaire extra-comptable en fin d'exercice, états = bilan SMT + compte de résultat SMT + notes 1 à 3. Résultat : **G = C − D + E − F**, avec C = A − B.
 
-Seuils d'éligibilité (CA HT annuel) : négoce < 60 M FCFA, artisanat < 40 M, services < 30 M, ou l'équivalent en francs congolais. Au-delà, l'entreprise passe au Système normal chez l'expert-comptable partenaire : le logiciel doit **le détecter et l'alerter**, pas le gérer.
+Seuils d'éligibilité (CA HT annuel), en francs congolais, valeurs 2026 : négoce < 240 M CDF, artisanat < 160 M, services < 120 M. Le logiciel ne manie que le CDF et l'USD. Au-delà, l'entreprise passe au Système normal chez l'expert-comptable partenaire : le logiciel doit **le détecter et l'alerter**, pas le gérer.
 
 ## Utilisateurs et rôles
 

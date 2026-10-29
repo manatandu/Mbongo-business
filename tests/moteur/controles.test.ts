@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { controler, evaluerSeuil, seuilEnFrancs, type CodeAnomalie } from '../../src/moteur';
+import { controler, evaluerSeuil, type CodeAnomalie } from '../../src/moteur';
 import { jeuPrototype } from './jeu-prototype';
 import { dossierDeBase, op } from './outils';
 
@@ -69,19 +69,13 @@ describe('autres contrôles', () => {
 });
 
 describe('seuils du SMT', () => {
-  // Taux fictif pour le test : 4,5 FC pour 1 FCFA.
-  const T = 4.5;
-
-  it('convertit le seuil du secteur en francs congolais', () => {
-    expect(seuilEnFrancs('negoce', T)).toBe(270_000_000);
-    expect(seuilEnFrancs('artisanat', T)).toBe(180_000_000);
-    expect(seuilEnFrancs('services', T)).toBe(135_000_000);
-  });
+  // Seuils fictifs pour le test, en francs congolais.
+  const S = { negoce: 270_000_000, artisanat: 180_000_000, services: 135_000_000 };
 
   it('prévient à 80 % et alerte au-delà du seuil', () => {
-    expect(evaluerSeuil('services', 100_000_000, T).niveau).toBe('sous_le_seuil');
-    expect(evaluerSeuil('services', 120_000_000, T).niveau).toBe('approche');
-    expect(evaluerSeuil('services', 135_000_000, T).niveau).toBe('depasse');
+    expect(evaluerSeuil(100_000_000, S.services).niveau).toBe('sous_le_seuil');
+    expect(evaluerSeuil(120_000_000, S.services).niveau).toBe('approche');
+    expect(evaluerSeuil(135_000_000, S.services).niveau).toBe('depasse');
   });
 
   it("renvoie vers l'expert-comptable quand le seuil est dépassé", () => {
@@ -89,12 +83,12 @@ describe('seuils du SMT', () => {
       entreprise: { nom: 'Salon (fictif)', secteur: 'services' },
       operations: [op({ type: 'recette', nature: 'ventes', montant: 140_000_000 })],
     });
-    const s = controler(d, '2026-06-30', { fcfaVersCdf: T }).find((x) => x.code === 'seuil_smt_depasse');
+    const s = controler(d, '2026-06-30', { seuilsSMT: S }).find((x) => x.code === 'seuil_smt_depasse');
     expect(s?.message).toMatch(/Système normal à voir avec l'expert-comptable partenaire/);
   });
 
   it('ne déclenche rien sur le jeu du prototype', () => {
-    const a = controler(jeuPrototype(), '2026-10-29', { fcfaVersCdf: T });
+    const a = controler(jeuPrototype(), '2026-10-29', { seuilsSMT: S });
     expect(codes(a).filter((c) => c.startsWith('seuil'))).toEqual([]);
   });
 });

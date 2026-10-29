@@ -71,9 +71,9 @@ describe('registre des achats (art. 32)', () => {
 });
 
 describe('seuil de l’entreprenant (art. 30)', () => {
-  // Négoce : 60 M FCFA, soit 300 M FC à 5 FC pour 1 FCFA.
+  const S = { negoce: 300_000_000, artisanat: 200_000_000, services: 150_000_000 };
   const grosseVente = op({ date: '2026-05-01', type: 'recette', nature: 'ventes', montant: 310_000_000 });
-  const codes = (p: Parameters<typeof dossierDeBase>[0]) => controler(dossierDeBase(p), '2026-06-30', { fcfaVersCdf: 5 }).map((a) => a.code);
+  const codes = (p: Parameters<typeof dossierDeBase>[0]) => controler(dossierDeBase(p), '2026-06-30', { seuilsSMT: S }).map((a) => a.code);
 
   it("prévient la première année au-dessus du seuil, sans retirer le statut", () => {
     const c = codes({ entreprise: { nom: 'Fictif', secteur: 'negoce', statut: 'entreprenant' }, operations: [grosseVente] });

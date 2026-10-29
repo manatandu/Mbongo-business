@@ -12,7 +12,7 @@ export { situationTiers, encaisser, regler, type SituationTiers, type Parametres
 export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';
 export { calculerEtats, MENTION_ETATS, type Etats, type CompteDeResultat, type Bilan, type Notes, type LigneNote1 } from './etats';
 export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';
-export { SEUILS_SMT_FCFA, PART_ALERTE_SEUIL, seuilEnFrancs, evaluerSeuil, chiffreAffairesEstime, type NiveauSeuil } from './seuils';
+export { PART_ALERTE_SEUIL, evaluerSeuil, chiffreAffairesEstime, type NiveauSeuil, type SeuilsSMT } from './seuils';
 export { cloturer, dossierSuivant, type OuvertureSuivante } from './cloture';
 export { livreEntreprenant, registreAchats, NATURES_ACHAT, type LivreEntreprenant, type LigneLivre, type RegistreAchats, type LigneAchat, type ModeReglement } from './entreprenant';
 export { VERSION_MOTEUR } from './version';

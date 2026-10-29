@@ -3,33 +3,18 @@
  * Le logiciel alerte ; la bascule au Système normal relève de l'expert-comptable partenaire.
  */
 import { preparer, signe, valeurFC, type Contexte } from './contexte';
-import { appliquerTaux } from './montants';
 import { encoursA, encoursOuverture, valeurTiersFC } from './tiers';
 import type { DateISO, DossierExercice, Montant, SecteurSMT } from './types';
 
-/** Chiffre d'affaires hors taxes annuel maximal, en FCFA. */
-export const SEUILS_SMT_FCFA: Readonly<Record<SecteurSMT, Montant>> = {
-  negoce: 60_000_000,
-  artisanat: 40_000_000,
-  services: 30_000_000,
-};
+/** Chiffre d'affaires hors taxes annuel à ne pas atteindre, en francs congolais, par secteur. */
+export type SeuilsSMT = Readonly<Record<SecteurSMT, Montant>>;
 
 /** Part du seuil à partir de laquelle on prévient. */
 export const PART_ALERTE_SEUIL = 0.8;
 
 export type NiveauSeuil = 'sous_le_seuil' | 'approche' | 'depasse';
 
-/** Seuil du secteur en francs congolais. `fcfaVersCdf` : francs congolais pour 1 FCFA. */
-export function seuilEnFrancs(secteur: SecteurSMT, fcfaVersCdf: number): Montant {
-  return appliquerTaux(SEUILS_SMT_FCFA[secteur], fcfaVersCdf, 1);
-}
-
-export function evaluerSeuil(
-  secteur: SecteurSMT,
-  chiffreAffaires: Montant,
-  fcfaVersCdf: number,
-): { seuil: Montant; ratio: number; niveau: NiveauSeuil } {
-  const seuil = seuilEnFrancs(secteur, fcfaVersCdf);
+export function evaluerSeuil(chiffreAffaires: Montant, seuil: Montant): { seuil: Montant; ratio: number; niveau: NiveauSeuil } {
   const ratio = chiffreAffaires / seuil;
   const niveau: NiveauSeuil = ratio >= 1 ? 'depasse' : ratio >= PART_ALERTE_SEUIL ? 'approche' : 'sous_le_seuil';
   return { seuil, ratio, niveau };

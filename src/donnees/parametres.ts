@@ -1,13 +1,11 @@
 /**
  * Paramètres des contrôles, communs au téléphone et au bureau.
  *
- * Les seuils du SMT sont fixés en FCFA (AUDCIF, art. 13). Pour les comparer aux ventes en francs congolais,
- * il faut un équivalent. Cours de la BCC (skill bcc-banque-centrale-donnees-macro, série cours-de-change) :
- * 100 FCFA = 397,30 FC en moyenne d'août 2026, soit environ 4 FC pour 1 FCFA. Le FCFA suit l'euro, le franc
- * congolais flotte : à revoir chaque année avec l'expert-comptable partenaire.
+ * Seuils d'éligibilité au SMT (AUDCIF, art. 13), en francs congolais : chiffre d'affaires HT annuel par secteur.
+ * Valeurs retenues pour 2026, d'après le cours de la BCC. À revoir chaque année avec l'expert-comptable partenaire.
  */
 import type { ParametresControle } from '../moteur';
 
 export const PARAMETRES_CONTROLE: ParametresControle = {
-  fcfaVersCdf: 4,
+  seuilsSMT: { negoce: 240_000_000, artisanat: 160_000_000, services: 120_000_000 },
 };
