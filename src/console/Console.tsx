@@ -11,6 +11,7 @@ import { etatAbonnement, type EtatAbonnement } from './abonnement';
 import { FicheClient, ListeClients } from './Clients';
 import { Rappels, TableauDeBord } from './Tableau';
 import { sb } from './supabase';
+import symboleTrk from './trk-symbole-negatif.svg';
 
 export const ETAT: Record<EtatAbonnement, { texte: string; ton: 'ok' | 'avert' | 'danger' | 'neutre' }> = {
   aucun: { texte: 'sans abonnement', ton: 'neutre' },
@@ -88,9 +89,7 @@ function Coquille({ session, admin }: { session: Session; admin: boolean | null 
     <div className="min-h-screen flex flex-col">
       <header className="ecran-seul text-chrome-text" style={{ background: 'var(--bandeau)' }}>
         <div className="max-w-[1100px] mx-auto h-12 px-4 flex items-center gap-3">
-          <span className="w-7 h-7 rounded grid place-items-center text-[10px] font-bold text-white" style={{ background: '#0b2a52', boxShadow: 'inset 0 -2px 0 #e0b21b' }} aria-hidden="true">
-            TRK
-          </span>
+          <img src={symboleTrk} alt="" className="w-7 h-7" />
           <a href="#/" className="text-[15px] text-white no-underline">
             <span className="nom-marque">TRK Consulting</span> <span className="text-chrome-text-dim">· Console</span>
           </a>

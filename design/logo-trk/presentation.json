@@ -1,0 +1,31 @@
+{
+  "brand": "TRK Consulting",
+  "tagline": "Assistance comptable et de gestion",
+  "brief": "Société d'assistance comptable et de gestion à Kinshasa pour les micro et petites entreprises au Système minimal de trésorerie de l'OHADA. Détient le logiciel Mbongo Business. Le logo doit inspirer confiance aux banques et rester proche des commerçants.",
+  "adjectives": ["rigueur", "proximité", "transparence", "sérieux"],
+  "criteria": "Reconnaissable à 16 px, en une couleur et en négatif ; sans flèche, ni graphique, ni balance ; aucun code d'ordre professionnel.",
+  "mockups": ["business-card", "signage", "website", "app-icon", "badge", "favicon-tab"],
+  "nav": ["La société", "Missions", "Offres", "Contact"],
+  "brand_color": "#0b2a52",
+  "tile_color": "#0b2a52",
+  "greyscale": false,
+  "designer": "TRK Consulting",
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Compte en T",
+      "symbol": "kit/trk-symbole-couleur.svg",
+      "lockup": "kit/trk-horizontal-couleur.svg",
+      "symbol_on_tile": "kit/trk-symbole-negatif.svg",
+      "lockup_on_dark": "kit/trk-horizontal-negatif.svg",
+      "idea": "Une tuile coupée en trois pavés : l'en-tête et les deux colonnes d'un compte, la page du journal.",
+      "rationale": [
+        "Le compte en T, signe universel de la tenue des comptes, sans cliché de flèche ni de graphique",
+        "L'en-tête or, les colonnes bleu nuit : la rigueur et la valeur, deux couleurs seulement",
+        "Trois pavés et deux joints : net à 16 px, facile à peindre sur une enseigne"
+      ]
+    }
+  ],
+  "recommendation": "Compte en T, en version couleur sur fond clair et en négatif sur bleu nuit.",
+  "next_steps": ["Validation", "Pose sur le site, la console et les documents", "Recherche d'antériorité de marque"]
+}

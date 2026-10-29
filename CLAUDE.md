@@ -104,6 +104,7 @@ Administrateurs TRK : console à part (`src/console/`, trkconsole.web.app) sur l
 ## Références
 
 - `prototype/index.html` : prototype fonctionnel validé (un seul fichier, logique de calcul déjà juste, sert de référence visuelle et métier).
+- `design/logo-trk/` : logo de TRK Consulting (piste « Compte en T »), kit complet dans `kit/` et guide d'usage `kit/GUIDE.md` ; régénérer par `outils/construire_kit.py`.
 - `docs/regles-smt.md` : règles comptables détaillées.
 - `docs/cadre-juridique.md` : partage des rôles structure / expert-comptable.
 - `docs/architecture.md` : plan du logiciel, conventions D1 à D10, feuille de route.
