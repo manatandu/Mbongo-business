@@ -79,3 +79,19 @@ Pour une mise à jour : `git pull`, puis la même commande.
 - Chaque appareil garde ses données. Le bureau en ligne ne voit pas les saisies faites sur un téléphone. Les relier demandera un serveur, prévu seulement pour un pilote.
 - `firebase.json` dit au navigateur de toujours revérifier les pages et le service worker. Sans ça, un téléphone pourrait garder une vieille version.
 - Le plan gratuit de Firebase (Spark) suffit largement.
+
+## Mise en ligne automatique (GitHub)
+
+Le fichier `.github/workflows/mise-en-ligne.yml` refait l'étape 6 tout seul à chaque push sur `main` ou `claude/new-session-e7uycb`. Il lance d'abord les tests ; s'ils échouent, rien n'est publié.
+
+Il lui faut une clé, à créer une seule fois :
+
+1. Console Firebase, projet mbongo, roue dentée, « Paramètres du projet », onglet « Comptes de service ».
+2. « Générer une nouvelle clé privée ». Un fichier `.json` se télécharge.
+3. Sur GitHub, dépôt `mbongo-business`, « Settings », « Secrets and variables », « Actions », « New repository secret ».
+4. Nom : `FIREBASE_SERVICE_ACCOUNT`. Valeur : tout le contenu du fichier `.json` (l'ouvrir avec le Bloc-notes, tout copier).
+5. Enregistrer, puis supprimer le fichier `.json` de l'ordinateur.
+
+Cette clé ouvre le projet Firebase : ne la donner à personne, ne pas la mettre dans le dépôt.
+
+Suivi des mises en ligne : onglet « Actions » du dépôt sur GitHub. Une coche verte : c'est en ligne.

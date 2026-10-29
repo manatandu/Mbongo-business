@@ -1,0 +1,36 @@
+# Remet Mbongo en ligne sur Firebase Hosting à chaque push, si les tests passent.
+# Il faut le secret FIREBASE_SERVICE_ACCOUNT dans le dépôt (voir docs/deploiement.md).
+name: Mise en ligne
+
+on:
+  push:
+    branches: [main, claude/new-session-e7uycb]
+  workflow_dispatch:
+
+concurrency:
+  group: mise-en-ligne
+  cancel-in-progress: true
+
+jobs:
+  firebase:
+    runs-on: ubuntu-latest
+    env:
+      CLE: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verifier
+      - name: Publier sur Firebase
+        if: env.CLE != ''
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: mbongo-8a748
+          channelId: live
+      - name: Secret manquant
+        if: env.CLE == ''
+        run: echo "::warning::Secret FIREBASE_SERVICE_ACCOUNT absent, rien n'a été publié."
