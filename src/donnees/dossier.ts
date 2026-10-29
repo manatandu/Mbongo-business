@@ -49,14 +49,13 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   const id = entreprise.id;
   const { debut, fin } = exercice;
 
-  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, confirmations, pieces] = await Promise.all([
+  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, pieces] = await Promise.all([
     db.comptes.where('entrepriseId').equals(id).sortBy('ordre'),
     db.operations.where('entrepriseId').equals(id).toArray(),
     db.tiers.where('entrepriseId').equals(id).toArray(),
     db.immobilisations.where('entrepriseId').equals(id).toArray(),
     db.sorties.where('entrepriseId').equals(id).toArray(),
     db.inventaires.where('exerciceId').equals(exerciceId).sortBy('ordre'),
-    db.confirmations.where('entrepriseId').equals(id).toArray(),
     db.pieces.where('entrepriseId').equals(id).toArray(),
   ]);
 
@@ -65,7 +64,6 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     .filter((o) => o.date >= debut && o.date <= fin)
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.creeLe < b.creeLe ? -1 : a.creeLe > b.creeLe ? 1 : 0))
     .map((o) => versOperation(o, avecPhoto));
-  const idsDossier = new Set(operations.map((o) => o.id));
 
   // Part déjà réglée, avant l'ouverture, des factures reportées.
   const regleAvant = new Map<string, number>();
@@ -113,7 +111,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     immobilisations,
     stockInitial: exercice.stockInitial,
     stockFinal: exercice.stockFinal,
-    confirmationsTaux: confirmations.filter((c) => idsDossier.has(c.operation)).map((c) => ({ operation: c.operation, taux: c.taux })),
+    // Un seul taux de clôture, saisi au bureau : pas de confirmation opération par opération.
     tauxCloture: exercice.tauxCloture,
   };
   if (inventaire.length) {

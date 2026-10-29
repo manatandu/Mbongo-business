@@ -102,12 +102,6 @@ export interface LigneStock {
   montant: Montant;
 }
 
-/** Taux confirmé (ou corrigé) par l'expert-comptable pour une opération en dollars. */
-export interface ConfirmationTaux {
-  operation: string;
-  taux: number;
-}
-
 /** Tout ce qu'il faut pour calculer les états d'un exercice. */
 export interface DossierExercice {
   entreprise: Entreprise;
@@ -127,6 +121,5 @@ export interface DossierExercice {
   /** Inventaire de fin d'exercice. Null tant qu'il n'est pas fait. */
   stockFinal: Montant | null;
   lignesStock?: LigneStock[];
-  confirmationsTaux: ConfirmationTaux[];
   tauxCloture: number | null;
 }

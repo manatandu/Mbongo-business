@@ -76,7 +76,6 @@ export function dossierSuivant(dossier: DossierExercice): DossierExercice {
     immobilisations: o.immobilisations,
     stockInitial: o.stockInitial,
     stockFinal: null,
-    confirmationsTaux: [],
     tauxCloture: null,
   };
 }

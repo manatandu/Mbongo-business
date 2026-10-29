@@ -18,7 +18,6 @@ export function dossierDeBase(p: Partial<DossierExercice> = {}): DossierExercice
     immobilisations: [],
     stockInitial: 500_000,
     stockFinal: 500_000,
-    confirmationsTaux: [],
     tauxCloture: null,
     ...p,
   };

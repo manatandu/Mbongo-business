@@ -11,7 +11,7 @@ import { db, useDossier } from '../session';
 
 async function telechargerCopie(entrepriseId: string, nom: string, jour: string): Promise<void> {
   const exercices = await db.exercices.where('entrepriseId').equals(entrepriseId).toArray();
-  const parEntreprise = (table: 'comptes' | 'operations' | 'tiers' | 'immobilisations' | 'sorties' | 'confirmations') => db.table(table).where('entrepriseId').equals(entrepriseId).toArray();
+  const parEntreprise = (table: 'comptes' | 'operations' | 'tiers' | 'immobilisations' | 'sorties') => db.table(table).where('entrepriseId').equals(entrepriseId).toArray();
   const copie = {
     format: 'mbongo-copie-1',
     creeLe: new Date().toISOString(),
@@ -22,7 +22,6 @@ async function telechargerCopie(entrepriseId: string, nom: string, jour: string)
     tiers: await parEntreprise('tiers'),
     immobilisations: await parEntreprise('immobilisations'),
     sorties: await parEntreprise('sorties'),
-    confirmations: await parEntreprise('confirmations'),
     inventaires: await db.inventaires.where('exerciceId').anyOf(exercices.map((e) => e.id)).toArray(),
   };
   const url = URL.createObjectURL(new Blob([JSON.stringify(copie, null, 1)], { type: 'application/json' }));

@@ -39,7 +39,7 @@ describe('jeu de démonstration', () => {
 
   it('montre au moins une créance ancienne et des opérations sans pièce, pour la démonstration des contrôles', () => {
     const codes = controler(creerJeuDemo('2027-05-20', compteur()).dossier, '2027-05-20').map((x) => x.code);
-    expect(codes).toEqual(expect.arrayContaining(['creance_ancienne', 'sans_piece', 'taux_a_confirmer']));
+    expect(codes).toEqual(expect.arrayContaining(['creance_ancienne', 'sans_piece']));
   });
 
   it('se présente comme fictive', () => {

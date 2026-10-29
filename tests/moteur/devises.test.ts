@@ -38,12 +38,6 @@ describe('opération en dollars', () => {
     expect(e.compteDeResultat.recettesVentes).toBe(560_000 + 290_000);
   });
 
-  it("applique le taux confirmé par l'expert sans toucher à l'opération d'origine", () => {
-    const d = dossierDeBase({ comptes, operations: [vente], confirmationsTaux: [{ operation: 'v1', taux: 2850 }] });
-    expect(calculerEtats(d, { auDate: '2026-06-30' }).compteDeResultat.recettesVentes).toBe(570_000);
-    expect(d.operations[0]?.taux).toBe(2800);
-  });
-
   it('refuse une opération en dollars sans taux', () => {
     const d = dossierDeBase({ comptes, operations: [{ ...vente, taux: null }] });
     expect(valider(d).join(' ')).toMatch(/en dollars : taux manquant/);

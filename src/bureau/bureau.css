@@ -1,21 +1,7 @@
 /* ---------------------------------------------------------------------------
-   BUREAU DE MBONGO · poste de travail de l'assistant et de l'expert-comptable.
-
-   Point de départ : le kit de design « logiciel de gestion » tiré de l'interface
-   d'OmegaX (même éditeur). On en garde la méthode, pas l'habit :
-
-   GARDÉ  · la structure des logiciels de gestion que les comptables de Kinshasa
-            connaissent (barre de titre, menus, barre d'outils, fenêtre active,
-            barre d'état) ; la densité (12 px, chiffres alignés) ; trois boutons,
-            trois ombres ; des grilles blanches à en-tête plein, sans zébrure ;
-            des animations courtes qui expliquent, coupées sous mouvement réduit.
-   CHANGÉ · les couleurs : le bleu et le jaune de Mbongo, contrastes REMESURÉS
-            (tableau dans docs/architecture.md, § 8.5) ; la police : celle du
-            système seulement. Les postes des structures d'accompagnement sont
-            souvent modestes et la connexion se paie au mégaoctet : pas de police
-            à télécharger, pas d'effet coûteux (flou, dégradés en plein écran).
-   RETIRÉ · tout ce qui sert OmegaX et pas Mbongo (tuiles d'accueil, fiches
-            d'imputation, éditions de structures, sous-menus, calculette).
+   BUREAU DE MBONGO · trois écrans pour l'assistant et l'expert-comptable.
+   Habillage sobre : le bleu et le jaune de Mbongo, la police du système,
+   des tableaux lisibles. Contrastes mesurés (docs/architecture.md, § 8.4).
    --------------------------------------------------------------------------- */
 
 @tailwind base;
@@ -23,53 +9,36 @@
 @tailwind utilities;
 
 :root {
-  /* Neutres · gris légèrement bleutés, accordés à l'encre. */
-  --n-0: #ffffff;
   --n-50: #f5f7fa;
   --n-100: #e9eef4;
   --n-150: #dfe5ec;
-  --n-200: #d2dae4;
-  --n-300: #b2bdcb;
-  --n-400: #8796a8;
+  /* Bord des champs et des boutons : 3,47:1 sur blanc, assez pour être vu. */
+  --n-400: #7d8b9d;
   --n-500: #536275;
-  --n-700: #3a4555;
   --n-900: #121a24;
 
-  /* Accent · échelle du bleu de Mbongo (le bleu ciel du drapeau, assombri pour l'écran de travail). */
+  /* Le bleu de Mbongo et l'étoile jaune (en filet seulement, jamais en fond de texte). */
   --a-50: #edf4fc;
-  --a-100: #dbe9fa;
   --a-200: #bcd5f2;
   --a-500: #2472cf;
   --a-600: #0b5fb8;
   --a-700: #0a4d96;
-  --a-800: #0b3e78;
-  /* L'encre · bandeau, barre de navigation, barres de titre des fenêtres. */
   --a-900: #0b2a52;
-  /* L'étoile · le jaune du drapeau, en filet seulement, jamais en fond de texte. */
   --etoile: #f2c200;
+  --bandeau: var(--a-900);
 
-  --chrome: var(--n-50);
-  --chrome-alt: var(--n-100);
-  --chrome-border: var(--n-200);
   --chrome-text: #e9f1fb;
   --chrome-text-dim: #a8c0de;
-
-  --bg: #e9eef4;
-  --mica: #e3e9f0;
-  /* Fond de fenêtre : différent du blanc des grilles et du bleu-gris du bureau. */
-  --fenetre: #f5f7fa;
-  --bandeau: var(--a-900);
-  --bandeau-survol: var(--a-800);
-  --surface: var(--n-0);
+  --surface: #ffffff;
   --surface-alt: var(--n-50);
   --border: var(--n-150);
-  --border-dark: var(--n-300);
+  --border-dark: var(--n-400);
   --text: var(--n-900);
   --text-dim: var(--n-500);
   --sel: var(--a-600);
   --sel-soft: var(--a-50);
 
-  /* Signaux · vert, ocre, rouge ne servent qu'à dire quelque chose, jamais à décorer. */
+  /* Vert, ocre, rouge ne servent qu'à dire quelque chose. */
   --positive: #0e7049;
   --positive-soft: #e4f6ed;
   --warning: #8e5406;
@@ -77,18 +46,13 @@
   --danger: #b52e26;
   --danger-soft: #fde9e7;
 
-  /* Canaux des couleurs, pour l'opacité des utilitaires (`border-danger/30`) : une variable ne se décompose pas. */
-  --chrome-rgb: 245 247 250;
-  --mica-rgb: 227 233 240;
-  --chrome-alt-rgb: 233 238 244;
-  --chrome-border-rgb: 210 218 228;
+  /* Canaux des couleurs, pour l'opacité des utilitaires (`border-danger/30`). */
   --chrome-text-rgb: 233 241 251;
   --chrome-text-dim-rgb: 168 192 222;
-  --bg-rgb: 233 238 244;
   --surface-rgb: 255 255 255;
   --surface-alt-rgb: 245 247 250;
   --border-rgb: 223 229 236;
-  --border-dark-rgb: 178 189 203;
+  --border-dark-rgb: 125 139 157;
   --text-rgb: 18 26 36;
   --text-dim-rgb: 83 98 117;
   --sel-rgb: 11 95 184;
@@ -100,125 +64,39 @@
   --danger-rgb: 181 46 38;
   --danger-soft-rgb: 253 233 231;
 
-  /* Élévation · trois niveaux, jamais plus : posé, flottant, dominant. */
   --ombre-plate: 0 1px 1px rgba(11, 42, 82, 0.05);
-  --ombre-posee: 0 0 0 1px rgba(11, 42, 82, 0.05), 0 1px 2px rgba(11, 42, 82, 0.06), 0 4px 12px -4px rgba(11, 42, 82, 0.1);
-  --ombre-flottante: 0 0 0 1px rgba(11, 42, 82, 0.07), 0 8px 16px -6px rgba(11, 42, 82, 0.14), 0 20px 40px -12px rgba(11, 42, 82, 0.2);
-  --ombre-dominante: 0 0 0 1px rgba(11, 42, 82, 0.09), 0 24px 48px -12px rgba(11, 42, 82, 0.3);
-
-  /* Anneau de focus · contraste non textuel d'au moins 3:1 (accent à 75 %). */
-  --anneau-focus: 0 0 0 3px color-mix(in srgb, var(--sel) 75%, transparent);
-
-  /* Courbes · une seule famille pour tout le bureau. */
-  --t-sortie: cubic-bezier(0.16, 1, 0.3, 1);
-  --t-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --t-doux: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* {
-  box-sizing: border-box;
-}
-html,
-body,
-#bureau {
-  height: 100%;
-}
 body {
   margin: 0;
-  /* La police du système : Segoe UI sous Windows, celle du téléphone ailleurs. Rien à télécharger. */
-  font-family: 'Segoe UI Variable Text', 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Roboto, Arial, sans-serif;
-  /* 13 px : un cran au-dessus du kit, pour des écrans modestes et tous les yeux. */
-  font-size: 13px;
-  line-height: 1.4;
+  /* La police du système : rien à télécharger. */
+  font-family: 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
   color: var(--text);
-  /* Un aplat léger plutôt que des halos : moins de travail pour une carte graphique modeste. */
-  background: linear-gradient(178deg, var(--n-50) 0%, var(--n-100) 100%) fixed;
-  -webkit-font-smoothing: antialiased;
-  /* Les chiffres s'alignent colonne par colonne, même en police proportionnelle. */
+  background: var(--n-100);
+  /* Les chiffres s'alignent colonne par colonne. */
   font-variant-numeric: tabular-nums;
 }
 
-/* Le filet de clôture : le trait qu'on tire sous une colonne pour la clore. Seul ornement du bureau. */
-.filet-cloture {
-  height: 1px;
-  border: 0;
-  background: linear-gradient(
-    to right,
-    currentColor 0,
-    currentColor calc(50% - min(12px, 6.65%)),
-    transparent calc(50% - min(12px, 6.65%)),
-    transparent calc(50% + min(12px, 6.65%)),
-    currentColor calc(50% + min(12px, 6.65%)),
-    currentColor 100%
-  );
-  opacity: 0.28;
-}
-
-/* 4 px pour les contrôles, 8 px pour les surfaces. */
 button,
 input,
-select,
-textarea {
+select {
   font-family: inherit;
-  font-variant-numeric: inherit;
   border-radius: 4px;
 }
-/* Champ au repos : filet plus sombre dessous ; au focus : trait d'accent. */
-:is(input, select, textarea).border-border {
-  border-bottom-color: var(--n-400);
-}
-input[type='checkbox'],
-input[type='radio'] {
-  accent-color: var(--sel);
-}
 
-/* Finitions par défaut dans la zone de travail, de spécificité nulle : une classe de l'écran l'emporte toujours. */
-:where(main section.border, main div.border.bg-surface) {
-  border-radius: 8px;
-}
-:where(main button.border:not(.bg-sel)) {
-  background-color: var(--surface);
-}
-:where(main button.border:not(.bg-sel):not(:disabled):hover) {
-  background-color: var(--chrome-alt);
-  border-color: var(--border-dark);
-}
-
-/* Grilles · une seule façon pour tout le bureau : blanche, en-tête plein, filets entre les lignes, pas de zébrure. */
-main table {
-  font-variant-numeric: tabular-nums;
-  background-color: var(--surface);
-  border-collapse: collapse;
-}
-main table thead th {
-  background-color: var(--a-700) !important;
-  color: #ffffff !important;
-  font-size: 12.5px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  vertical-align: bottom;
-}
-main table thead th + th {
-  border-left: 1px solid color-mix(in srgb, #ffffff 18%, transparent);
-}
-main table tbody td {
-  border-bottom: 1px solid var(--border);
-}
-:where(main tbody tr:hover) {
-  background-color: color-mix(in srgb, var(--sel) 7%, transparent);
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
 }
 
 @layer components {
-  .shadow-posee,
-  .shadow-flottante {
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  /* Boutons · trois registres, pas un de plus. */
   .btn {
-    @apply inline-flex items-center justify-center gap-1.5 px-3 h-[32px] text-[13px] font-semibold;
+    @apply inline-flex items-center justify-center gap-1.5 px-3 h-[34px] text-[14px] font-semibold;
     border-radius: 6px;
     border: 1px solid transparent;
     white-space: nowrap;
@@ -227,69 +105,56 @@ main table tbody td {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  /* Le geste principal de l'écran, en pilule. Le survol fonce : le blanc reste au-dessus de 4,5:1. */
   .btn-principal {
-    background: linear-gradient(180deg, var(--a-500), var(--a-600));
+    background: var(--a-600);
     color: #fff;
-    border-radius: 999px;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 1px 2px rgba(11, 42, 82, 0.18);
   }
   .btn-principal:hover:not(:disabled) {
-    background: linear-gradient(180deg, var(--a-600), var(--a-700));
+    background: var(--a-700);
   }
   .btn-neutre {
     background: var(--surface);
-    border-color: var(--border);
+    border-color: var(--border-dark);
     color: var(--text);
-    box-shadow: var(--ombre-plate);
   }
   .btn-neutre:hover:not(:disabled) {
     background: var(--surface-alt);
-    border-color: var(--border-dark);
-  }
-  .btn-fantome {
-    background: transparent;
-    color: var(--text-dim);
-  }
-  .btn-fantome:hover:not(:disabled) {
-    background: var(--n-100);
-    color: var(--text);
   }
 
-  /* Onglets · le trait actif glisse au lieu de sauter. */
   .onglet {
-    @apply relative px-3 py-1.5 text-[12px] font-semibold;
+    @apply px-3 py-2 text-[14px] font-semibold;
     color: var(--text-dim);
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
   }
   .onglet:hover {
     color: var(--text);
   }
   .onglet-actif {
     color: var(--sel);
-  }
-  .onglet-actif::after {
-    content: '';
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: -1px;
-    height: 2px;
-    border-radius: 2px 2px 0 0;
-    background: var(--sel);
-    animation: trait-onglet 0.24s var(--t-sortie) both;
+    border-bottom-color: var(--sel);
   }
 
-  /* Raccourcis des écrans du bureau. */
+  /* Tableaux : blancs, en-tête bleu, filets entre les lignes. */
   .grille {
-    @apply w-full text-left text-[13px];
+    @apply w-full text-left text-[14px];
+    background: var(--surface);
+    border-collapse: collapse;
   }
   .grille th {
-    @apply px-2 py-1.5 whitespace-nowrap;
+    @apply px-2 py-1.5 whitespace-nowrap font-semibold;
+    background: var(--a-700);
+    color: #fff;
   }
   .grille td {
     @apply px-2 py-1 align-top;
+    border-bottom: 1px solid var(--border);
+  }
+  .grille tbody tr:hover {
+    background: var(--a-50);
   }
   .grille .m {
     @apply text-right whitespace-nowrap;
@@ -297,207 +162,39 @@ main table tbody td {
   .grille tr.total td {
     font-weight: 600;
     color: var(--a-900);
-    background-color: var(--a-50);
+    background: var(--a-50);
     border-top: 1px solid var(--a-200);
   }
   .grille tr.resultat td {
     font-weight: 600;
     color: #fff;
-    background-color: var(--a-700);
+    background: var(--a-700);
   }
+
   .champ {
-    @apply border border-border bg-surface px-2 h-[30px] text-[13px];
+    @apply border px-2 h-[34px] text-[14px];
+    background: var(--surface);
+    border-color: var(--border-dark);
   }
   .libelle {
-    @apply block text-[13px] mb-1;
+    @apply block text-[14px] mb-1;
   }
   .pastille {
-    @apply inline-block px-1.5 py-px rounded text-[12px] font-semibold border whitespace-nowrap;
+    @apply inline-block px-1.5 py-px rounded text-[13px] font-semibold border whitespace-nowrap;
   }
   .encart {
-    @apply bg-surface border border-border rounded-lg;
+    @apply border rounded-lg;
+    background: var(--surface);
+    border-color: var(--border);
     box-shadow: var(--ombre-plate);
   }
   .encart-titre {
-    @apply px-3 py-2 text-[13px] font-semibold flex items-center justify-between gap-2 border-b border-border;
+    @apply px-3 py-2 flex items-center justify-between gap-2 border-b;
+    border-color: var(--border);
   }
 }
 
-/* Transitions courtes et uniformes. */
-button,
-a,
-input,
-select,
-textarea {
-  transition:
-    background-color 0.14s var(--t-doux),
-    border-color 0.14s var(--t-doux),
-    color 0.14s var(--t-doux),
-    box-shadow 0.18s var(--t-doux),
-    transform 0.1s var(--t-ressort);
-}
-button:active:not(:disabled) {
-  transform: scale(0.975);
-}
-
-/* Focus · trait d'accent sous un champ, anneau net autour d'un bouton ou d'un lien. */
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: none;
-  border-bottom-color: var(--sel);
-  box-shadow: inset 0 -1px 0 var(--sel);
-}
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 1px;
-  box-shadow: 0 0 0 1px #fff;
-}
-
-/* Barres de défilement fines. */
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-thumb {
-  background: var(--n-300);
-  border-radius: 999px;
-  border: 3.5px solid transparent;
-  background-clip: content-box;
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: var(--n-400);
-  background-clip: content-box;
-}
-
-/* Animations · chacune répond à une question ; 120 à 280 ms ; transform et opacité seulement. */
-/* « D'où vient cette fenêtre ? » */
-@keyframes fenetre-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-/* « Ce menu sort d'où ? » */
-@keyframes menu-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -6px, 0) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes modale-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes voile-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes trait-onglet {
-  from {
-    transform: scaleX(0.3);
-    opacity: 0;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
-}
-/* « Qu'est-ce qui vient d'arriver ? » : un message, une ligne. */
-@keyframes alerte-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -8px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-/* « Où en est le chargement ? » : un reflet passe sur la forme du contenu attendu. */
-@keyframes scintille {
-  from {
-    background-position: -180% 0;
-  }
-  to {
-    background-position: 180% 0;
-  }
-}
-.anim-fenetre {
-  animation: fenetre-in 0.28s var(--t-sortie) both;
-}
-.anim-menu {
-  animation: menu-in 0.15s var(--t-sortie) both;
-  transform-origin: top center;
-}
-.anim-modale {
-  animation: modale-in 0.24s var(--t-sortie) both;
-  border-radius: 8px;
-}
-.anim-voile {
-  animation: voile-in 0.18s var(--t-doux) both;
-}
-.anim-alerte {
-  animation: alerte-in 0.2s var(--t-sortie) both;
-}
-/* Menus et bulles d'aide : fond plein, ombre flottante. */
-.panneau-menu {
-  background: var(--surface);
-  box-shadow: var(--ombre-flottante);
-}
-/* Une modale bornée à l'écran, centrée sans jamais sortir par le haut. */
-.modale-bornee {
-  max-height: calc(100vh - 2rem);
-  max-height: calc(100dvh - 2rem);
-}
-.voile-centre-sur {
-  align-items: flex-start;
-  overflow-y: auto;
-}
-.voile-centre-sur > * {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-.squelette {
-  background: linear-gradient(100deg, var(--n-100) 30%, var(--n-50) 46%, var(--n-100) 62%);
-  background-size: 220% 100%;
-  animation: scintille 1.4s linear infinite;
-  border-radius: 6px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-  button:active:not(:disabled) {
-    transform: none;
-  }
-}
-
-/* Impression · seule la fenêtre de travail part sur le papier, sans encre gaspillée. */
+/* Impression : seuls les états partent sur le papier. */
 @media print {
   @page {
     size: A4;
@@ -507,19 +204,19 @@ a:focus-visible {
     background: #fff;
   }
   .ecran-seul,
-  button[aria-label^='Aide'] {
+  button,
+  [role='tablist'] {
     display: none !important;
   }
   main {
     padding: 0 !important;
-    overflow: visible !important;
   }
-  .shadow-posee,
-  .shadow-flottante,
   .encart {
     box-shadow: none !important;
   }
-  main table thead th {
+  .grille th,
+  .grille tr.total td,
+  .grille tr.resultat td {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

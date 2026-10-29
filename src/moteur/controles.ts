@@ -20,7 +20,6 @@ export type CodeAnomalie =
   | 'creance_ancienne'
   | 'seuil_smt_approche'
   | 'seuil_smt_depasse'
-  | 'taux_a_confirmer'
   | 'mois_sans_saisie'
   | 'stock_non_inventorie'
   | 'taux_cloture_manquant';
@@ -153,23 +152,6 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
         references: [],
       });
     }
-  }
-
-  // Taux de change non confirmés par l'expert
-  const aConfirmer = ops.filter((o) => {
-    if (!vivante(ctx, o, ref) || ctx.confirmations.has(o.id)) return false;
-    const source = ctx.comptes.get(o.compte);
-    const dest = o.compteDestination ? ctx.comptes.get(o.compteDestination) : undefined;
-    if (o.type !== 'transfert') return source?.devise === 'USD';
-    return source?.devise === 'USD' && dest?.devise === 'USD';
-  });
-  if (aConfirmer.length) {
-    anomalies.push({
-      code: 'taux_a_confirmer',
-      niveau: 'information',
-      message: `${pluriel(aConfirmer.length, 'opération')} en dollars dont le taux reste à confirmer par l'expert-comptable avant l'arrêté.`,
-      references: aConfirmer.map((o) => o.id),
-    });
   }
 
   // Mois écoulés sans aucune saisie

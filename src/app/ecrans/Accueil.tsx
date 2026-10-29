@@ -2,6 +2,7 @@
 import { useMemo } from 'react';
 import { Link } from 'wouter';
 import { calculerEtats, centimesEnFrancs, controler, soldesTresorerie, versFC, type CodeAnomalie, type Nature, type Operation } from '../../moteur';
+import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
 import { useLangue, type Cle } from '../../i18n';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { useDossier } from '../session';
@@ -37,7 +38,7 @@ export function Accueil() {
     const entre = duMois.filter((o) => o.type === 'recette').reduce((s, o) => s + valeur(o), 0);
     const sorti = duMois.filter((o) => o.type === 'depense').reduce((s, o) => s + valeur(o), 0);
     // Les plus urgentes d'abord, deux au plus : au-delà, plus personne ne les lit.
-    const anomalies = controler(dossier, dateRef)
+    const anomalies = controler(dossier, dateRef, PARAMETRES_CONTROLE)
       .filter((a) => a.niveau !== 'information' && ALERTES[a.code])
       .sort((a, b) => (a.niveau === b.niveau ? 0 : a.niveau === 'a_traiter' ? -1 : 1))
       .slice(0, 2);

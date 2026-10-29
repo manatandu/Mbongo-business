@@ -24,7 +24,7 @@ Fondement : loi n° 15/002 du 12 février 2015 portant création et organisation
 | fournit l'outil avec lequel le commerçant tient lui-même ses comptes | tenue déléguée, sur demande du client |
 | forme et accompagne le chef d'entreprise | conseil comptable |
 | contrôle les saisies, réclame les pièces, relance | avis et assistance fiscaux, déclarations |
-| prépare l'inventaire de fin d'exercice et les états | arrêté des états, certification si requise |
+| aide le commerçant à faire son inventaire ; le logiciel prépare les états | arrêté des états, certification si requise |
 | produit des tableaux de bord de gestion | bascule au Système normal au-delà des seuils SMT |
 
-Règle d'interface : l'assistant n'a pas de droit d'écriture sur les opérations du commerçant. Il commente, signale, propose une correction que le commerçant valide.
+Règle d'interface : le bureau n'a aucun moyen d'écrire dans les saisies du commerçant. L'assistant signale ce qui cloche ; le commerçant corrige depuis son téléphone. Seul l'expert-comptable partenaire arrête les états.

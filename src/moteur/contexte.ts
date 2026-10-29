@@ -13,7 +13,6 @@ export interface Contexte {
   parId: Map<string, Operation>;
   /** Opération annulée → son annulation. */
   annulations: Map<string, Operation>;
-  confirmations: Map<string, number>;
 }
 
 export function preparer(dossier: DossierExercice): Contexte {
@@ -26,7 +25,6 @@ export function preparer(dossier: DossierExercice): Contexte {
     operations,
     parId: new Map(operations.map((o) => [o.id, o])),
     annulations,
-    confirmations: new Map(dossier.confirmationsTaux.map((c) => [c.operation, c.taux])),
   };
 }
 
@@ -45,9 +43,9 @@ export function estAnnuleeAu(ctx: Contexte, id: string, date: DateISO): boolean 
   return a !== undefined && a.date <= date;
 }
 
-/** Taux confirmé par l'expert s'il existe, sinon taux de la saisie. Une annulation suit son original. */
+/** Taux figé à la saisie. Une annulation suit son original. */
 export function tauxEffectif(ctx: Contexte, op: Operation): number | null {
-  return ctx.confirmations.get(op.annule ?? op.id) ?? op.taux;
+  return op.annule ? (ctx.parId.get(op.annule)?.taux ?? op.taux) : op.taux;
 }
 
 /** Montant crédité sur le compte de destination d'un transfert. */

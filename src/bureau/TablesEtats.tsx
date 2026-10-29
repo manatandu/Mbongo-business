@@ -1,9 +1,7 @@
-/** États SMT préparés : compte de résultat, bilan, notes 1 à 3. */
-import { useMemo, useState } from 'react';
-import { useParams } from 'wouter';
-import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteur';
-import { fmt, fmtDate } from '../../ui/format';
-import { Chargement, dateRefDe, Fenetre, Pastille, useBureau, useDossierBureau } from '../contexte';
+/** Tableaux des états SMT : compte de résultat, bilan, notes 2 et 3. Vocabulaire exact du modèle AUDCIF. */
+import type { Etats as EtatsSMT, Montant } from '../moteur';
+import { fmt } from '../ui/format';
+import { Pastille } from './ui';
 
 const L = ({ l, n, v, c }: { l: string; n?: string; v: Montant; c?: string }) => (
   <tr className={c}>
@@ -123,28 +121,5 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
         </div>
       </div>
     </div>
-  );
-}
-
-export function Etats() {
-  const { id } = useParams<{ id: string }>();
-  const { aujourdhui } = useBureau();
-  const c = useDossierBureau(id);
-  const [aLaCloture, setALaCloture] = useState(false);
-  const e = useMemo(() => (c ? calculerEtats(c.dossier, aLaCloture ? {} : { auDate: dateRefDe(c, aujourdhui) }) : null), [c, aujourdhui, aLaCloture]);
-  if (!c || !e) return <Chargement etat={c} />;
-  return (
-    <Fenetre titre="États SMT" sousTitre={`${c.entreprise.nom} · NIF ${c.entreprise.nif || 'néant'} · ${e.provisoire ? `situation provisoire au ${fmtDate(e.auDate)}` : 'états définitifs'}`}>
-      <div className="flex items-center gap-3 text-[12px]">
-        <label className="flex items-center gap-1.5">
-          <input type="checkbox" checked={aLaCloture} onChange={(x) => setALaCloture(x.target.checked)} />
-          Voir au 31 décembre
-        </label>
-        {c.exercice.statut === 'arrete' ? <Pastille ton="ok">Arrêtés par l'expert</Pastille> : <Pastille ton="avert">En attente d'arrêté</Pastille>}
-      </div>
-      <TablesEtats e={e} />
-      <hr className="filet-cloture w-full text-text" />
-      <p className="m-0 text-[12px] font-semibold text-center">{e.mention}</p>
-    </Fenetre>
   );
 }

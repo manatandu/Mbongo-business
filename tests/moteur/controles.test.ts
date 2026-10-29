@@ -58,18 +58,6 @@ describe('autres contrôles', () => {
     expect(controler(d, '2026-05-15').find((x) => x.code === 'mois_sans_saisie')?.references).toEqual(['2026-02', '2026-03']);
   });
 
-  it('signale les opérations en dollars dont le taux reste à confirmer', () => {
-    const d = dossierDeBase({
-      comptes: [...dossierDeBase().comptes, { id: 'usd', type: 'caisse', libelle: 'Caisse dollars', devise: 'USD' }],
-      operations: [
-        op({ id: 'a', compte: 'usd', type: 'recette', nature: 'ventes', montant: 100, devise: 'USD', taux: 2800 }),
-        op({ id: 'b', compte: 'usd', type: 'recette', nature: 'ventes', montant: 100, devise: 'USD', taux: 2800 }),
-      ],
-      confirmationsTaux: [{ operation: 'a', taux: 2800 }],
-    });
-    expect(controler(d, '2026-03-31').find((x) => x.code === 'taux_a_confirmer')?.references).toEqual(['b']);
-  });
-
   it("signale à la clôture l'inventaire et le taux manquants", () => {
     const d = dossierDeBase({
       stockFinal: null,

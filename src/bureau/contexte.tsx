@@ -1,4 +1,4 @@
-/** État du bureau : base locale, rôle choisi, date du jour, dossier ouvert. */
+/** État du bureau : base locale, rôle choisi, date du jour, dossier d'un client. */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { BaseMbongo } from '../donnees/base';
@@ -16,9 +16,6 @@ interface ContexteBureau {
   role: RoleBureau;
   changerRole: (r: RoleBureau) => void;
   aujourdhui: DateISO;
-  /** Message de la barre d'état. */
-  message: string;
-  annoncer: (m: string) => void;
 }
 
 const Contexte = createContext<ContexteBureau | null>(null);
@@ -33,17 +30,15 @@ const lireRole = (): RoleBureau => {
 
 export function FournisseurBureau({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<RoleBureau>(lireRole);
-  const [message, setMessage] = useState('Prêt');
   const changerRole = useCallback((r: RoleBureau) => {
     setRole(r);
-    setMessage(`Rôle : ${LIBELLE_ROLE[r]}`);
     try {
       localStorage.setItem('mbongo.bureau.role', r);
     } catch {
       // Préférence non gardée : sans conséquence.
     }
   }, []);
-  const valeur = useMemo(() => ({ role, changerRole, aujourdhui: aujourdhuiLocal(), message, annoncer: setMessage }), [role, changerRole, message]);
+  const valeur = useMemo(() => ({ role, changerRole, aujourdhui: aujourdhuiLocal() }), [role, changerRole]);
   return <Contexte.Provider value={valeur}>{children}</Contexte.Provider>;
 }
 
@@ -53,7 +48,7 @@ export function useBureau(): ContexteBureau {
   return c;
 }
 
-/** Dossier de l'exercice en cours d'une entreprise, rechargé à chaque écriture. `null` : introuvable. */
+/** Dossier de l'exercice en cours d'un client, rechargé à chaque écriture. `null` : introuvable. */
 export function useDossierBureau(entrepriseId: string | undefined): Chargement | null | undefined {
   const { aujourdhui } = useBureau();
   return useLiveQuery(async () => {
@@ -64,5 +59,3 @@ export function useDossierBureau(entrepriseId: string | undefined): Chargement |
 }
 
 export const dateRefDe = (c: Chargement, aujourdhui: DateISO): DateISO => (aujourdhui > c.exercice.fin ? c.exercice.fin : aujourdhui);
-
-export { Aide, Chargement, Fenetre, Message, Pastille } from './contexte-ui';

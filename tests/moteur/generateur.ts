@@ -26,7 +26,6 @@ const commande = fc.oneof(
   fc.record({ k: fc.constant('facture' as const), genre: fc.constantFrom('creance' as const, 'dette' as const), jour, montant, taux, usd: fc.boolean(), nature: indice }),
   fc.record({ k: fc.constant('reglement' as const), genre: fc.constantFrom('creance' as const, 'dette' as const), jour, ligne: indice, part: fc.integer({ min: 1, max: 100 }), compte: indice, taux }),
   fc.record({ k: fc.constant('annulation' as const), jour, cible: indice }),
-  fc.record({ k: fc.constant('confirmation' as const), cible: indice, taux }),
 );
 
 export const graine = fc.record({
@@ -57,7 +56,6 @@ export function construire(g: Graine, cloturable = false): DossierExercice {
   const creances: PieceTiers[] = [];
   const dettes: PieceTiers[] = [];
   const immobilisations: Immobilisation[] = [];
-  const confirmationsTaux: { operation: string; taux: number }[] = [];
   const encours = new Map<string, number>();
   /** Capital restant dû, en francs : un remboursement ne peut pas le rendre négatif. */
   let capital = g.empruntOuverture;
@@ -202,13 +200,6 @@ export function construire(g: Graine, cloturable = false): DossierExercice {
         if (cible.reglementDe) encours.set(cible.reglementDe.ligne, (encours.get(cible.reglementDe.ligne) ?? 0) + cible.montant);
         break;
       }
-      case 'confirmation': {
-        // Un nouveau taux sur un emprunt pourrait rendre le capital négatif : cas couvert par la validation, pas ici.
-        const usd = operations.filter((o) => !o.annule && o.taux !== null && effetCapital(o) === 0 && !confirmationsTaux.some((x) => x.operation === o.id));
-        const cible = usd[c.cible % Math.max(1, usd.length)];
-        if (cible) confirmationsTaux.push({ operation: cible.id, taux: c.taux });
-        break;
-      }
     }
   }
 
@@ -225,7 +216,6 @@ export function construire(g: Graine, cloturable = false): DossierExercice {
     immobilisations,
     stockInitial: g.stockInitial,
     stockFinal: cloturable ? (g.stockFinal ?? g.stockInitial) : g.stockFinal,
-    confirmationsTaux,
     tauxCloture: cloturable ? (g.tauxCloture ?? g.tauxOuverture) : g.tauxCloture,
   };
 }

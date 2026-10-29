@@ -1,14 +1,11 @@
 /** Base locale du téléphone, via Dexie (IndexedDB). */
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  LigneArrete,
   LigneCompte,
-  LigneConfirmation,
   LigneEntreprise,
   LigneEnvoi,
   LigneExercice,
   LigneImmobilisation,
-  LigneIntervention,
   LigneInventaire,
   LigneOperation,
   LignePiece,
@@ -28,12 +25,9 @@ export class BaseMbongo extends Dexie {
   sorties!: EntityTable<LigneSortie, 'id'>;
   inventaires!: EntityTable<LigneInventaire, 'id'>;
   taux!: EntityTable<LigneTaux, 'id'>;
-  confirmations!: EntityTable<LigneConfirmation, 'id'>;
   pieces!: EntityTable<LignePiece, 'id'>;
   fileEnvoi!: EntityTable<LigneEnvoi, 'seq'>;
   reglages!: EntityTable<Reglage, 'cle'>;
-  arretes!: EntityTable<LigneArrete, 'id'>;
-  interventions!: EntityTable<LigneIntervention, 'id'>;
 
   constructor(nom = 'mbongo') {
     super(nom);
@@ -52,13 +46,15 @@ export class BaseMbongo extends Dexie {
       fileEnvoi: '++seq, table',
       reglages: 'cle',
     });
-    // Bureau : arrêtés de l'expert et journal des interventions.
     this.version(2).stores({
       arretes: 'id, entrepriseId, exerciceId',
       interventions: 'id, entrepriseId, le',
     });
+    // Allègement : l'arrêté devient une date sur l'exercice ; plus de journal d'interventions
+    // ni de confirmation du taux opération par opération (un seul taux de clôture).
+    this.version(3).stores({ arretes: null, interventions: null, confirmations: null });
   }
 }
 
 /** Tables métier à vider ensemble quand on retire une entreprise de l'appareil. */
-export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'confirmations', 'pieces', 'arretes', 'interventions'] as const;
+export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'pieces'] as const;

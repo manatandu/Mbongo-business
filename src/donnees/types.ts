@@ -4,7 +4,6 @@
  */
 import type {
   CompteTresorerie,
-  ConfirmationTaux,
   DateISO,
   GenreTiers,
   Immobilisation,
@@ -57,6 +56,8 @@ export interface LigneExercice {
   stockInitial: Montant;
   stockFinal: Montant | null;
   tauxCloture: number | null;
+  /** Date de l'arrêté des états par l'expert-comptable partenaire. */
+  arreteLe?: DateISO | null;
 }
 
 export interface LigneCompte extends CompteTresorerie {
@@ -82,8 +83,6 @@ export interface LigneTaux {
   source: 'demo' | 'assistant' | 'commercant';
 }
 
-export type LigneConfirmation = ConfirmationTaux & { id: string; entrepriseId: string };
-
 /** Photo d'une pièce justificative, gardée sur le téléphone jusqu'à l'envoi. */
 export interface LignePiece {
   id: string;
@@ -106,36 +105,8 @@ export interface LigneEnvoi {
   erreur?: string;
 }
 
+/** Rôle choisi au bureau : l'assistant consulte, l'expert-comptable arrête les états. */
 export type RoleBureau = 'assistant' | 'expert';
-
-/** Arrêté des états par l'expert-comptable : instantané figé, jamais modifié. */
-export interface LigneArrete {
-  id: string;
-  entrepriseId: string;
-  exerciceId: string;
-  /** Date et heure de l'arrêté (ISO 8601). */
-  le: string;
-  auteur: string;
-  /** États tels que l'expert les a vus, sérialisés. */
-  etats: string;
-  /** SHA-256 de `etats`. */
-  empreinte: string;
-  versionMoteur: string;
-  nombreOperations: number;
-}
-
-export type ActionIntervention = 'taux_saisi' | 'taux_confirme' | 'taux_cloture' | 'inventaire_prepare' | 'arrete' | 'reouverture';
-
-/** Journal des interventions de l'assistant et de l'expert, en ajout seulement. */
-export interface LigneIntervention {
-  id: string;
-  entrepriseId: string | null;
-  exerciceId: string | null;
-  le: string;
-  role: RoleBureau;
-  action: ActionIntervention;
-  detail: string;
-}
 
 export interface Reglage {
   cle: string;

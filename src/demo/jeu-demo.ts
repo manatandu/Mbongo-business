@@ -185,7 +185,6 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
     immobilisations,
     stockInitial: exercice.stockInitial,
     stockFinal: null,
-    confirmationsTaux: [],
     tauxCloture: null,
   };
 

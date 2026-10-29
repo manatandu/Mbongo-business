@@ -172,12 +172,11 @@ export function valider(d: DossierExercice): string[] {
 
   // Emprunt : le capital restant dû ne descend jamais sous zéro (D2).
   // Valorisé en francs historiques : un emprunt en dollars n'est pas réévalué en v1.
-  const confirmes = new Map(d.confirmationsTaux.map((c) => [c.operation, c.taux]));
   let capital = d.empruntOuverture;
   for (const op of [...d.operations].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) {
     if (op.nature !== 'emprunt_recu' && op.nature !== 'remboursement_emprunt') continue;
     const c = comptes.get(op.compte);
-    const taux = confirmes.get(op.annule ?? op.id) ?? op.taux;
+    const taux = op.taux;
     if (!c || !positif(op.montant) || (c.devise === 'USD' && !estTaux(taux))) continue;
     const fc = versFC(op.montant, c.devise, taux);
     capital += (op.nature === 'emprunt_recu' ? fc : -fc) * (op.annule ? -1 : 1);
@@ -229,14 +228,6 @@ export function valider(d: DossierExercice): string[] {
     if (n !== 1) err.push(`Opération ${op.id} : un achat de matériel ou une caution entre au registre une fois et une seule (${n} trouvée).`);
   }
   for (const [id, n] of cessionsLiees) if (n > 1) err.push(`Opération ${id} : liée à ${n} sorties d'immobilisation.`);
-
-  // Taux confirmés par l'expert
-  for (const c of d.confirmationsTaux) {
-    const op = ops.get(c.operation);
-    if (!op) err.push(`Taux confirmé pour une opération inconnue : ${c.operation}.`);
-    else if (op.devise !== 'USD') err.push(`Opération ${op.id} : taux confirmé sur une opération en francs.`);
-    if (!estTaux(c.taux)) err.push(`Taux confirmé invalide pour ${c.operation}.`);
-  }
 
   // Inventaire détaillé
   if (d.lignesStock) {

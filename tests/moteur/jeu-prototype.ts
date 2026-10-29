@@ -122,7 +122,6 @@ export function jeuPrototype(): DossierExercice {
     ],
     stockInitial: 6_500_000,
     stockFinal: 7_350_000,
-    confirmationsTaux: [],
     tauxCloture: null,
   };
 }
