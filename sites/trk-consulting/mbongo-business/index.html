@@ -3,184 +3,321 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mbongo Business</title>
-<meta name="description" content="Mbongo Business, logiciel de TRK Consulting, aide les petits commerçants à tenir leur caisse sur leur téléphone, en français et en lingala, selon le Système minimal de trésorerie de l'OHADA.">
+<title>Mbongo Business · TRK Consulting</title>
+<meta name="description" content="Mbongo Business, logiciel de TRK Consulting : comptabilité de trésorerie des micro et petites entreprises selon le Système minimal de trésorerie de l'OHADA, sur téléphone, sans connexion, en français et en lingala.">
+<meta name="theme-color" content="#0b2a52">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <style>
 /*
  * Page de présentation du logiciel Mbongo Business, dans le site de TRK Consulting (/mbongo-business/).
- * Une colonne sur téléphone, deux à partir de 820 px, page blanche, textes courts.
- * Couleurs de l'appli : bleu, jaune pour l'attention. Polices du téléphone, rien à télécharger.
+ * Même construction que la page d'accueil de TRK ; couleurs de l'appli : bleu, bleu nuit, jaune.
+ * Animations légères, coupées si l'appareil demande moins de mouvement. Rien à télécharger.
  */
 :root {
-  --encre: #0b5fb8;
-  --encre-douce: #2472cf;
-  --etoile: #f2c200;
+  --bleu: #0b5fb8;
+  --bleu-2: #2472cf;
+  --bleu-pale: #e8f0fa;
+  --nuit: #0b2a52;
+  --nuit-2: #10366a;
+  --jaune: #f2c200;
+  --jaune-pale: #fff5cc;
   --fond: #ffffff;
-  --surface: #f5f8fb;
-  --surface-2: #e8eef5;
-  --trait: #d6dee8;
-  --texte: #0b2a52;
-  --texte-dim: #566578;
-  --police: system-ui, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --surface: #f3f6fa;
+  --trait: #dfe5ed;
+  --texte: #10233f;
+  --texte-dim: #5a6a7f;
+  --vert: #1d7a4a;
+  --rouge: #b42318;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
   --mono: ui-monospace, "Roboto Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-  --large: 1080px;
+  --large: 1120px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--fond); color: var(--texte); font-family: var(--police); font-size: 16px; line-height: 1.55; }
-.cadre { max-width: var(--large); margin-inline: auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
-h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; font-weight: 650; letter-spacing: -0.01em; }
-h1 { font-size: clamp(1.75rem, 4.6vw, 2.75rem); }
-h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
-h3 { font-size: 1.05rem; }
-p { margin: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
+.cadre { max-width: var(--large); margin-inline: auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1, h2 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.005em; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); }
+h3 { font-size: 1.06rem; font-weight: 650; line-height: 1.3; }
+p { margin: 0; text-wrap: pretty; }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--encre); outline-offset: 3px; border-radius: 4px; }
-.etiquette { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--texte-dim); font-weight: 500; }
-.dim { color: var(--texte-dim); }
+:focus-visible { outline: 2px solid var(--jaune); outline-offset: 3px; border-radius: 4px; }
+.surtitre { display: inline-flex; align-items: center; gap: 10px; font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--bleu); }
+.surtitre::before { content: ""; width: 28px; height: 1px; background: currentColor; }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* Bandeau de maquette */
-.maquette { background: #fff3cc; color: #6b4600; border-bottom: 1px solid #f0dc9a; font-size: .84rem; }
-.maquette .cadre { padding-block: 8px; display: flex; gap: 6px 10px; flex-wrap: wrap; }
-.maquette b { text-transform: uppercase; letter-spacing: .06em; font-size: .76rem; }
+/* Bandeau */
+.prepa { background: var(--jaune-pale); color: #6b5410; border-bottom: 1px solid #f0e3a6; font-size: .82rem; }
+.prepa .cadre { padding-block: 7px; }
 
 /* En-tête */
-.entete { position: sticky; top: 0; z-index: 5; background: var(--fond); border-bottom: 1px solid var(--trait); }
-.entete .cadre { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.marque { width: 32px; height: 32px; border-radius: 8px; background: var(--encre); display: grid; place-items: center; position: relative; overflow: hidden; flex: none; }
-.marque::after { content: ""; position: absolute; width: 42px; height: 8px; background: var(--etoile); transform: rotate(-35deg); }
-.marque span { position: relative; z-index: 1; color: #fff; font-weight: 800; font-size: 17px; }
-.logo strong { font-size: 1.15rem; letter-spacing: -0.01em; }
-.nav { display: none; gap: 24px; font-size: .92rem; }
-.nav a { text-decoration: none; color: var(--texte-dim); }
-.nav a:hover { color: var(--texte); }
-@media (min-width: 820px) { .nav { display: flex; } }
+.entete { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: saturate(1.4) blur(10px); -webkit-backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid transparent; transition: border-color .3s, box-shadow .3s; }
+.entete.defile { border-bottom-color: var(--trait); box-shadow: 0 6px 24px -18px rgba(11,42,82,.5); }
+.entete .cadre { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 68px; }
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.m { width: 38px; height: 38px; border-radius: 10px; background: var(--bleu); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 19px; position: relative; overflow: hidden; flex: none; }
+.m::after { content: ""; position: absolute; width: 52px; height: 7px; background: var(--jaune); transform: rotate(-35deg); top: 22px; }
+.m b { position: relative; z-index: 1; }
+.logo .nom { font-family: var(--serif); font-size: 1.16rem; font-weight: 600; line-height: 1.1; }
+.logo .nom small { display: block; font: 400 .72rem var(--sans); color: var(--texte-dim); }
+.nav { display: none; gap: 26px; font-size: .93rem; }
+.nav a { text-decoration: none; color: var(--texte-dim); position: relative; padding-block: 6px; }
+.nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: var(--bleu); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
+.nav a:hover, .nav a.actif { color: var(--texte); }
+.nav a:hover::after, .nav a.actif::after { transform: scaleX(1); }
+.entete-actions { display: flex; align-items: center; gap: 8px; }
+@media (min-width: 980px) { .nav { display: flex; } .menu { display: none; } }
+
+.menu { position: relative; }
+.menu summary { list-style: none; cursor: pointer; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--trait); display: grid; place-items: center; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu summary span, .menu summary span::before, .menu summary span::after { display: block; width: 18px; height: 1.5px; background: var(--texte); position: relative; transition: transform .3s var(--ease), background .2s; }
+.menu summary span::before, .menu summary span::after { content: ""; position: absolute; left: 0; }
+.menu summary span::before { top: -6px; } .menu summary span::after { top: 6px; }
+.menu[open] summary span { background: transparent; }
+.menu[open] summary span::before { transform: translateY(6px) rotate(45deg); }
+.menu[open] summary span::after { transform: translateY(-6px) rotate(-45deg); }
+.menu nav { position: absolute; right: 0; top: 52px; width: min(280px, calc(100vw - 40px)); background: #fff; border: 1px solid var(--trait); border-radius: 14px; box-shadow: 0 24px 48px -24px rgba(11,42,82,.45); padding: 8px; display: grid; animation: deroule .25s var(--ease); }
+.menu nav a { padding: 12px 14px; border-radius: 9px; text-decoration: none; }
+.menu nav a:hover { background: var(--surface); }
+@keyframes deroule { from { opacity: 0; transform: translateY(-6px); } }
 
 /* Boutons */
-.bouton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 20px; border-radius: 8px; font: 600 .95rem var(--police); text-decoration: none; border: 1px solid transparent; cursor: pointer; }
-.bouton-principal { background: var(--encre); color: #fff; }
-.bouton-principal:hover { filter: brightness(1.1); }
-.bouton-second { background: transparent; color: var(--texte); border-color: var(--trait); }
-.bouton-second:hover { background: var(--surface); }
-.entete .bouton { min-height: 38px; padding: 6px 14px; font-size: .88rem; }
+.bouton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 11px 22px; border-radius: 999px; font: 600 .95rem var(--sans); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .25s var(--ease), background-color .25s, box-shadow .25s, border-color .25s; }
+.bouton:hover { transform: translateY(-1px); }
+.bouton .fleche { transition: transform .25s var(--ease); }
+.bouton:hover .fleche { transform: translateX(3px); }
+.bouton-jaune { background: var(--jaune); color: var(--nuit); box-shadow: 0 10px 24px -14px rgba(242,194,0,.9); }
+.bouton-jaune:hover { background: #ffd21f; }
+.bouton-bleu { background: var(--bleu); color: #fff; }
+.bouton-bleu:hover { background: var(--bleu-2); }
+.bouton-clair { color: #fff; border-color: rgba(255,255,255,.35); }
+.bouton-clair:hover { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.06); }
+.bouton-trait { color: var(--texte); border-color: var(--trait); }
+.bouton-trait:hover { background: var(--surface); }
+.entete .bouton { min-height: 40px; padding: 8px 18px; font-size: .88rem; display: none; }
+@media (min-width: 560px) { .entete .bouton { display: inline-flex; } }
 
-/* Filet de clôture : un trait interrompu en son milieu */
-.filet { --vide: min(13.3%, 24px); height: 1px; border: 0; margin: 0; background: linear-gradient(to right, var(--trait) calc(50% - var(--vide) / 2), transparent 0 calc(50% + var(--vide) / 2), var(--trait) 0); }
-
-section { padding-block: clamp(48px, 8vw, 88px); }
-.titre-section { margin-bottom: 28px; }
-.entete-section { display: grid; gap: 10px; max-width: 640px; margin-bottom: 32px; }
+section { padding-block: clamp(64px, 10vw, 112px); }
+.tete { display: grid; gap: 14px; max-width: 680px; margin-bottom: clamp(32px, 5vw, 52px); }
+.tete p { font-size: 1.04rem; color: var(--texte-dim); }
 
 /* Ouverture */
-.ouverture .cadre { display: grid; gap: 40px; }
-@media (min-width: 820px) { .ouverture .cadre { grid-template-columns: 1.15fr .85fr; align-items: center; } }
-.ouverture-texte { display: grid; gap: 18px; min-width: 0; }
-.ouverture-texte .chapo { font-size: 1.08rem; color: var(--texte-dim); max-width: 34em; }
-.actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.assurance { font-size: .85rem; color: var(--texte-dim); }
+.ouverture { position: relative; overflow: hidden; background: radial-gradient(900px 520px at 90% 0%, rgba(36,114,207,.55) 0%, transparent 60%), var(--nuit); color: #fff; padding-block: clamp(56px, 9vw, 104px); }
+.ouverture::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(180deg, #000 0%, transparent 90%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%); pointer-events: none; }
+.ouverture .cadre { position: relative; display: grid; gap: 52px; }
+@media (min-width: 900px) { .ouverture .cadre { grid-template-columns: 1.15fr .85fr; align-items: center; } }
+.ouverture .surtitre { color: var(--jaune); }
+.ouverture-texte { display: grid; gap: 22px; min-width: 0; }
+.ouverture-texte .chapo { font-size: clamp(1.02rem, 1.6vw, 1.14rem); color: #c3cfe0; max-width: 36em; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.reperes { list-style: none; margin: 10px 0 0; padding: 22px 0 0; border-top: 1px solid rgba(255,255,255,.12); display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 24px; }
+@media (min-width: 640px) { .reperes { grid-template-columns: repeat(4, auto); justify-content: start; } }
+.reperes li { display: grid; gap: 2px; font-size: .8rem; color: #aebdd2; }
+.reperes b { color: #fff; font-size: 1rem; font-weight: 600; }
 
-/* Ce que produit l'appli, sur le modèle SMT */
-.liasse { background: var(--surface); border: 1px solid var(--trait); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
-.liasse ol { list-style: none; margin: 0; padding: 0; display: grid; }
-.liasse li { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding-block: 9px; border-top: 1px solid var(--trait); font-size: .93rem; }
-.liasse li .mono { color: var(--texte-dim); font-size: .85rem; white-space: nowrap; }
-.liasse .pied { font-size: .8rem; color: var(--texte-dim); }
+/* Téléphone de l'ouverture */
+.scene { display: grid; place-items: center; min-width: 0; }
+.telephone { width: min(290px, 78vw); aspect-ratio: 9 / 18.5; border-radius: 38px; background: #050f1f; padding: 10px; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 50px 90px -40px rgba(0,0,0,.75); position: relative; }
+.telephone::before { content: ""; position: absolute; top: 18px; left: 50%; width: 70px; height: 7px; border-radius: 4px; background: #1b2b44; transform: translateX(-50%); z-index: 2; }
+.ecran { height: 100%; border-radius: 30px; background: #e9eef4; overflow: hidden; display: flex; flex-direction: column; color: var(--nuit); font-size: 12px; }
+.ecran-tete { background: var(--nuit); color: #fff; padding: 34px 14px 12px; display: flex; align-items: center; gap: 8px; }
+.ecran-tete .m { width: 24px; height: 24px; border-radius: 7px; font-size: 12px; }
+.ecran-tete .m::after { width: 34px; height: 5px; top: 14px; }
+.ecran-tete strong { font-size: 13px; }
+.ecran-tete span { margin-left: auto; font-size: 9.5px; background: rgba(242,194,0,.2); color: var(--jaune); padding: 2px 7px; border-radius: 999px; }
+.fenetre { margin: 10px; background: #fff; border-radius: 12px; border: 1px solid #d8e0ea; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
+.fenetre-titre { padding: 8px 12px; border-bottom: 1px solid #e3e9f0; font-weight: 600; font-size: 11px; color: var(--texte-dim); }
+.solde { padding: 12px; display: grid; gap: 2px; }
+.solde small { color: var(--texte-dim); font-size: 10.5px; }
+.solde b { font: 600 21px var(--mono); letter-spacing: -.02em; }
+.boutons-ecran { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 12px 10px; }
+.boutons-ecran span { text-align: center; padding: 7px 0; border-radius: 999px; font-weight: 600; font-size: 11px; background: var(--bleu); color: #fff; }
+.boutons-ecran span + span { background: #fff; color: var(--nuit); border: 1px solid #cfd8e3; }
+.operations { list-style: none; margin: 0; padding: 0 12px; display: grid; }
+.operations li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid #edf1f5; font-size: 11px; }
+.operations .plus { color: var(--vert); font-family: var(--mono); }
+.operations .moins { color: var(--rouge); font-family: var(--mono); }
+.kpis { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #e3e9f0; border-top: 1px solid #e3e9f0; }
+.kpis div { background: #fff; padding: 8px 10px; display: grid; }
+.kpis small { color: var(--texte-dim); font-size: 9.5px; }
+.kpis b { font: 600 12px var(--mono); }
+.onglets { display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border-top: 1px solid #d8e0ea; padding: 8px 6px 12px; font-size: 9.5px; text-align: center; color: var(--texte-dim); }
+.onglets span:first-child { color: var(--bleu); font-weight: 600; }
 
-/* Publics */
-.publics { display: grid; gap: 16px; }
-@media (min-width: 820px) { .publics { grid-template-columns: 1fr 1fr; } }
-.public { border: 1px solid var(--trait); border-radius: 10px; padding: 24px; display: grid; gap: 12px; align-content: start; background: var(--fond); }
-.public.premier { border-color: var(--encre); border-width: 1.5px; }
-.public ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: var(--texte-dim); }
-.public .mono { color: var(--texte); }
-
-/* Fonctions */
-.fonctions { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--trait); }
-@media (min-width: 640px) { .fonctions { grid-template-columns: 1fr 1fr; column-gap: 40px; } }
-@media (min-width: 960px) { .fonctions { grid-template-columns: repeat(3, 1fr); } }
-.fonction { padding-block: 20px; border-bottom: 1px solid var(--trait); display: grid; gap: 6px; align-content: start; }
+/* Fonctionnalités */
+.fonctions { display: grid; gap: 18px; }
+@media (min-width: 680px) { .fonctions { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .fonctions { grid-template-columns: repeat(3, 1fr); } }
+.fonction { border: 1px solid var(--trait); border-radius: 16px; padding: 24px; display: grid; gap: 10px; align-content: start; background: #fff; transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s; }
+.fonction:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -28px rgba(11,42,82,.45); border-color: #cfd7e2; }
+.icone { width: 42px; height: 42px; border-radius: 11px; background: var(--bleu-pale); color: var(--bleu); display: grid; place-items: center; transition: background .3s, color .3s; }
+.fonction:hover .icone { background: var(--bleu); color: #fff; }
+.icone svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .fonction p { color: var(--texte-dim); font-size: .95rem; }
 
-/* Qui fait quoi */
-.roles { background: var(--surface); }
-.colonnes-roles { display: grid; gap: 16px; }
-@media (min-width: 820px) { .colonnes-roles { grid-template-columns: repeat(3, 1fr); } }
-.role { padding-left: 14px; border-left: 2px solid var(--trait); display: grid; gap: 8px; align-content: start; }
-.role.vous { border-left-color: var(--etoile); }
-.role.mbongo { border-left-color: var(--encre); }
-.role.expert { border-left-color: var(--texte); }
-.role ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; color: var(--texte-dim); font-size: .95rem; }
-.loi { margin-top: 24px; font-size: .88rem; color: var(--texte-dim); max-width: 62ch; }
+/* États produits */
+.etats { background: var(--surface); }
+.etats .cadre { display: grid; gap: 40px; }
+@media (min-width: 900px) { .etats .cadre { grid-template-columns: .85fr 1.15fr; gap: 72px; align-items: start; } }
+.liasse { background: #fff; border: 1px solid var(--trait); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 60px -45px rgba(11,42,82,.5); }
+.liasse-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px; border-bottom: 1px solid var(--trait); font-size: .82rem; color: var(--texte-dim); }
+.liasse-tete .statut { font-size: .74rem; padding: 3px 10px; border-radius: 999px; background: var(--jaune-pale); color: #6b5410; font-weight: 600; }
+.liasse ol { list-style: none; margin: 0; padding: 0; }
+.liasse li { display: grid; grid-template-columns: 1fr auto; gap: 14px; padding: 15px 22px; border-bottom: 1px solid var(--trait); font-size: .95rem; transition: background .25s; }
+.liasse li:last-child { border-bottom: 0; }
+.liasse li:hover { background: #fafcfe; }
+.liasse li span:last-child { font: .8rem var(--mono); color: var(--texte-dim); white-space: nowrap; }
+.liasse li small { display: block; color: var(--texte-dim); font-size: .84rem; }
+.reference { margin-top: 18px; font-size: .86rem; color: var(--texte-dim); }
+.formule-g { margin-top: 26px; display: inline-flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--nuit); color: #fff; font: 600 1.05rem var(--mono); }
+.formule-g small { font: 400 .78rem var(--sans); color: #aebdd2; }
+
+/* Deux espaces */
+.espaces { display: grid; gap: 18px; }
+@media (min-width: 820px) { .espaces { grid-template-columns: 1fr 1fr; } }
+.espace { border-radius: 18px; padding: clamp(24px, 4vw, 34px); display: grid; gap: 14px; align-content: start; border: 1px solid var(--trait); }
+.espace.appli { background: linear-gradient(160deg, var(--bleu-pale), #fff 60%); }
+.espace.bureau { background: linear-gradient(160deg, #eef1f6, #fff 60%); }
+.espace .qui { font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--bleu); font-weight: 600; }
+.espace ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; font-size: .95rem; }
+.espace li { padding-left: 22px; position: relative; }
+.espace li::before { content: ""; position: absolute; left: 0; top: .72em; width: 10px; height: 1.5px; background: var(--bleu); }
+.espace .lien { margin-top: 6px; font-weight: 600; color: var(--bleu); text-decoration: none; }
+.espace .lien:hover { text-decoration: underline; }
+
+/* Public */
+.public { background: var(--nuit); color: #fff; }
+.public .surtitre { color: var(--jaune); }
+.public .tete p { color: #b9c6d8; }
+.seuils { display: grid; gap: 16px; }
+@media (min-width: 820px) { .seuils { grid-template-columns: repeat(3, 1fr); } }
+.seuil { border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 24px; display: grid; gap: 10px; background: rgba(255,255,255,.03); }
+.seuil .secteur { font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--jaune); font-weight: 600; }
+.seuil .montant { font: 600 clamp(1.6rem, 3.4vw, 2.1rem) var(--mono); letter-spacing: -.02em; }
+.seuil .montant small { font: 400 .9rem var(--sans); color: #aebdd2; }
+.seuil p { color: #c3cfe0; font-size: .93rem; }
+.note-public { margin-top: 26px; font-size: .9rem; color: #9fb0c8; max-width: 70ch; border-left: 2px solid var(--jaune); padding-left: 16px; }
+
+/* Mise en service */
+.etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; position: relative; }
+@media (min-width: 900px) { .etapes { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+.etapes li { display: grid; gap: 10px; align-content: start; }
+.etapes .rond { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 1px solid var(--trait); display: grid; place-items: center; font: 600 .9rem var(--sans); color: var(--nuit); position: relative; z-index: 1; }
+@media (min-width: 900px) {
+  .etapes::before { content: ""; position: absolute; top: 22px; left: 22px; right: 22px; height: 1px; background: var(--trait); }
+  .etapes::after { content: ""; position: absolute; top: 22px; left: 22px; right: 22px; height: 1px; background: var(--bleu); transform: scaleX(var(--progres, 1)); transform-origin: left; transition: transform 1.6s var(--ease); }
+}
+.etapes p { color: var(--texte-dim); font-size: .95rem; }
 
 /* Formules */
-.formules { display: grid; gap: 16px; }
-@media (min-width: 820px) { .formules { grid-template-columns: repeat(3, 1fr); } }
-.formule { border: 1px solid var(--trait); border-radius: 10px; padding: 24px; display: grid; gap: 14px; grid-template-rows: auto auto 1fr auto; }
-.formule.mise-en-avant { border-color: var(--encre); border-width: 1.5px; }
-.formule .prix { font-size: 1.15rem; font-weight: 600; }
-.formule ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: var(--texte-dim); font-size: .95rem; }
-
-/* Démarche */
-.etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; counter-reset: etape; }
-@media (min-width: 820px) { .etapes { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
-.etapes li { counter-increment: etape; display: grid; gap: 6px; align-content: start; }
-.etapes li::before { content: counter(etape); font: 500 .85rem var(--mono); width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--trait); display: grid; place-items: center; color: var(--texte-dim); }
-.etapes p { color: var(--texte-dim); font-size: .93rem; }
+.formules-sec { background: var(--surface); }
+.formules { display: grid; gap: 18px; }
+@media (min-width: 900px) { .formules { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+.formule { background: #fff; border: 1px solid var(--trait); border-radius: 18px; padding: 28px; display: grid; gap: 16px; grid-template-rows: auto auto 1fr auto; transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.formule:hover { transform: translateY(-4px); box-shadow: 0 28px 48px -32px rgba(11,42,82,.5); }
+.formule.avant { border: 1.5px solid var(--bleu); position: relative; }
+.formule .prix { font-size: .95rem; color: var(--texte-dim); }
+.formule .prix b { display: block; font-family: var(--serif); font-size: 1.5rem; color: var(--texte); font-weight: 600; }
+.formule ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; font-size: .95rem; align-content: start; }
+.formule li { padding-left: 24px; position: relative; }
+.formule li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 9px; height: 5px; border-left: 1.7px solid var(--bleu); border-bottom: 1.7px solid var(--bleu); transform: rotate(-45deg); }
+.formule .note { font-size: .84rem; color: var(--texte-dim); }
 
 /* Questions */
-.questions { display: grid; border-top: 1px solid var(--trait); max-width: 760px; }
-details { border-bottom: 1px solid var(--trait); }
-summary { cursor: pointer; list-style: none; padding-block: 16px; font-weight: 500; display: flex; justify-content: space-between; gap: 16px; }
-summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; font-family: var(--mono); color: var(--texte-dim); }
-details[open] summary::after { content: "−"; }
-details p { padding-bottom: 16px; color: var(--texte-dim); max-width: 62ch; }
+.faq .cadre { display: grid; gap: 36px; }
+@media (min-width: 900px) { .faq .cadre { grid-template-columns: .8fr 1.2fr; gap: 72px; } }
+.questions { border-top: 1px solid var(--trait); }
+details.q { border-bottom: 1px solid var(--trait); }
+details.q summary { cursor: pointer; list-style: none; padding: 20px 0; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+details.q summary::-webkit-details-marker { display: none; }
+details.q summary::after { content: ""; flex: none; width: 10px; height: 10px; border-right: 1.7px solid var(--texte-dim); border-bottom: 1.7px solid var(--texte-dim); transform: rotate(45deg); transition: transform .3s var(--ease); margin-right: 4px; }
+details.q[open] summary::after { transform: rotate(-135deg); }
+details.q p { padding-bottom: 20px; color: var(--texte-dim); max-width: 62ch; }
+details.q[open] p { animation: deroule .35s var(--ease); }
 
 /* Contact */
-.contact { background: var(--surface); }
-.contact .cadre { display: grid; gap: 32px; }
-@media (min-width: 820px) { .contact .cadre { grid-template-columns: .9fr 1.1fr; align-items: start; } }
-.carte-contact { background: var(--fond); border: 1px solid var(--trait); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
-.numero { font: 500 clamp(1.3rem, 5vw, 1.6rem) var(--mono); letter-spacing: .01em; user-select: all; overflow-wrap: anywhere; }
-.coordonnees { display: grid; gap: 4px; font-size: .95rem; color: var(--texte-dim); }
+.contact .cadre { display: grid; gap: 36px; }
+@media (min-width: 900px) { .contact .cadre { grid-template-columns: 1fr 1fr; align-items: start; gap: 72px; } }
+.coordonnees { border: 1px solid var(--trait); border-radius: 18px; overflow: hidden; margin: 0; }
+.coordonnees div { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--trait); font-size: .95rem; }
+.coordonnees dt { color: var(--texte-dim); }
+.coordonnees dd { margin: 0; font-weight: 500; }
+.a-venir { color: var(--texte-dim); font-weight: 400; font-style: italic; }
+.coordonnees .pied-carte { padding: 18px 22px; background: var(--surface); display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 0; }
+.inactif { opacity: .5; pointer-events: none; }
 
 /* Pied */
-footer { border-top: 1px solid var(--trait); padding-block: 32px calc(32px + env(safe-area-inset-bottom, 0px)); font-size: .88rem; color: var(--texte-dim); }
-footer .cadre { display: grid; gap: 16px; }
-@media (min-width: 820px) { footer .cadre { grid-template-columns: 1fr auto; align-items: end; } }
-.liens-pied { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+footer { background: #081f3e; color: #9fb0c8; padding-block: 44px calc(36px + env(safe-area-inset-bottom, 0px)); font-size: .88rem; }
+footer .cadre { display: grid; gap: 28px; }
+@media (min-width: 820px) { footer .cadre { grid-template-columns: 1.4fr 1fr 1fr; } }
+footer .nom { font-family: var(--serif); color: #fff; font-size: 1.2rem; }
+footer h4 { margin: 0 0 10px; color: #fff; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+footer a { text-decoration: none; }
+footer a:hover { color: #fff; }
+.mentions { grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; font-size: .8rem; }
 
+/* Animations */
 @media (prefers-reduced-motion: no-preference) {
-  .bouton { transition: filter .15s ease, background-color .15s ease; }
+  .js .apparait { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--i, 0) * 90ms); }
+  .js .apparait.vu { opacity: 1; transform: none; }
+  .js .etapes:not(.vu)::after { --progres: 0; }
+  .ouverture-texte > * { animation: monte .9s var(--ease) both; }
+  .ouverture-texte > :nth-child(2) { animation-delay: .08s; }
+  .ouverture-texte > :nth-child(3) { animation-delay: .16s; }
+  .ouverture-texte > :nth-child(4) { animation-delay: .24s; }
+  .ouverture-texte > :nth-child(5) { animation-delay: .32s; }
+  .telephone { animation: entre 1.1s .15s var(--ease) both, flotte 7s 1.4s ease-in-out infinite; }
+  .operations li { animation: glisse .6s var(--ease) both; animation-delay: calc(1.1s + var(--o) * 260ms); }
+  .solde b { animation: monte .6s .9s var(--ease) both; }
+  .kpis div { animation: monte .5s var(--ease) both; animation-delay: calc(2s + var(--k) * 90ms); }
+  @keyframes monte { from { opacity: 0; transform: translateY(16px); } }
+  @keyframes entre { from { opacity: 0; transform: translateY(40px) rotate(2deg); } }
+  @keyframes flotte { 50% { transform: translateY(-8px); } }
+  @keyframes glisse { from { opacity: 0; transform: translateX(-14px); } }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
 </head>
 <body>
+<script>document.documentElement.classList.add('js');</script>
 
-<div class="maquette" role="note">
-  <div class="cadre"><b>En préparation</b><span>Numéro WhatsApp et tarifs à venir.</span></div>
-</div>
+<div class="prepa" role="note"><div class="cadre">Page en cours de finalisation : tarifs et coordonnées seront publiés prochainement.</div></div>
 
-<header class="entete">
+<header class="entete" id="entete">
   <div class="cadre">
-    <a class="logo" href="#haut" aria-label="Mbongo Business, accueil">
-      <span class="marque" aria-hidden="true"><span>M</span></span>
-      <strong>Mbongo Business</strong>
+    <a class="logo" href="#haut" aria-label="Mbongo Business, haut de page">
+      <span class="m" aria-hidden="true"><b>M</b></span>
+      <span class="nom">Mbongo Business<small>Un logiciel de TRK Consulting</small></span>
     </a>
     <nav class="nav" aria-label="Sections">
-      <a href="#pour-qui">Pour qui</a>
-      <a href="#appli">L'appli</a>
-      <a href="#roles">Qui fait quoi</a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#etats">États financiers</a>
+      <a href="#public">Pour qui</a>
       <a href="#formules">Formules</a>
-      <a href="#questions">Questions</a>
       <a href="../">TRK Consulting</a>
     </nav>
-    <a class="bouton bouton-principal" href="#contact">Nous écrire</a>
+    <div class="entete-actions">
+      <a class="bouton bouton-bleu" href="https://mbongo-business.web.app/">Ouvrir l'application</a>
+      <details class="menu">
+        <summary aria-label="Menu"><span></span></summary>
+        <nav aria-label="Menu">
+          <a href="#fonctions">Fonctionnalités</a>
+          <a href="#etats">États financiers</a>
+          <a href="#public">Pour qui</a>
+          <a href="#formules">Formules</a>
+          <a href="#questions">Questions</a>
+          <a href="https://mbongo-business.web.app/">Ouvrir l'application</a>
+          <a href="../">TRK Consulting</a>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 
@@ -188,203 +325,308 @@ footer .cadre { display: grid; gap: 16px; }
   <section class="ouverture">
     <div class="cadre">
       <div class="ouverture-texte">
-        <p class="etiquette">Logiciel de TRK Consulting · Kinshasa</p>
-        <h1>Votre caisse bien tenue, sur votre téléphone.</h1>
-        <p class="chapo">Vous notez vos recettes et vos dépenses, en français ou en lingala, même sans internet. Le logiciel fait les calculs et sort vos états de fin d'année. TRK Consulting vous forme et contrôle vos saisies.</p>
+        <p class="surtitre">Système minimal de trésorerie · OHADA</p>
+        <h1>La comptabilité de trésorerie du petit commerce, sur téléphone</h1>
+        <p class="chapo">Mbongo Business enregistre les recettes, les dépenses et les opérations à crédit, puis établit les états financiers du Système minimal de trésorerie. Il fonctionne sans connexion, en français et en lingala.</p>
         <div class="actions">
-          <a class="bouton bouton-principal" href="https://mbongo-business.web.app/">Ouvrir l'appli</a>
-          <a class="bouton bouton-second" href="#contact">Nous écrire sur WhatsApp</a>
+          <a class="bouton bouton-jaune" href="https://mbongo-business.web.app/">Ouvrir l'application <span class="fleche" aria-hidden="true">→</span></a>
+          <a class="bouton bouton-clair" href="#formules">Voir les formules</a>
         </div>
-        <p class="assurance">Dans l'appli, « Voir la démonstration » ouvre une boutique fictive. Sans compte, dans le navigateur du téléphone.</p>
+        <ul class="reperes">
+          <li><b>Hors ligne</b>après la première ouverture</li>
+          <li><b>CDF et USD</b>un compte par devise</li>
+          <li><b>2 langues</b>français et lingala</li>
+          <li><b>~200 Ko</b>pour un Android simple</li>
+        </ul>
       </div>
-      <aside class="liasse" aria-label="Ce que l'appli tient pour vous">
-        <p class="etiquette">Système minimal de trésorerie · OHADA</p>
-        <ol>
-          <li><span>Journal de trésorerie, par compte</span><span class="mono">note 4</span></li>
-          <li><span>Clients qui vous doivent, fournisseurs à payer</span><span class="mono">suivi</span></li>
-          <li><span>Registre du matériel</span><span class="mono">note 1</span></li>
-          <li><span>Compte de résultat</span><span class="mono">A à G</span></li>
-          <li><span>Bilan et notes</span><span class="mono">notes 1 à 3</span></li>
-        </ol>
-        <p class="pied">Modèles de l'Acte uniforme relatif au droit comptable (AUDCIF révisé, art. 13 et Titre X).</p>
-      </aside>
-    </div>
-  </section>
 
-  <hr class="filet">
-
-  <section id="pour-qui">
-    <div class="cadre">
-      <h2 class="titre-section">Pour qui</h2>
-      <div class="publics">
-        <article class="public premier">
-          <h3>Petits commerces et ateliers</h3>
-          <p class="dim">Système minimal de trésorerie</p>
-          <ul>
-            <li>Boutiques, dépôts, alimentations</li>
-            <li>Ateliers de couture, menuiserie, coiffure</li>
-            <li>Chiffre d'affaires annuel sous le seuil : négoce <span class="mono">240 M</span>, artisanat <span class="mono">160 M</span>, services <span class="mono">120 M CDF</span> (équivalents 2026)</li>
-          </ul>
-        </article>
-        <article class="public">
-          <h3>Au-delà des seuils</h3>
-          <p class="dim">Système normal</p>
-          <ul>
-            <li>L'appli vous prévient quand vos ventes approchent du seuil</li>
-            <li>Le passage au Système normal se fait avec l'expert-comptable partenaire</li>
-          </ul>
-        </article>
+      <div class="scene" aria-hidden="true">
+        <div class="telephone">
+          <div class="ecran">
+            <div class="ecran-tete"><span class="m"><b>M</b></span><strong>Mbongo</strong><span>Données fictives</span></div>
+            <div class="fenetre">
+              <div class="fenetre-titre">Accueil</div>
+              <div class="solde"><small>Argent disponible</small><b>1 284 500 CDF</b></div>
+              <div class="boutons-ecran"><span>+ Recette</span><span>− Dépense</span></div>
+              <ul class="operations">
+                <li style="--o:0"><span>Vente riz, 3 sacs</span><span class="plus">+ 85 000</span></li>
+                <li style="--o:1"><span>Transport marchandise</span><span class="moins">− 12 000</span></li>
+                <li style="--o:2"><span>Vente huile, M-Pesa</span><span class="plus">+ 46 500</span></li>
+              </ul>
+              <div class="kpis">
+                <div style="--k:0"><small>Entré ce mois</small><b>2 410 000</b></div>
+                <div style="--k:1"><small>Sorti ce mois</small><b>1 126 000</b></div>
+                <div style="--k:2"><small>On me doit</small><b>140 000</b></div>
+                <div style="--k:3"><small>Je dois</small><b>0</b></div>
+              </div>
+            </div>
+            <div class="onglets"><span>Accueil</span><span>Journal</span><span>Clients</span><span>Plus</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <hr class="filet">
-
-  <section id="appli">
+  <section id="fonctions">
     <div class="cadre">
-      <h2 class="titre-section">L'appli</h2>
+      <div class="tete apparait">
+        <p class="surtitre">Fonctionnalités</p>
+        <h2>Ce que fait le logiciel</h2>
+        <p>Chaque fonction répond à une pratique courante des commerces de Kinshasa : paiement mobile, ventes à crédit, achats en dollars.</p>
+      </div>
       <div class="fonctions">
-        <div class="fonction"><h3>Recettes et dépenses</h3><p>Caisse, M-Pesa, Orange Money, Airtel Money, banque, likelemba</p></div>
-        <div class="fonction"><h3>Francs et dollars</h3><p>Une caisse par devise, taux du jour gardé sur chaque saisie</p></div>
-        <div class="fonction"><h3>Ventes et achats à crédit</h3><p>Paiements en plusieurs fois, clients en retard signalés</p></div>
-        <div class="fonction"><h3>Photo des pièces</h3><p>La facture photographiée reste attachée à la saisie</p></div>
-        <div class="fonction"><h3>Sans internet</h3><p>Tout marche hors ligne, sur un Android simple</p></div>
-        <div class="fonction"><h3>Français et lingala</h3><p>Des mots simples ; les états restent en français officiel</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="roles" id="roles">
-    <div class="cadre">
-      <h2 class="titre-section">Qui fait quoi</h2>
-      <div class="colonnes-roles">
-        <div class="role vous">
-          <h3>Vous</h3>
-          <ul>
-            <li>notez chaque recette et chaque dépense</li>
-            <li>photographiez vos factures</li>
-            <li>comptez votre stock au 31 décembre</li>
-          </ul>
-        </div>
-        <div class="role mbongo">
-          <h3>TRK Consulting</h3>
-          <ul>
-            <li>vous forme à l'appli</li>
-            <li>contrôle vos saisies et réclame les pièces</li>
-            <li>vous aide à faire l'inventaire</li>
-          </ul>
-        </div>
-        <div class="role expert">
-          <h3>L'expert-comptable partenaire</h3>
-          <ul>
-            <li>arrête vos états, les certifie s'il le faut</li>
-            <li>vous conseille, vous assiste pour les impôts</li>
-            <li>tient vos comptes si vous le lui confiez</li>
-          </ul>
-        </div>
-      </div>
-      <p class="loi">Les actes réservés par la loi n° 15/002 du 12 février 2015, modifiée en 2018, sont confiés à un expert-comptable inscrit au tableau de l'Ordre national, lié à TRK Consulting par convention.</p>
-    </div>
-  </section>
-
-  <section id="formules">
-    <div class="cadre">
-      <h2 class="titre-section">Formules</h2>
-      <p class="dim" style="margin:-16px 0 24px">Proposées par TRK Consulting.</p>
-      <div class="formules">
-        <article class="formule">
-          <h3>Essentiel</h3>
-          <p class="prix">Tarif à fixer</p>
-          <ul>
-            <li>L'appli sur votre téléphone</li>
-            <li>Formation de départ</li>
-            <li>Contrôle mensuel des saisies</li>
-          </ul>
-          <a class="bouton bouton-second" href="#contact">Nous écrire</a>
+        <article class="fonction apparait" style="--i:0">
+          <span class="icone"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span>
+          <h3>Recettes et dépenses</h3>
+          <p>Caisse, M-Pesa, Orange Money, Airtel Money, banque et tontine, chacun avec son journal.</p>
         </article>
-        <article class="formule mise-en-avant">
-          <h3>Plus</h3>
-          <p class="prix">Tarif à fixer</p>
-          <ul>
-            <li>Tout l'Essentiel</li>
-            <li>Suivi des clients en retard</li>
-            <li>Aide à l'inventaire de fin d'année</li>
-          </ul>
-          <a class="bouton bouton-principal" href="#contact">Nous écrire</a>
+        <article class="fonction apparait" style="--i:1">
+          <span class="icone"><svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg></span>
+          <h3>Franc congolais et dollar</h3>
+          <p>Un compte par devise. Le taux du jour est conservé sur chaque opération, un taux unique à la clôture.</p>
         </article>
-        <article class="formule">
-          <h3>Avec l'expert-comptable</h3>
-          <p class="prix">Sur devis de l'expert</p>
-          <ul>
-            <li>Arrêté et, s'il le faut, certification des états</li>
-            <li>Déclarations fiscales</li>
-          </ul>
-          <a class="bouton bouton-second" href="#contact">Nous écrire</a>
+        <article class="fonction apparait" style="--i:2">
+          <span class="icone"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <h3>Ventes et achats à crédit</h3>
+          <p>Règlements en une ou plusieurs fois, alerte au-delà de 30 jours, dossier de créance imprimable.</p>
+        </article>
+        <article class="fonction apparait" style="--i:0">
+          <span class="icone"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+          <h3>Pièces justificatives</h3>
+          <p>La facture photographiée reste attachée à l'opération. Les opérations sans pièce sont signalées.</p>
+        </article>
+        <article class="fonction apparait" style="--i:1">
+          <span class="icone"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></span>
+          <h3>Contrôles automatiques</h3>
+          <p>Solde négatif, mois sans saisie, jours sans vente, approche des seuils du SMT, inventaire manquant.</p>
+        </article>
+        <article class="fonction apparait" style="--i:2">
+          <span class="icone"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v5M15 4v5"/></svg></span>
+          <h3>Échéancier</h3>
+          <p>Rappels des échéances fiscales et sociales applicables, dont l'IRPP des micro et petites entreprises.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <hr class="filet">
-
-  <section id="demarche">
+  <section class="etats" id="etats">
     <div class="cadre">
-      <h2 class="titre-section">Comment ça se passe</h2>
-      <ol class="etapes">
-        <li><h3>On passe vous voir</h3><p>Installation sur votre téléphone et première formation, à la boutique.</p></li>
-        <li><h3>Vous notez chaque jour</h3><p>Deux gestes par saisie. Les totaux du cahier de caisse sont reportés avec vous.</p></li>
-        <li><h3>On contrôle chaque mois</h3><p>Pièces manquantes, caisse négative, clients en retard : on vous le signale.</p></li>
-        <li><h3>En fin d'année</h3><p>Inventaire ensemble. Les états sortent du logiciel, l'expert-comptable partenaire les arrête.</p></li>
+      <div class="apparait">
+        <p class="surtitre" style="margin-bottom:14px">États financiers</p>
+        <h2>Les documents du Système minimal de trésorerie</h2>
+        <p class="dim" style="margin-top:14px;color:var(--texte-dim)">Établis à partir des opérations saisies, selon les modèles de l'AUDCIF révisé. Ils restent « non arrêtés » tant que l'expert-comptable partenaire ne les a pas arrêtés.</p>
+        <p class="formule-g">G = C − D + E − F <small>résultat de l'exercice</small></p>
+      </div>
+      <div class="liasse apparait" style="--i:1">
+        <div class="liasse-tete"><span>Exercice 2026</span><span class="statut">Non arrêtés</span></div>
+        <ol>
+          <li><span>Journal de trésorerie<small>mensuel, par compte</small></span><span>journal</span></li>
+          <li><span>Suivi des créances et des dettes<small>clients et fournisseurs</small></span><span>suivi</span></li>
+          <li><span>Compte de résultat<small>rubriques A à G</small></span><span>SMT</span></li>
+          <li><span>Bilan<small>actif et passif équilibrés</small></span><span>SMT</span></li>
+          <li><span>Notes annexes<small>selon le modèle du SMT</small></span><span>notes 1 à 3</span></li>
+          <li><span>Livre des recettes et des dépenses, registre des achats<small>tirés des saisies</small></span><span>AUDCG</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="espaces">
+    <div class="cadre">
+      <div class="tete apparait">
+        <p class="surtitre">Deux espaces</p>
+        <h2>Une application et un bureau</h2>
+      </div>
+      <div class="espaces">
+        <article class="espace appli apparait">
+          <span class="qui">Application · le commerçant</span>
+          <h3>Sur le téléphone, sans connexion</h3>
+          <ul>
+            <li>Saisie des opérations et des ventes à crédit</li>
+            <li>Inventaire de fin d'exercice</li>
+            <li>Tableau de bord, journaux et états</li>
+            <li>Copie de sauvegarde des données</li>
+          </ul>
+          <a class="lien" href="https://mbongo-business.web.app/">Ouvrir l'application →</a>
+        </article>
+        <article class="espace bureau apparait" style="--i:1">
+          <span class="qui">Bureau · TRK Consulting et l'expert</span>
+          <h3>Sur ordinateur, en consultation</h3>
+          <ul>
+            <li>Liste des clients suivis et points d'attention</li>
+            <li>Contrôles et états de chaque client</li>
+            <li>Impression PDF et export Excel</li>
+            <li>Arrêté des états, réservé à l'expert-comptable</li>
+          </ul>
+          <a class="lien" href="https://mbongo-business.web.app/bureau.html">Ouvrir le bureau →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="public" id="public">
+    <div class="cadre">
+      <div class="tete apparait">
+        <p class="surtitre">Pour qui</p>
+        <h2>Les entreprises relevant du SMT</h2>
+        <p>Boutiques, dépôts, ateliers et prestataires dont le chiffre d'affaires annuel reste sous le seuil de leur secteur.</p>
+      </div>
+      <div class="seuils">
+        <div class="seuil apparait"><span class="secteur">Négoce</span><span class="montant">240 M <small>CDF</small></span><p>Alimentations, dépôts, boutiques, quincailleries.</p></div>
+        <div class="seuil apparait" style="--i:1"><span class="secteur">Artisanat</span><span class="montant">160 M <small>CDF</small></span><p>Couture, menuiserie, soudure, boulangerie.</p></div>
+        <div class="seuil apparait" style="--i:2"><span class="secteur">Services</span><span class="montant">120 M <small>CDF</small></span><p>Coiffure, transport, réparation, restauration.</p></div>
+      </div>
+      <p class="note-public apparait">Seuils de chiffre d'affaires hors taxes, équivalents 2026 en francs congolais. Le logiciel signale leur approche ; le passage au Système normal se fait avec l'expert-comptable partenaire.</p>
+    </div>
+  </section>
+
+  <section id="mise-en-service">
+    <div class="cadre">
+      <div class="tete apparait">
+        <p class="surtitre">Mise en service</p>
+        <h2>De l'installation à la clôture</h2>
+      </div>
+      <ol class="etapes apparait">
+        <li><span class="rond">1</span><h3>Installation</h3><p>Sur le téléphone du commerçant, depuis le navigateur, avec les soldes d'ouverture.</p></li>
+        <li><span class="rond">2</span><h3>Formation</h3><p>Prise en main sur le lieu d'activité, en français ou en lingala.</p></li>
+        <li><span class="rond">3</span><h3>Suivi</h3><p>Contrôle mensuel des saisies et des pièces par TRK Consulting.</p></li>
+        <li><span class="rond">4</span><h3>Clôture</h3><p>Inventaire, taux du dollar au 31 décembre, arrêté par l'expert-comptable.</p></li>
       </ol>
     </div>
   </section>
 
-  <hr class="filet">
-
-  <section id="questions">
+  <section class="formules-sec" id="formules">
     <div class="cadre">
-      <h2 class="titre-section">Questions</h2>
-      <div class="questions">
-        <details><summary>Faut-il internet ?</summary><p>Non. L'appli s'ouvre et enregistre sans réseau. Il en faut seulement pour la première ouverture.</p></details>
-        <details><summary>Quel téléphone ?</summary><p>Un Android avec le navigateur Chrome suffit. L'appli pèse moins de 200 Ko et s'installe sur l'écran d'accueil.</p></details>
-        <details><summary>TRK Consulting tient-il ma comptabilité ?</summary><p>Non. Vous saisissez vous-même ; TRK Consulting vous forme et contrôle. Si vous voulez confier la tenue de vos comptes, c'est l'expert-comptable partenaire qui s'en charge.</p></details>
-        <details><summary>J'ai déjà un cahier de caisse.</summary><p>Vous reportez le total de chaque mois passé, on vous montre comment, puis vous continuez dans l'appli.</p></details>
-        <details><summary>Je vends en dollars.</summary><p>Une caisse dollars à part, le taux du jour noté sur chaque saisie, et les états présentés en francs congolais.</p></details>
+      <div class="tete apparait">
+        <p class="surtitre">Formules</p>
+        <h2>Formules d'accompagnement</h2>
+        <p>Proposées par TRK Consulting. Le logiciel est inclus dans chaque formule.</p>
+      </div>
+      <div class="formules">
+        <article class="formule apparait">
+          <h3>Essentiel</h3>
+          <p class="prix"><b>Sur rendez-vous</b>tarif communiqué prochainement</p>
+          <ul>
+            <li>Mbongo Business sur le téléphone</li>
+            <li>Installation et formation initiale</li>
+            <li>Contrôle mensuel des saisies</li>
+          </ul>
+          <a class="bouton bouton-trait" href="#contact">Demander un rendez-vous</a>
+        </article>
+        <article class="formule avant apparait" style="--i:1">
+          <h3>Suivi</h3>
+          <p class="prix"><b>Sur rendez-vous</b>tarif communiqué prochainement</p>
+          <ul>
+            <li>Tout le contenu de la formule Essentiel</li>
+            <li>Suivi des créances clients</li>
+            <li>Assistance à l'inventaire de fin d'exercice</li>
+          </ul>
+          <a class="bouton bouton-bleu" href="#contact">Demander un rendez-vous</a>
+        </article>
+        <article class="formule apparait" style="--i:2">
+          <h3>Avec l'expert-comptable</h3>
+          <p class="prix"><b>Sur devis</b>établi par l'expert-comptable</p>
+          <ul>
+            <li>Arrêté et, le cas échéant, certification des états</li>
+            <li>Assistance et déclarations fiscales</li>
+          </ul>
+          <p class="note">Missions réalisées par l'expert-comptable partenaire, inscrit à l'Ordre national.</p>
+          <a class="bouton bouton-trait" href="#contact">Demander un devis</a>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="contact" id="contact">
+  <section class="faq" id="questions">
     <div class="cadre">
-      <div style="display:grid;gap:10px">
-        <h2>Nous écrire</h2>
-        <p class="dim">Sur WhatsApp, en français ou en lingala. On vous répond pour un rendez-vous à la boutique.</p>
+      <div class="tete apparait" style="margin-bottom:0">
+        <p class="surtitre">Questions</p>
+        <h2>Questions fréquentes</h2>
       </div>
-      <div class="carte-contact">
-        <p class="etiquette">WhatsApp</p>
-        <!-- Numéro à arrêter : tant qu'il manque, le bouton reste inactif. Remplacer aussi wa.me ci-dessous. -->
-        <p class="numero">+243 ··· ··· ···</p>
-        <div class="coordonnees">
-          <span>Kinshasa</span>
-          <span>Du lundi au samedi</span>
+      <div class="questions apparait" style="--i:1">
+        <details class="q"><summary>Une connexion internet est-elle nécessaire ?</summary><p>Seulement pour la première ouverture. Ensuite, l'application s'ouvre et enregistre sans réseau.</p></details>
+        <details class="q"><summary>Quel téléphone faut-il ?</summary><p>Un téléphone Android avec le navigateur Chrome. L'application s'installe sur l'écran d'accueil et pèse environ 200 Ko.</p></details>
+        <details class="q"><summary>TRK Consulting tient-il la comptabilité à ma place ?</summary><p>Non. Le commerçant saisit lui-même ses opérations ; TRK Consulting le forme et contrôle ses saisies. La tenue déléguée relève de l'expert-comptable partenaire.</p></details>
+        <details class="q"><summary>Où sont conservées les données ?</summary><p>Sur le téléphone du commerçant. Une copie de sauvegarde peut être téléchargée à tout moment depuis les réglages.</p></details>
+        <details class="q"><summary>Je tiens déjà un cahier de caisse.</summary><p>Les totaux des mois passés sont reportés lors de la mise en place, puis la saisie se poursuit dans l'application.</p></details>
+        <details class="q"><summary>Je vends aussi en dollars.</summary><p>Un compte en dollars est tenu à part, avec le taux du jour sur chaque opération. Les états sont présentés en francs congolais.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" style="padding-top:0">
+    <div class="cadre">
+      <div class="tete apparait" style="margin-bottom:0">
+        <p class="surtitre">Contact</p>
+        <h2>Demander une démonstration</h2>
+        <p>Une démonstration se tient sur le lieu d'activité. L'application contient aussi une boutique fictive, accessible sans compte.</p>
+      </div>
+      <dl class="coordonnees apparait" style="--i:1">
+        <div><dt>WhatsApp</dt><dd><span class="a-venir">communiqué prochainement</span></dd></div>
+        <div><dt>Ville</dt><dd>Kinshasa</dd></div>
+        <div><dt>Horaires</dt><dd>Du lundi au samedi</dd></div>
+        <div><dt>Langues</dt><dd>Français, lingala</dd></div>
+        <div class="pied-carte">
+          <a class="bouton bouton-bleu inactif" aria-disabled="true" tabindex="-1">Écrire sur WhatsApp</a>
+          <a class="bouton bouton-trait" href="https://mbongo-business.web.app/">Essayer la démonstration</a>
         </div>
-        <a class="bouton bouton-principal" aria-disabled="true" tabindex="-1" style="opacity:.55;pointer-events:none">Ouvrir WhatsApp</a>
-      </div>
+      </dl>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="cadre">
-    <div style="display:grid;gap:6px">
-      <p><b style="color:var(--texte)">Mbongo Business</b> · un logiciel de <a href="../">TRK Consulting</a> · Kinshasa</p>
+    <div style="display:grid;gap:10px">
+      <span class="nom">Mbongo Business</span>
+      <p>Comptabilité de trésorerie des micro et petites entreprises, selon le Système minimal de trésorerie de l'OHADA.</p>
     </div>
-    <div class="liens-pied">
-      <span>Mentions légales</span>
-      <span>Confidentialité</span>
+    <div>
+      <h4>Le logiciel</h4>
+      <ul>
+        <li><a href="https://mbongo-business.web.app/">Application</a></li>
+        <li><a href="https://mbongo-business.web.app/bureau.html">Bureau</a></li>
+        <li><a href="#formules">Formules</a></li>
+      </ul>
     </div>
+    <div>
+      <h4>TRK Consulting</h4>
+      <ul>
+        <li><a href="../">La société</a></li>
+        <li><a href="../#missions">Missions</a></li>
+        <li><a href="../#contact">Contact</a></li>
+      </ul>
+    </div>
+    <p class="mentions">© TRK Consulting. Mbongo Business est un logiciel de TRK Consulting, qui en détient les droits. Les montants affichés sur cette page sont fictifs.</p>
   </div>
 </footer>
 
+<script>
+  var entete = document.getElementById('entete');
+  var surDefile = function () { entete.classList.toggle('defile', scrollY > 8); };
+  addEventListener('scroll', surDefile, { passive: true }); surDefile();
+
+  document.querySelectorAll('.menu nav a').forEach(function (a) {
+    a.addEventListener('click', function () { a.closest('details').open = false; });
+  });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('vu'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    document.querySelectorAll('.apparait').forEach(function (el) { io.observe(el); });
+
+    var liens = document.querySelectorAll('.nav a[href^="#"]');
+    var suivi = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        liens.forEach(function (a) { a.classList.toggle('actif', a.getAttribute('href') === '#' + e.target.id); });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    ['fonctions', 'etats', 'public', 'formules'].forEach(function (id) { var s = document.getElementById(id); if (s) suivi.observe(s); });
+  } else {
+    document.querySelectorAll('.apparait').forEach(function (el) { el.classList.add('vu'); });
+  }
+</script>
 </body>
 </html>

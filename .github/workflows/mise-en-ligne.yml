@@ -52,6 +52,21 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cle.json
         run: firebase deploy --only hosting --project "$PROJET" --non-interactive
+      - name: Supprimer les sites retirés
+        if: env.CLE != ''
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cle.json
+          # Sites qui ne servent plus. Le site par défaut (mbongo-8a748) ne peut pas être supprimé.
+          RETIRES: trk-consulting-rdc
+        run: |
+          for site in $RETIRES; do
+            if firebase hosting:sites:get "$site" --project "$PROJET" > /dev/null 2>&1; then
+              echo "Site $site : suppression."
+              firebase hosting:sites:delete "$site" --project "$PROJET" --force --non-interactive
+            else
+              echo "Site $site : déjà supprimé."
+            fi
+          done
       - name: Effacer la clé
         if: always()
         run: rm -f "$RUNNER_TEMP/cle.json"
