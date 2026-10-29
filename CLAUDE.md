@@ -92,3 +92,4 @@ Seuils d'éligibilité (CA HT annuel) : négoce < 60 M FCFA, artisanat < 40 M, s
 - `prototype/index.html` : prototype fonctionnel validé (un seul fichier, logique de calcul déjà juste, sert de référence visuelle et métier).
 - `docs/regles-smt.md` : règles comptables détaillées.
 - `docs/cadre-juridique.md` : partage des rôles structure / expert-comptable.
+- `docs/architecture.md` : architecture complète, décisions à prendre (D1 à D10), feuille de route détaillée.
