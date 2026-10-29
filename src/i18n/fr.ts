@@ -236,6 +236,13 @@ export const fr = {
   'reglages.demoRecharger': 'Remettre la démonstration à zéro',
   'reglages.demoQuitter': 'Quitter la démonstration',
   'reglages.demoOk': 'Démonstration remise à zéro',
+  'reglages.telephone': 'Sur ce téléphone',
+  'reglages.installer': "Mettre Mbongo sur l'écran d'accueil",
+  'reglages.installee': "Mbongo est sur l'écran d'accueil.",
+  'reglages.horsLigne': 'Mbongo marche sans internet sur ce téléphone.',
+  'reglages.horsLignePasEncore': "Ouvrez Mbongo une fois avec internet : il marchera ensuite sans.",
+  'maj.texte': 'Une nouvelle version de Mbongo est prête.',
+  'maj.bouton': 'Mettre à jour',
 
   'verrou.titre': 'Entrez votre code',
   'verrou.faux': 'Code incorrect.',

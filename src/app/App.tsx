@@ -6,6 +6,7 @@ import { useHashLocation } from 'wouter/use-hash-location';
 import { FournisseurLangue, useLangue, type Cle } from '../i18n';
 import { codeDefini, verifierCode } from '../donnees/reglages';
 import { Icone } from './composants';
+import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
 import { Bienvenue, CreerEntreprise } from './ecrans/Bienvenue';
 import { Etats } from './ecrans/Etats';
@@ -117,12 +118,28 @@ function Contenu() {
   return <Coque />;
 }
 
+/** Une nouvelle version attend : le commerçant choisit le moment, jamais au milieu d'une saisie. */
+function MiseAJour() {
+  const { t } = useLangue();
+  const { majPrete } = useInstallation();
+  if (!majPrete) return null;
+  return (
+    <div className="maj" role="status">
+      <span>{t('maj.texte')}</span>
+      <button className="bouton" onClick={mettreAJour}>
+        {t('maj.bouton')}
+      </button>
+    </div>
+  );
+}
+
 export function App() {
   return (
     <FournisseurLangue>
       <FournisseurSession>
         <Router hook={useHashLocation}>
           <div className="app">
+            <MiseAJour />
             <Contenu />
           </div>
         </Router>

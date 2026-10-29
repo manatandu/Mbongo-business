@@ -85,11 +85,12 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - `npm test` : tous les tests (moteur, invariant, pureté). `TIRAGES=10000 npm test` pour un invariant plus poussé.
 - `npm run typage` : vérification TypeScript.
 - `npm run verifier` : les deux, à lancer avant chaque commit.
+- `npm run build` puis `npm run essai:hors-ligne` : essai de l'appli en mode avion (Playwright).
 
 ## Feuille de route
 
 1. Moteur SMT et tests : fait.
-2. Appli du commerçant : faite ; reste l'installation hors ligne (PWA) et un essai en mode avion.
+2. Appli du commerçant : faite, installable, marche sans réseau (essai en mode avion automatisé).
 3. Bureau et exports PDF / Excel : faits.
 4. Site vitrine : maquette faite ; restent les informations réelles.
 5. Préparation de la soutenance (scénario, parcours Playwright, plan B).

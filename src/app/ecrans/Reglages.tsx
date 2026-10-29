@@ -1,4 +1,4 @@
-/** Langue, code d'accès, état des données sur le téléphone, copie de sauvegarde, démonstration. */
+/** Langue, installation sur le téléphone, code d'accès, copie de sauvegarde, démonstration. */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
@@ -7,6 +7,7 @@ import { chargerDemo } from '../../donnees/demo';
 import { retirerEntreprise } from '../../donnees/entreprise';
 import { codeDefini, definirCode } from '../../donnees/reglages';
 import { Erreurs } from '../composants';
+import { installer, useInstallation } from '../installation';
 import { db, useDossier } from '../session';
 
 async function telechargerCopie(entrepriseId: string, nom: string, jour: string): Promise<void> {
@@ -39,6 +40,7 @@ export function Reglages() {
   const [code, setCode] = useState('');
   const [erreurs, setErreurs] = useState<string[]>([]);
   const aCode = useLiveQuery(() => codeDefini(db), []);
+  const appli = useInstallation();
   const nonEnvoyees = useLiveQuery(() => db.operations.where('entrepriseId').equals(entreprise.id).filter((o) => o.envoi === 'local').count(), [entreprise.id]);
 
   async function enregistrerCode() {
@@ -63,6 +65,14 @@ export function Reglages() {
           Lingala
         </button>
       </div>
+
+      <h2 className="titre-section">{t('reglages.telephone')}</h2>
+      <p className="aide">{appli.installee ? t('reglages.installee') : appli.horsLignePret ? t('reglages.horsLigne') : t('reglages.horsLignePasEncore')}</p>
+      {appli.peutInstaller && !appli.installee && (
+        <button className="bouton" onClick={() => void installer()}>
+          {t('reglages.installer')}
+        </button>
+      )}
 
       <h2 className="titre-section">{t('reglages.code')}</h2>
       <p className="aide">{t('reglages.codeAide')}</p>

@@ -242,6 +242,13 @@ export const ln: Record<Cle, string> = {
   'reglages.demoRecharger': 'Zongisa ndakisa na ebandeli',
   'reglages.demoQuitter': 'Bima na ndakisa',
   'reglages.demoOk': 'Ndakisa ezongi na ebandeli',
+  'reglages.telephone': 'Na telefone oyo',
+  'reglages.installer': 'Tia Mbongo na écran ya liboso',
+  'reglages.installee': 'Mbongo ezali na écran ya liboso.',
+  'reglages.horsLigne': 'Mbongo esalaka kozanga internet na telefone oyo.',
+  'reglages.horsLignePasEncore': 'Fungola Mbongo mbala moko na internet : sima ekosala kozanga yango.',
+  'maj.texte': 'Version ya sika ya Mbongo ezali prête.',
+  'maj.bouton': 'Tia version ya sika',
 
   'verrou.titre': 'Koma code na yo',
   'verrou.faux': 'Code ezali malamu te.',

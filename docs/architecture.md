@@ -120,6 +120,8 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 
 ## 6. Les données sur le téléphone
 
+- **Appli installable** : un service worker garde l'appli en cache dès la première ouverture avec internet. Ensuite elle s'ouvre sans réseau, depuis l'écran d'accueil. Seule l'appli du commerçant est en cache, ni le bureau ni l'export Excel.
+- **Mises à jour** : une nouvelle version attend l'accord du commerçant (« Mettre à jour »). Elle ne s'applique jamais au milieu d'une saisie.
 - **Base locale** IndexedDB, via Dexie. Le téléphone est la source de vérité. `navigator.storage.persist()` au lancement, pour que Chrome n'efface pas la base.
 - **Tables** : entreprises, exercices, comptes, opérations, tiers (créances et dettes), immobilisations, sorties, inventaires, pièces (photos), réglages.
 - **Saisie validée par le moteur** avant toute écriture : une saisie qui déséquilibrerait le dossier est refusée avec un message clair.
@@ -135,7 +137,7 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 | Saisir | recette, dépense, transfert, change de dollars ; payé ou à crédit ; photo ; le reste sous « Plus d'options » |
 | Journal | un compte, un mois, en liste lisible : début du mois, entré, sorti, fin du mois |
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois |
-| Plus | matériel, stock (inventaire), états, réglages |
+| Plus | matériel, stock (inventaire), états, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
 
 Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
 
@@ -213,8 +215,8 @@ Mesuré à la construction, compressé :
 
 | Élément | Poids |
 |---|---|
-| appli du commerçant (React, Dexie, moteur, écrans, deux langues) | environ 142 Ko |
-| bureau, en plus du code partagé | environ 7 Ko |
+| appli du commerçant (React, Dexie, moteur, écrans, deux langues, mise en cache) | environ 150 Ko, une fois ; ensuite zéro octet à l'ouverture |
+| bureau, en plus du code partagé | environ 9 Ko |
 | export Excel, au clic seulement | environ 20 Ko |
 
 Une micro-entreprise saisit 1 000 à 5 000 opérations par an. Le moteur recalcule tout l'exercice en quelques millisecondes.
@@ -228,6 +230,7 @@ Une micro-entreprise saisit 1 000 à 5 000 opérations par an. Le moteur recalcu
 | non-régression | Vitest | le jeu du prototype redonne ses montants |
 | données | Vitest + fake-indexeddb | saisie validée, annulations, démonstration valide chaque jour de 2026 à 2028, arrêté |
 | bureau | Vitest | le classeur Excel reprend les montants des états et porte la mention |
+| mode avion | Playwright, `npm run essai:hors-ligne` | sur un téléphone simulé (360 px, processeur ralenti quatre fois) : l'appli s'ouvre sans réseau, la démonstration se charge, une vente s'enregistre et reste après réouverture, le bureau n'est pas en cache |
 | parcours | Playwright | scénario de la soutenance, de bout en bout (à faire) |
 
 `npm run verifier` avant chaque commit. Règle du dépôt : tout calcul comptable a son test.
@@ -279,8 +282,8 @@ Chaque étape se termine par un état de ce qui marche et de ce qui reste.
 
 **1. Moteur SMT et tests** · fait. Invariant vérifié sur des centaines de milliers d'exercices tirés au hasard.
 
-**2. Appli du commerçant** · presque fait. Saisie, journaux, clients et fournisseurs, matériel, stock, états, deux langues, démonstration.
-Reste : l'installation sur l'écran d'accueil qui marche sans réseau (service worker, `vite-plugin-pwa` déjà installé, icônes prêtes) et un essai complet en mode avion.
+**2. Appli du commerçant** · fait. Saisie, journaux, clients et fournisseurs, matériel, stock, états, deux langues, démonstration ; appli installable qui marche sans réseau, essai en mode avion automatisé.
+Reste à faire sur un vrai téléphone Android d'entrée de gamme, avant la soutenance : l'installer, couper le réseau, refaire le parcours.
 
 **3. Bureau et exports** · fait. Trois écrans, arrêté, PDF, Excel.
 
