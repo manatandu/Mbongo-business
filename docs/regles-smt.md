@@ -135,6 +135,8 @@ Conforme :
 - délai d'arrêté de l'art. 23 : date limite du 30 avril affichée au bureau (en rouge une fois dépassée) et rappel dans l'échéancier ;
 - stocks : fiches de stock facultatives, valorisées selon l'art. 44 (CUMP après chaque entrée par défaut, CUMP de période, PEPS), méthode mentionnée en note 2.
 
-Reste : « travaux en cours » à l'inventaire, sans rubrique distincte.
+- travaux en cours à l'inventaire (Titre X, ch. 1 : « stocks […] et des travaux en cours ») : rubrique à part, évalués à ce qu'ils ont coûté, compris dans la valeur du stock final et détaillés en note 2.
+
+Plus aucun écart connu avec le Titre X.
 
 À trancher avec l'expert-comptable partenaire : l'art. 28 cite un tableau des flux de trésorerie que le Titre X ne prévoit pas ; aucune règle de sortie du SMT (nombre d'exercices de dépassement) dans le texte lu.

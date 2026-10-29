@@ -109,6 +109,8 @@ export interface LigneStock {
   quantite: number;
   prixUnitaire: Montant;
   montant: Montant;
+  /** Travail commencé et pas fini à la clôture (Titre X : « stocks […] et travaux en cours »), évalué à ce qu'il a coûté. */
+  travauxEnCours?: boolean;
 }
 
 /** Tout ce qu'il faut pour calculer les états d'un exercice. */

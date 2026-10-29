@@ -126,7 +126,9 @@ export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: stri
     [],
     [gras('Note 2 · État des stocks')],
     ...(methodeStock ? [[methodeStock]] : []),
-    ...n.note2.lignes.map((l): Cell[] => [l.reference, l.designation, { value: l.quantite, type: Number }, nombre(l.prixUnitaire), nombre(l.montant)]),
+    ...n.note2.lignes.map((l): Cell[] =>
+      l.travauxEnCours ? [l.reference, `${l.designation} (travail en cours)`, '', '', nombre(l.montant)] : [l.reference, l.designation, { value: l.quantite, type: Number }, nombre(l.prixUnitaire), nombre(l.montant)],
+    ),
     ['Valeur du stock final', n.note2.inventaireFait ? '' : 'inventaire non fait', nombre(n.note2.stockFinal, 'bold')],
     ['Valeur du stock initial', '', nombre(n.note2.stockInitial)],
     [],

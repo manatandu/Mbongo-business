@@ -13,7 +13,9 @@ import { db, useDossier } from '../session';
 interface Brouillon {
   designation: string;
   quantite: string;
+  /** Prix d'achat unitaire ; pour un travail en cours, ce qu'il a déjà coûté. */
   prix: string;
+  travaux?: boolean;
 }
 
 export function Stock() {
@@ -46,13 +48,17 @@ function Inventaire() {
 
   useEffect(() => {
     if (enregistrees && lignes === null) {
-      setLignes(enregistrees.length ? enregistrees.map((l) => ({ designation: l.designation, quantite: String(l.quantite).replace('.', ','), prix: String(l.prixUnitaire) })) : [{ designation: '', quantite: '', prix: '' }]);
+      setLignes(
+        enregistrees.length
+          ? enregistrees.map((l) => ({ designation: l.designation, quantite: String(l.quantite).replace('.', ','), prix: String(l.prixUnitaire), ...(l.travauxEnCours ? { travaux: true } : {}) }))
+          : [{ designation: '', quantite: '', prix: '' }],
+      );
     }
   }, [enregistrees, lignes]);
 
   const valide = exercice.stockFinal !== null;
   const calculees = (lignes ?? []).map((l, i) => {
-    const q = lireQuantite(l.quantite);
+    const q = l.travaux ? 1 : lireQuantite(l.quantite);
     const p = lireMontant(l.prix, 'CDF');
     return { ...l, i, q, p, montant: q !== null && p !== null ? Math.round(q * p) : null };
   });
@@ -65,11 +71,21 @@ function Inventaire() {
       setErreurs([t('saisir.erreur.montant')]);
       return false;
     }
+    // Références de la note 2 : S1, S2… pour le stock, T1, T2… pour les travaux en cours.
+    let ns = 0;
+    let nt = 0;
     try {
       await enregistrerInventaire(
         db,
         exercice.id,
-        utiles.map((l, k) => ({ reference: `L${k + 1}`, designation: l.designation.trim(), quantite: l.q ?? 0, prixUnitaire: l.p ?? 0, montant: l.montant ?? 0 })),
+        utiles.map((l) => ({
+          reference: l.travaux ? `T${++nt}` : `S${++ns}`,
+          designation: l.designation.trim(),
+          quantite: l.q ?? 0,
+          prixUnitaire: l.p ?? 0,
+          montant: l.montant ?? 0,
+          ...(l.travaux ? { travauxEnCours: true } : {}),
+        })),
       );
       setErreurs([]);
       return true;
@@ -115,8 +131,8 @@ function Inventaire() {
                 {(enregistrees ?? []).map((l) => (
                   <tr key={l.id}>
                     <td>{l.designation}</td>
-                    <td className="d num">{String(l.quantite).replace('.', ',')}</td>
-                    <td className="d num">{fmt(l.prixUnitaire)}</td>
+                    <td className="d num">{l.travauxEnCours ? '' : String(l.quantite).replace('.', ',')}</td>
+                    <td className="d num">{l.travauxEnCours ? t('stock.travail') : fmt(l.prixUnitaire)}</td>
                     <td className="d num">{fmt(l.montant)}</td>
                   </tr>
                 ))}
@@ -127,7 +143,7 @@ function Inventaire() {
       ) : (
         <>
           <div className="liste">
-            {calculees.map((l) => (
+            {calculees.filter((l) => !l.travaux).map((l) => (
               <div className="ligne" key={l.i} style={{ gridTemplateColumns: '1fr' }}>
                 <label className="champ">
                   {t('stock.designation')}
@@ -157,15 +173,16 @@ function Inventaire() {
               <button
                 className="bouton discret"
                 onClick={() =>
-                  setLignes(
-                    (fiches?.fiches ?? [])
+                  setLignes((ls) => [
+                    ...(fiches?.fiches ?? [])
                       .filter((f) => f.etat.quantite > 0)
                       .map((f) => ({
                         designation: f.article.unite ? `${f.article.designation} (${f.article.unite})` : f.article.designation,
                         quantite: String(f.etat.quantite).replace('.', ','),
                         prix: String(Math.round(f.etat.coutUnitaire)),
                       })),
-                  )
+                    ...(ls ?? []).filter((l) => l.travaux),
+                  ])
                 }
               >
                 {t('stock.reprendre')}
@@ -176,6 +193,39 @@ function Inventaire() {
           <button className="bouton discret" onClick={() => setLignes((ls) => [...(ls ?? []), { designation: '', quantite: '', prix: '' }])}>
             {t('stock.ajouter')}
           </button>
+
+          <h2 className="titre-section">{t('stock.travaux')}</h2>
+          <p className="aide">{t('stock.aideTravaux')}</p>
+          {calculees.some((l) => l.travaux) && (
+            <div className="liste">
+              {calculees
+                .filter((l) => l.travaux)
+                .map((l) => (
+                  <div className="ligne" key={l.i} style={{ gridTemplateColumns: '1fr' }}>
+                    <>
+                      <label className="champ">
+                        {t('stock.travail')}
+                        <input value={l.designation} onChange={(e) => modifier(l.i, 'designation', e.target.value)} />
+                      </label>
+                      <label className="champ">
+                        {t('stock.valeurTravail')}
+                        <input inputMode="numeric" value={l.prix} onChange={(e) => modifier(l.i, 'prix', e.target.value)} />
+                      </label>
+                    </>
+                    <div className="meta">
+                      <span />
+                      <button className="lien-bouton" onClick={() => setLignes((ls) => (ls ?? []).filter((_, j) => j !== l.i))}>
+                        {t('stock.retirer')}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+          <button className="bouton discret" onClick={() => setLignes((ls) => [...(ls ?? []), { designation: '', quantite: '1', prix: '', travaux: true }])}>
+            {t('stock.ajouterTravail')}
+          </button>
+
           <Erreurs messages={erreurs} />
           <div className="duo">
             <button className="bouton discret" onClick={() => void garder().then((ok) => ok && annoncer(t('stock.okBrouillon')))}>

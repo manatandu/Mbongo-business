@@ -207,6 +207,11 @@ export const fr = {
   'materiel.ok': 'Sortie enregistrée',
   'materiel.caution': 'Caution',
 
+  'stock.travaux': 'Travaux en cours',
+  'stock.aideTravaux': "Travail commencé mais pas fini au 31 décembre (habit en couture, meuble en fabrication, chantier) : notez ce qu'il a déjà coûté en matières et en main-d'œuvre.",
+  'stock.ajouterTravail': '+ Ajouter un travail en cours',
+  'stock.valeurTravail': 'Ce qu’il a déjà coûté (CDF)',
+  'stock.travail': 'Travail',
   'stock.titre': 'Inventaire du stock',
   'stock.onglet.fiches': 'Fiches de stock',
   'stock.onglet.inventaire': "Inventaire de fin d'année",

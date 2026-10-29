@@ -178,12 +178,16 @@ function Notes({ e }: { e: EtatsSMT }) {
                 <td>
                   {l.reference} · {l.designation}
                 </td>
-                <td className="d num">
-                  {String(l.quantite).replace('.', ',')} × {fmt(l.prixUnitaire)}
-                </td>
+                <td className="d num">{l.travauxEnCours ? 'travail en cours' : `${String(l.quantite).replace('.', ',')} × ${fmt(l.prixUnitaire)}`}</td>
                 <td className="d num">{fmt(l.montant)}</td>
               </tr>
             ))}
+            {n.note2.lignes.some((l) => l.travauxEnCours) && (
+              <tr>
+                <td colSpan={2}>dont travaux en cours</td>
+                <td className="d num">{fmt(n.note2.lignes.filter((l) => l.travauxEnCours).reduce((s, l) => s + l.montant, 0))}</td>
+              </tr>
+            )}
             <tr className="sous">
               <td colSpan={2}>Valeur du stock final{n.note2.inventaireFait ? '' : ' (inventaire non fait : stock initial repris)'}</td>
               <td className="d num">{fmt(n.note2.stockFinal)}</td>

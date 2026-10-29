@@ -2,17 +2,23 @@ import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseMbongo } from '../../src/donnees/base';
 import { creerEntreprise } from '../../src/donnees/entreprise';
+import { chargerDossier } from '../../src/donnees/dossier';
+import { enregistrerInventaire, validerInventaire } from '../../src/donnees/saisie';
+import { calculerEtats } from '../../src/moteur';
 import { creerArticle, definirMethodeStock, enregistrerMouvement, fichesStock, methodeStock } from '../../src/donnees/stock';
 
 let db: BaseMbongo;
 let ent: string;
+let exerciceId: string;
 
 beforeEach(async () => {
   db = new BaseMbongo(`test-${Math.random()}`);
-  ent = (await creerEntreprise(db, {
+  const r = await creerEntreprise(db, {
     nom: 'Dépôt de test (fictif)', activite: '', secteur: 'negoce', commune: '', nif: '', responsable: '', telephone: '', annee: 2026,
     comptes: [{ type: 'caisse', libelle: 'Caisse', devise: 'CDF', solde: 0 }], stockInitial: 0, tauxOuverture: null,
-  })).entrepriseId;
+  });
+  ent = r.entrepriseId;
+  exerciceId = r.exerciceId;
 });
 
 describe('fiches de stock', () => {
@@ -48,5 +54,17 @@ describe('fiches de stock', () => {
   it('refuse un article en double', async () => {
     await creerArticle(db, ent, { designation: 'Sucre', unite: 'sac', quantite: 0, prixUnitaire: 0, date: '2026-01-01' });
     await expect(creerArticle(db, ent, { designation: ' sucre ', unite: 'sac', quantite: 0, prixUnitaire: 0, date: '2026-01-01' })).rejects.toThrow('existe déjà');
+  });
+
+  it("compte les travaux en cours dans l'inventaire (Titre X : stocks et travaux en cours)", async () => {
+    await enregistrerInventaire(db, exerciceId, [
+      { reference: 'S1', designation: 'Tissu wax', quantite: 12, prixUnitaire: 15_000, montant: 180_000 },
+      { reference: 'T1', designation: 'Robe de mariée en couture', quantite: 1, prixUnitaire: 95_000, montant: 95_000, travauxEnCours: true },
+    ]);
+    await validerInventaire(db, exerciceId);
+    const e = calculerEtats((await chargerDossier(db, exerciceId)).dossier);
+    expect(e.bilan.actif.stocks).toBe(275_000);
+    expect(e.notes.note2.lignes.filter((l) => l.travauxEnCours).map((l) => l.designation)).toEqual(['Robe de mariée en couture']);
+    expect(e.bilan.equilibre).toBe(true);
   });
 });

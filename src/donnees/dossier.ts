@@ -120,7 +120,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     tauxCloture: exercice.tauxCloture,
   };
   if (inventaire.length) {
-    dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant }));
+    dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant, ...(l.travauxEnCours ? { travauxEnCours: true } : {}) }));
   }
   return { entreprise, exercice, comptes, dossier };
 }
