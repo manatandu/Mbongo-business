@@ -96,7 +96,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 1. Moteur SMT et tests : fait.
 2. Appli du commerçant : faite, installable, marche sans réseau (essai en mode avion automatisé).
 3. Bureau et exports PDF / Excel : faits.
-4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent tarifs, adresse et immatriculation (WhatsApp : +243 983 510 725).
+4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent adresse et immatriculation (WhatsApp : +243 983 510 725 ; tarifs : mise en place 30 000 CDF, Essentiel 25 000 CDF/mois, Suivi 50 000 CDF/mois).
 5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
 Plus tard, seulement s'il y a un pilote : serveur.
 

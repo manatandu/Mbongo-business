@@ -227,6 +227,7 @@ section { padding-block: clamp(64px, 10vw, 112px); }
 .formule li { padding-left: 24px; position: relative; }
 .formule li::before { content: ""; position: absolute; left: 2px; top: .45em; width: 9px; height: 5px; border-left: 1.7px solid var(--bleu); border-bottom: 1.7px solid var(--bleu); transform: rotate(-45deg); }
 .formule .note { font-size: .84rem; color: var(--texte-dim); }
+.tarifs-note { margin-top: 22px; font-size: .86rem; color: var(--texte-dim); }
 
 /* Questions */
 .faq .cadre { display: grid; gap: 36px; }
@@ -287,7 +288,6 @@ footer a:hover { color: #fff; }
 <body>
 <script>document.documentElement.classList.add('js');</script>
 
-<div class="prepa" role="note"><div class="cadre">Page en cours de finalisation : les tarifs seront publiés prochainement.</div></div>
 
 <header class="entete" id="entete">
   <div class="cadre">
@@ -498,12 +498,12 @@ footer a:hover { color: #fff; }
       <div class="tete apparait">
         <p class="surtitre">Formules</p>
         <h2>Formules d'accompagnement</h2>
-        <p>Proposées par TRK Consulting. Le logiciel est inclus dans chaque formule.</p>
+        <p>Proposées par TRK Consulting. Le logiciel est inclus dans chaque formule. La mise en place est facturée une fois : <strong>30 000 CDF</strong> (installation, reprise des soldes d'ouverture, formation initiale).</p>
       </div>
       <div class="formules">
         <article class="formule apparait">
           <h3>Essentiel</h3>
-          <p class="prix"><b>Sur rendez-vous</b>tarif communiqué prochainement</p>
+          <p class="prix"><b>25 000 CDF</b>par mois</p>
           <ul>
             <li>Mbongo Business sur le téléphone</li>
             <li>Installation et formation initiale</li>
@@ -513,7 +513,7 @@ footer a:hover { color: #fff; }
         </article>
         <article class="formule avant apparait" style="--i:1">
           <h3>Suivi</h3>
-          <p class="prix"><b>Sur rendez-vous</b>tarif communiqué prochainement</p>
+          <p class="prix"><b>50 000 CDF</b>par mois</p>
           <ul>
             <li>Tout le contenu de la formule Essentiel</li>
             <li>Suivi des créances clients</li>
@@ -523,7 +523,7 @@ footer a:hover { color: #fff; }
         </article>
         <article class="formule apparait" style="--i:2">
           <h3>Avec l'expert-comptable</h3>
-          <p class="prix"><b>Sur devis</b>établi par l'expert-comptable</p>
+          <p class="prix"><b>Sur devis</b>établi par l'expert-comptable partenaire</p>
           <ul>
             <li>Arrêté et, le cas échéant, certification des états</li>
             <li>Assistance et déclarations fiscales</li>
@@ -532,6 +532,7 @@ footer a:hover { color: #fff; }
           <a class="bouton bouton-trait" href="#contact">Demander un devis</a>
         </article>
       </div>
+      <p class="tarifs-note apparait">Tarifs 2026, en francs congolais.</p>
     </div>
   </section>
 
