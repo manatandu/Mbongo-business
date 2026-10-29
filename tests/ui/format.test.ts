@@ -5,9 +5,9 @@ describe('affichage', () => {
   it('groupe les milliers avec une espace simple', () => {
     expect(fmt(1_234_567)).toBe('1 234 567');
     expect(fmt(-587_500)).toBe('−587 500');
-    expect(fmtMontant(12_500, 'CDF')).toBe('12 500 FC');
-    expect(fmtMontant(12_345, 'USD')).toBe('123,45 $');
-    expect(fmtMontant(-50, 'USD')).toBe('−0,50 $');
+    expect(fmtMontant(12_500, 'CDF')).toBe('12 500 CDF');
+    expect(fmtMontant(12_345, 'USD')).toBe('123,45 USD');
+    expect(fmtMontant(-50, 'USD')).toBe('−0,50 USD');
   });
 });
 

@@ -37,7 +37,7 @@ function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
   const l = livreEntreprenant(d, d.exercice.debut, e.auDate);
   const livre: SheetData = [
     ...entete(e, "Livre des recettes et des dépenses (AUDCG, art. 31)"),
-    [gras('Date'), gras('Origine ou destination'), gras('Compte'), gras('Mode'), gras('Recette (FC)'), gras('Dépense (FC)')],
+    [gras('Date'), gras('Origine ou destination'), gras('Compte'), gras('Mode'), gras('Recette (CDF)'), gras('Dépense (CDF)')],
     ...l.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.compte, MODE[x.mode], x.sens === 'ressource' ? nombre(x.montantFC) : '', x.sens === 'emploi' ? nombre(x.montantFC) : '']),
     [],
     ['Recettes en espèces', '', '', '', nombre(l.ressourcesEspeces, 'bold')],
@@ -48,7 +48,7 @@ function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
   const r = registreAchats(d);
   const achats: SheetData = [
     ...entete(e, `Registre des achats ${r.annee} (AUDCG, art. 32)`),
-    [gras('Date'), gras('Détail'), gras('Mode de règlement'), gras('Référence de la pièce'), gras('Montant (FC)')],
+    [gras('Date'), gras('Détail'), gras('Mode de règlement'), gras('Référence de la pièce'), gras('Montant (CDF)')],
     ...r.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.mode === 'credit' ? MODE.credit : `${MODE[x.mode]} (${x.compte})`, x.reference || (x.reprise ? 'repris du cahier' : ''), nombre(x.montantFC)]),
     [],
     [gras('Récapitulation')],
@@ -71,7 +71,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
 
   const resultat: SheetData = [
     ...entete(e, 'Compte de résultat SMT'),
-    [gras('Rubriques'), gras('Note'), gras('Montant (FC)')],
+    [gras('Rubriques'), gras('Note'), gras('Montant (CDF)')],
     ligne('Recettes sur ventes ou prestations de services', '4', r.recettesVentes),
     ligne('Autres recettes sur activités', '4', r.autresRecettes),
     ligne('Total des recettes sur produits (A)', '', r.A, true),
@@ -93,7 +93,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
 
   const bilan: SheetData = [
     ...entete(e, `Bilan SMT au 31 décembre ${e.exercice.annee}`),
-    [gras('Actif'), gras('Note'), gras('Montant (FC)')],
+    [gras('Actif'), gras('Note'), gras('Montant (CDF)')],
     ligne('Immobilisations (valeur nette)', '1', b.actif.immobilisations),
     ligne('Stocks', '2', b.actif.stocks),
     ligne('Clients et débiteurs divers', '3', b.actif.creances),
@@ -101,7 +101,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
     ligne('Banque, monnaie électronique, tontine (en + ou en −)', '', b.actif.banque),
     ligne('Total actif', '', b.actif.total, true),
     [],
-    [gras('Passif'), gras('Note'), gras('Montant (FC)')],
+    [gras('Passif'), gras('Note'), gras('Montant (CDF)')],
     ligne('Compte exploitant', '1', b.passif.compteExploitant),
     ligne('Résultat exercice', '', b.passif.resultat),
     ligne('Emprunt', '', b.passif.emprunt),

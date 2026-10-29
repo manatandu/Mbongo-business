@@ -25,7 +25,7 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
             <tr>
               <th>Rubriques</th>
               <th>Note</th>
-              <th className="m">Montant (FC)</th>
+              <th className="m">Montant (CDF)</th>
             </tr>
           </thead>
           <tbody>
@@ -59,7 +59,7 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
               <tr>
                 <th>Actif</th>
                 <th>Note</th>
-                <th className="m">FC</th>
+                <th className="m">CDF</th>
               </tr>
             </thead>
             <tbody>
@@ -74,7 +74,7 @@ export function TablesEtats({ e }: { e: EtatsSMT }) {
               <tr>
                 <th>Passif</th>
                 <th>Note</th>
-                <th className="m">FC</th>
+                <th className="m">CDF</th>
               </tr>
             </thead>
             <tbody>

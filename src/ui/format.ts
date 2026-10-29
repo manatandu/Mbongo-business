@@ -9,10 +9,10 @@ const espaces = (s: string): string => s.replace(/[  ]/g, ' ');
 /** 1234567 → « 1 234 567 », −5 → « −5 ». */
 export const fmt = (n: number): string => (n < 0 ? '−' : '') + espaces(entier.format(Math.abs(n)));
 
-/** Montant dans sa devise : « 12 500 FC » ou « 123,45 $ » (le dollar est stocké en centimes). */
+/** Montant dans sa monnaie : « 12 500 CDF » ou « 123,45 USD » (l'USD est stocké en centimes). */
 export function fmtMontant(m: Montant, devise: Devise): string {
-  if (devise === 'CDF') return `${fmt(m)} FC`;
-  return `${m < 0 ? '−' : ''}${espaces(cents.format(Math.abs(m) / 100))} $`;
+  if (devise === 'CDF') return `${fmt(m)} CDF`;
+  return `${m < 0 ? '−' : ''}${espaces(cents.format(Math.abs(m) / 100))} USD`;
 }
 
 /** Montant nu, sans symbole, dans sa devise. */

@@ -47,13 +47,13 @@ export interface ParametresControle {
 
 const pluriel = (n: number, mot: string): string => `${n} ${mot}${n > 1 ? 's' : ''}`;
 
-/** Montant lisible dans un message : « 180 000 FC », « 120,00 $ ». */
+/** Montant lisible dans un message : « 180 000 CDF », « 120,00 USD ». */
 function lisible(m: Montant, devise: Devise): string {
   const signe = m < 0 ? '−' : '';
   const a = Math.abs(m);
   const groupe = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  if (devise === 'CDF') return `${signe}${groupe(a)} FC`;
-  return `${signe}${groupe(Math.floor(a / 100))},${String(a % 100).padStart(2, '0')} $`;
+  if (devise === 'CDF') return `${signe}${groupe(a)} CDF`;
+  return `${signe}${groupe(Math.floor(a / 100))},${String(a % 100).padStart(2, '0')} USD`;
 }
 
 /** Une opération « vivante » : ni annulation, ni annulée à la date. */

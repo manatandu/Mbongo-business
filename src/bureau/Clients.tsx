@@ -33,8 +33,8 @@ export function Clients() {
               <th>Entreprise</th>
               <th>Secteur</th>
               <th>Dernière saisie</th>
-              <th className="m">Ventes de l'année (FC)</th>
-              <th className="m">Résultat provisoire (FC)</th>
+              <th className="m">Ventes de l'année (CDF)</th>
+              <th className="m">Résultat provisoire (CDF)</th>
               <th>À faire</th>
             </tr>
           </thead>

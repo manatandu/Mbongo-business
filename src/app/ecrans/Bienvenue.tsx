@@ -170,7 +170,7 @@ export function CreerEntreprise() {
             <input
               aria-label={`${t(c.cle)} : ${t('saisir.montant')}`}
               inputMode="decimal"
-              placeholder={c.devise === 'USD' ? '0 $' : '0 FC'}
+              placeholder={c.devise === 'USD' ? '0 USD' : '0 CDF'}
               value={c.solde}
               onChange={(e) => setComptes((cs) => cs.map((x, j) => (j === i ? { ...x, solde: e.target.value } : x)))}
               style={{ width: 130, border: '1px solid var(--line-strong)', borderRadius: 8, padding: '6px 8px', fontFamily: 'var(--mono)', background: 'var(--surface)', fontSize: 16 }}

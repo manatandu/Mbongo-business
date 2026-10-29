@@ -157,7 +157,7 @@ export function Saisir() {
 
   const libelleCompte = (id: string) => {
     const c = comptes.find((x) => x.id === id);
-    return c ? `${c.libelle}${c.devise === 'USD' ? ' ($)' : ''}` : id;
+    return c ? `${c.libelle}${c.devise === 'USD' ? ' (USD)' : ''}` : id;
   };
 
   if (aujourdhui > exercice.fin) {
@@ -187,7 +187,7 @@ export function Saisir() {
 
       <div className={credit ? 'ligne-montant' : ''}>
         <label className="champ">
-          {t('saisir.montant')} ({devise === 'USD' ? '$' : 'FC'})
+          {t('saisir.montant')} ({devise === 'USD' ? 'USD' : 'CDF'})
           <input
             className="montant"
             inputMode="decimal"
@@ -202,8 +202,8 @@ export function Saisir() {
           <label className="champ">
             {t('saisir.devise')}
             <select value={deviseCredit} onChange={(e) => setDeviseCredit(e.target.value as Devise)}>
-              <option value="CDF">FC</option>
-              <option value="USD">$</option>
+              <option value="CDF">CDF</option>
+              <option value="USD">USD</option>
             </select>
           </label>
         )}
@@ -280,7 +280,7 @@ export function Saisir() {
 
       {change && vers && (
         <label className="champ">
-          {t('saisir.recu')} ({vers.devise === 'USD' ? '$' : 'FC'})
+          {t('saisir.recu')} ({vers.devise === 'USD' ? 'USD' : 'CDF'})
           <input inputMode="decimal" value={recu} onChange={(e) => setRecu(e.target.value)} autoComplete="off" />
         </label>
       )}

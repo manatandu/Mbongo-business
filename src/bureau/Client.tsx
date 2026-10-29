@@ -107,7 +107,7 @@ export function Client() {
                 {dollars && (
                   <div className="flex items-end gap-2">
                     <label>
-                      <span className="libelle">Taux du dollar au 31 décembre {c.exercice.tauxCloture ? `(actuel : ${fmt(c.exercice.tauxCloture)} FC)` : ''}</span>
+                      <span className="libelle">Taux USD au 31 décembre, en CDF pour 1 USD {c.exercice.tauxCloture ? `(actuel : ${fmt(c.exercice.tauxCloture)} CDF)` : ''}</span>
                       <input className="champ w-40 text-right" inputMode="decimal" value={taux} onChange={(e) => setTaux(e.target.value)} />
                     </label>
                     <button

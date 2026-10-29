@@ -92,7 +92,7 @@ export function Stock() {
                   <th>{t('stock.designation')}</th>
                   <th className="d">{t('stock.quantite')}</th>
                   <th className="d">{t('stock.prix')}</th>
-                  <th className="d">FC</th>
+                  <th className="d">CDF</th>
                 </tr>
               </thead>
               <tbody>

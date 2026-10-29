@@ -17,7 +17,7 @@ function Reglement({ s, genre, fermer }: { s: SituationTiers; genre: GenreTiers;
   const [tauxTexte, setTauxTexte] = useState(taux ? String(taux) : '');
   const [erreurs, setErreurs] = useState<string[]>([]);
 
-  if (!comptes.length) return <p className="erreur">{t('tiers.pasDeCompte', { devise: s.ligne.devise === 'USD' ? '$' : 'FC' })}</p>;
+  if (!comptes.length) return <p className="erreur">{t('tiers.pasDeCompte', { devise: s.ligne.devise === 'USD' ? 'USD' : 'CDF' })}</p>;
 
   async function valider() {
     const m = lireMontant(montant, s.ligne.devise);
@@ -43,7 +43,7 @@ function Reglement({ s, genre, fermer }: { s: SituationTiers; genre: GenreTiers;
     <div className="actions">
       <div className="deux-col">
         <label className="champ">
-          {t('saisir.montant')} ({s.ligne.devise === 'USD' ? '$' : 'FC'})
+          {t('saisir.montant')} ({s.ligne.devise === 'USD' ? 'USD' : 'CDF'})
           <input inputMode="decimal" value={montant} onChange={(e) => setMontant(e.target.value)} />
         </label>
         <label className="champ">

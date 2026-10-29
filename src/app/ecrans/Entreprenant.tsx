@@ -95,13 +95,13 @@ export function RegistreAchats() {
       <h2 className="titre-section">{t('achats.titre', { annee: registre.annee })}</h2>
       <div className="hero">
         <div className="lbl">{t('achats.total')}</div>
-        <div className="big">{fmt(registre.total)} FC</div>
+        <div className="big">{fmt(registre.total)} CDF</div>
       </div>
       {registre.parMois.map(({ mois, total }) => (
         <section key={mois}>
           <h3 className="titre-section">
             {nomMois(Number(mois.slice(5, 7)))}
-            <span>{fmt(total)} FC</span>
+            <span>{fmt(total)} CDF</span>
           </h3>
           <div className="liste">
             {registre.lignes

@@ -61,7 +61,7 @@ function Sortie({ ligne, fermer }: { ligne: LigneNote1; fermer: () => void }) {
               {chargement.comptes.map((x) => (
                 <option key={x.id} value={x.id}>
                   {x.libelle}
-                  {x.devise === 'USD' ? ' ($)' : ''}
+                  {x.devise === 'USD' ? ' (USD)' : ''}
                 </option>
               ))}
             </select>
