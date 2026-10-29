@@ -1,12 +1,14 @@
 /** Base locale du téléphone, via Dexie (IndexedDB). */
 import Dexie, { type EntityTable } from 'dexie';
 import type {
+  LigneArrete,
   LigneCompte,
   LigneConfirmation,
   LigneEntreprise,
   LigneEnvoi,
   LigneExercice,
   LigneImmobilisation,
+  LigneIntervention,
   LigneInventaire,
   LigneOperation,
   LignePiece,
@@ -30,6 +32,8 @@ export class BaseMbongo extends Dexie {
   pieces!: EntityTable<LignePiece, 'id'>;
   fileEnvoi!: EntityTable<LigneEnvoi, 'seq'>;
   reglages!: EntityTable<Reglage, 'cle'>;
+  arretes!: EntityTable<LigneArrete, 'id'>;
+  interventions!: EntityTable<LigneIntervention, 'id'>;
 
   constructor(nom = 'mbongo') {
     super(nom);
@@ -48,8 +52,13 @@ export class BaseMbongo extends Dexie {
       fileEnvoi: '++seq, table',
       reglages: 'cle',
     });
+    // Bureau : arrêtés de l'expert et journal des interventions.
+    this.version(2).stores({
+      arretes: 'id, entrepriseId, exerciceId',
+      interventions: 'id, entrepriseId, le',
+    });
   }
 }
 
 /** Tables métier à vider ensemble quand on retire une entreprise de l'appareil. */
-export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'confirmations', 'pieces'] as const;
+export const TABLES_ENTREPRISE = ['comptes', 'operations', 'tiers', 'immobilisations', 'sorties', 'confirmations', 'pieces', 'arretes', 'interventions'] as const;

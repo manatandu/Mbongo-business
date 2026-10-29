@@ -8,7 +8,7 @@ import { calculerSoldes, soldesQuotidiens } from './tresorerie';
 import { chiffreAffairesDepuisContexte, evaluerSeuil } from './seuils';
 import { encoursA, situationDepuisContexte } from './tiers';
 import { verifierDossier } from './validation';
-import type { DateISO, DossierExercice, Montant, Operation } from './types';
+import type { DateISO, Devise, DossierExercice, Montant, Operation } from './types';
 
 export type NiveauAnomalie = 'information' | 'a_revoir' | 'a_traiter';
 
@@ -45,6 +45,15 @@ export interface ParametresControle {
 }
 
 const pluriel = (n: number, mot: string): string => `${n} ${mot}${n > 1 ? 's' : ''}`;
+
+/** Montant lisible dans un message : « 180 000 FC », « 120,00 $ ». */
+function lisible(m: Montant, devise: Devise): string {
+  const signe = m < 0 ? '−' : '';
+  const a = Math.abs(m);
+  const groupe = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  if (devise === 'CDF') return `${signe}${groupe(a)} FC`;
+  return `${signe}${groupe(Math.floor(a / 100))},${String(a % 100).padStart(2, '0')} $`;
+}
 
 /** Une opération « vivante » : ni annulation, ni annulée à la date. */
 const vivante = (ctx: Contexte, op: Operation, date: DateISO): boolean => !op.annule && !estAnnuleeAu(ctx, op.id, date);
@@ -104,8 +113,8 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
       code: banque ? 'decouvert_bancaire' : 'solde_negatif',
       niveau: banque ? 'a_revoir' : 'a_traiter',
       message: banque
-        ? `${c.libelle} à découvert depuis le ${premier} (au plus bas ${minimum} ${c.devise}). Vérifier avec le relevé.`
-        : `${c.libelle} négatif depuis le ${premier} (au plus bas ${minimum} ${c.devise}) : opération oubliée ou erreur de compte.`,
+        ? `${c.libelle} à découvert depuis le ${premier} (au plus bas ${lisible(minimum, c.devise)}). Vérifier avec le relevé.`
+        : `${c.libelle} négatif depuis le ${premier} (au plus bas ${lisible(minimum, c.devise)}) : opération oubliée ou erreur de compte.`,
       references: [c.id],
     });
   }
@@ -118,7 +127,7 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
       code: 'creance_ancienne',
       niveau: 'a_traiter',
       message: `${pluriel(anciennes.length, 'créance')} de plus de ${age} jours : ${anciennes
-        .map((s) => `${s.ligne.nom} (${s.encours} ${s.ligne.devise})`)
+        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)})`)
         .join(' ; ')}.`,
       references: anciennes.map((s) => s.ligne.id),
     });
@@ -133,14 +142,14 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
       anomalies.push({
         code: 'seuil_smt_depasse',
         niveau: 'a_traiter',
-        message: `Chiffre d'affaires de ${ca} FC, ${part} % du seuil SMT (${s.seuil} FC). Passage au Système normal à voir avec l'expert-comptable partenaire.`,
+        message: `Chiffre d'affaires de ${lisible(ca, 'CDF')}, ${part} % du seuil SMT (${lisible(s.seuil, 'CDF')}). Passage au Système normal à voir avec l'expert-comptable partenaire.`,
         references: [],
       });
     } else if (s.niveau === 'approche') {
       anomalies.push({
         code: 'seuil_smt_approche',
         niveau: 'a_revoir',
-        message: `Chiffre d'affaires de ${ca} FC, ${part} % du seuil SMT (${s.seuil} FC).`,
+        message: `Chiffre d'affaires de ${lisible(ca, 'CDF')}, ${part} % du seuil SMT (${lisible(s.seuil, 'CDF')}).`,
         references: [],
       });
     }

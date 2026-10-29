@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Jetons du skill « dense-desktop-design ». Tous les gris sont ceux du gabarit.
+ * Seuls --sel et le dégradé de la barre de titre prennent le bleu de Mbongo, assombri pour rester sobre.
+ */
+:root {
+  --chrome: #e9eaec;
+  --chrome-alt: #dfe1e4;
+  --chrome-border: #9aa0a6;
+
+  --bg: #e8e9eb;
+  --surface: #ffffff;
+  --surface-alt: #f6f6f7;
+  --border: #b7bcc2;
+  --border-dark: #8b929a;
+  --text: #14161a;
+  --text-dim: #565d66;
+  --sel: #0b5aa8;
+  --positive: #256a4a;
+  --positive-soft: #e3f1ea;
+  --warning: #a06a12;
+  --warning-soft: #f7ecd8;
+  --danger: #9c2b23;
+  --danger-soft: #f6e0dd;
+
+  --titlebar-from: #1f6fc4;
+  --titlebar-to: #0b4a8f;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#bureau {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* Coins carrés partout, pas de style « app moderne » arrondie. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  border-radius: 2px;
+}
+
+@layer components {
+  /* Grille dense : en-têtes en petites capitales grises, lignes zébrées, montants à droite. */
+  .grille {
+    @apply w-full border-collapse text-[11.5px] bg-surface;
+  }
+  .grille th {
+    @apply sticky top-0 bg-chrome text-left font-semibold text-[10px] uppercase tracking-wide text-text-dim px-2 py-1 border-b border-border-dark whitespace-nowrap;
+  }
+  .grille td {
+    @apply px-2 py-[5px] border-b border-border align-top;
+  }
+  .grille tbody tr:nth-child(even) td {
+    @apply bg-surface-alt;
+  }
+  .grille tbody tr:hover td {
+    @apply bg-chrome-alt;
+  }
+  .grille .m {
+    @apply text-right font-mono tabular-nums whitespace-nowrap;
+  }
+  .grille tr.total td {
+    @apply font-semibold bg-chrome;
+  }
+  .grille tr.resultat td {
+    @apply font-semibold bg-[#dce7f5];
+  }
+  .panneau {
+    @apply bg-surface border border-border;
+  }
+  .panneau-titre {
+    @apply px-2 py-1 bg-chrome border-b border-border text-[11px] font-semibold flex items-center justify-between gap-2;
+  }
+  .champ {
+    @apply h-[26px] px-1.5 text-[12px] bg-surface border border-border-dark;
+  }
+  .libelle {
+    @apply block text-[11px] font-semibold text-text mb-0.5;
+  }
+  .bouton {
+    @apply h-[26px] px-3 text-[12px] border border-border-dark bg-chrome hover:bg-chrome-alt disabled:opacity-40;
+  }
+  .bouton-principal {
+    @apply h-[26px] px-3 text-[12px] border border-sel bg-sel text-white hover:brightness-110 disabled:opacity-40;
+  }
+  .pastille {
+    @apply inline-block px-1.5 text-[10px] font-semibold border;
+  }
+}

@@ -21,6 +21,8 @@ describe('contrôles sur le jeu du prototype', () => {
 
   it('relève la créance de plus de 30 jours', () => {
     expect(trouve('creance_ancienne')?.references).toEqual(['c-3']);
+    expect(trouve('creance_ancienne')?.message).toContain('Restaurant Chez Tantine (610 000 FC)');
+    expect(trouve('decouvert_bancaire')?.message).toContain('depuis le 2026-08-05 (au plus bas −690 000 FC)');
   });
 
   it('ne signale pas les mois repris du cahier de caisse comme sans vente', () => {

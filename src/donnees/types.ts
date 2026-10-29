@@ -106,6 +106,37 @@ export interface LigneEnvoi {
   erreur?: string;
 }
 
+export type RoleBureau = 'assistant' | 'expert';
+
+/** Arrêté des états par l'expert-comptable : instantané figé, jamais modifié. */
+export interface LigneArrete {
+  id: string;
+  entrepriseId: string;
+  exerciceId: string;
+  /** Date et heure de l'arrêté (ISO 8601). */
+  le: string;
+  auteur: string;
+  /** États tels que l'expert les a vus, sérialisés. */
+  etats: string;
+  /** SHA-256 de `etats`. */
+  empreinte: string;
+  versionMoteur: string;
+  nombreOperations: number;
+}
+
+export type ActionIntervention = 'taux_saisi' | 'taux_confirme' | 'taux_cloture' | 'inventaire_prepare' | 'arrete' | 'reouverture';
+
+/** Journal des interventions de l'assistant et de l'expert, en ajout seulement. */
+export interface LigneIntervention {
+  id: string;
+  entrepriseId: string | null;
+  exerciceId: string | null;
+  le: string;
+  role: RoleBureau;
+  action: ActionIntervention;
+  detail: string;
+}
+
 export interface Reglage {
   cle: string;
   valeur: unknown;
