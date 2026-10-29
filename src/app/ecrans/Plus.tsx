@@ -14,6 +14,7 @@ const ENTREES: { href: string; icone: string; titre: Cle; aide: Cle }[] = [
 const LIVRES: typeof ENTREES = [
   { href: '/livre', icone: 'journal', titre: 'plus.livre', aide: 'plus.livreAide' },
   { href: '/achats', icone: 'stock', titre: 'plus.achats', aide: 'plus.achatsAide' },
+  { href: '/echeances', icone: 'journal', titre: 'plus.echeances', aide: 'plus.echeancesAide' },
 ];
 
 export function Plus() {

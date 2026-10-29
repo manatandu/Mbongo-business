@@ -6,7 +6,7 @@ import { estAnnuleeAu, preparer, type Contexte } from './contexte';
 import { ajouterJours, jourSemaine, moisDe, moisEntre } from './dates';
 import { calculerSoldes, soldesQuotidiens } from './tresorerie';
 import { chiffreAffairesDepuisContexte, evaluerSeuil, type SeuilsSMT } from './seuils';
-import { encoursA, situationDepuisContexte } from './tiers';
+import { encoursA, prescription, situationDepuisContexte } from './tiers';
 import { verifierDossier } from './validation';
 import type { DateISO, Devise, DossierExercice, Montant, Operation } from './types';
 
@@ -18,6 +18,8 @@ export type CodeAnomalie =
   | 'solde_negatif'
   | 'decouvert_bancaire'
   | 'creance_ancienne'
+  | 'creance_prescription'
+  | 'creance_prescrite'
   | 'seuil_smt_approche'
   | 'seuil_smt_depasse'
   | 'mois_sans_saisie'
@@ -129,6 +131,38 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
         .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)})`)
         .join(' ; ')}.`,
       references: anciennes.map((s) => s.ligne.id),
+    });
+  }
+
+  // Créances sur des particuliers : un an pour agir (Code civil, livre III, art. 653).
+  const enCours = situationDepuisContexte(ctx, 'creance', ref).filter((s) => s.encours > 0);
+  const delai = (s: (typeof enCours)[number]) => prescription(s.ligne);
+  const bientot = enCours.filter((s) => {
+    const d = delai(s);
+    return d !== null && ref < d && ref >= ajouterJours(d, -90);
+  });
+  if (bientot.length) {
+    anomalies.push({
+      code: 'creance_prescription',
+      niveau: 'a_traiter',
+      message: `${pluriel(bientot.length, 'créance')} sur des particuliers à réclamer avant la fin du délai d'un an : ${bientot
+        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)}, jusqu'au ${delai(s)})`)
+        .join(' ; ')}. Faire signer une reconnaissance de dette, ou agir avant.`,
+      references: bientot.map((s) => s.ligne.id),
+    });
+  }
+  const passees = enCours.filter((s) => {
+    const d = delai(s);
+    return d !== null && ref >= d;
+  });
+  if (passees.length) {
+    anomalies.push({
+      code: 'creance_prescrite',
+      niveau: 'a_revoir',
+      message: `${pluriel(passees.length, 'créance')} sur des particuliers de plus d'un an : ${passees
+        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)})`)
+        .join(' ; ')}. Le délai pour les réclamer en justice est passé, sauf reconnaissance de dette signée ou action déjà engagée.`,
+      references: passees.map((s) => s.ligne.id),
     });
   }
 

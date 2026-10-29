@@ -8,7 +8,7 @@ export { appliquerTaux, centimesEnFrancs, estMontant, estTaux, versFC } from './
 export { estDateISO } from './dates';
 export { valider, verifierDossier, ErreurDossier } from './validation';
 export { soldesTresorerie, journalMensuel, ligneBilan, type SoldeCompte, type JournalTresorerie, type LigneJournal } from './tresorerie';
-export { situationTiers, encaisser, regler, type SituationTiers, type ParametresReglement } from './tiers';
+export { situationTiers, encaisser, regler, prescription, dossierCreance, type SituationTiers, type ParametresReglement, type DossierCreance } from './tiers';
 export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';
 export { calculerEtats, MENTION_ETATS, type Etats, type CompteDeResultat, type Bilan, type Notes, type LigneNote1 } from './etats';
 export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';

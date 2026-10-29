@@ -39,6 +39,8 @@ function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
 function versPiece(l: LigneTiers, regleAvant: number): PieceTiers {
   const p: PieceTiers = { id: l.id, date: l.date, facture: l.facture, nom: l.nom, nature: l.nature, montant: l.montant, devise: l.devise, taux: l.taux };
   if (regleAvant > 0) p.regleAvant = regleAvant;
+  if (l.client) p.client = l.client;
+  if (l.adresse) p.adresse = l.adresse;
   return p;
 }
 

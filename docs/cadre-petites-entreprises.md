@@ -260,7 +260,7 @@ Rien de tout cela ne bloque la soutenance (pas de serveur, données fictives). T
 
 Classées par rapport entre l'utilité et le travail. Rien de cela n'est fait ; à décider étape par étape.
 
-**Utiles et légères**
+**Utiles et légères** (les trois premières sont faites)
 
 1. **Échéancier** fiscal et social (§ 3.6) sur l'accueil : rappels sans montant engageant.
 2. **Créances : client particulier ou commerçant.** Pour un particulier, alertes à 6, 9 et 11 mois, et créance « en danger » à un an (CC, art. 653). Aujourd'hui l'alerte est à 30 jours seulement.

@@ -122,3 +122,11 @@ describe("démonstration de fin d'année", () => {
     expect(e.bilan.passif.compteExploitant).toBe(en.bilan.passif.compteExploitant + en.bilan.passif.resultat);
   });
 });
+
+describe('vente à crédit', () => {
+  it('garde le type de client et son adresse', async () => {
+    await enregistrerFacture(db, exerciceId, 'creance', { date: '2026-05-02', facture: 'F-2', nom: 'Restaurant fictif', nature: 'ventes', montant: 90_000, devise: 'CDF', taux: null, client: 'commercant', adresse: 'Avenue fictive, Gombe' });
+    const f = (await chargerDossier(db, exerciceId)).dossier.creances.find((x) => x.facture === 'F-2');
+    expect(f).toMatchObject({ client: 'commercant', adresse: 'Avenue fictive, Gombe' });
+  });
+});

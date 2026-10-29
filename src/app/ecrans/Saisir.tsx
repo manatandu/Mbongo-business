@@ -4,7 +4,7 @@
  */
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
-import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeOperation } from '../../moteur';
+import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeClient, type TypeOperation } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { ajouterPhoto, enregistrerFacture, enregistrerOperation, ErreurSaisie } from '../../donnees/saisie';
 import { lireMontant, lireTaux } from '../../ui/format';
@@ -56,6 +56,8 @@ export function Saisir() {
   const [tauxTexte, setTauxTexte] = useState(taux ? String(taux) : '');
   const [tiers, setTiers] = useState('');
   const [facture, setFacture] = useState('');
+  const [typeClient, setTypeClient] = useState<TypeClient>('particulier');
+  const [adresse, setAdresse] = useState('');
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [papier, setPapier] = useState(false);
   const [reprise, setReprise] = useState(false);
@@ -120,7 +122,16 @@ export function Saisir() {
     try {
       if (credit) {
         const genre = type === 'recette' ? 'creance' : 'dette';
-        await enregistrerFacture(db, exercice.id, genre, { date, facture: facture.trim(), nom: tiers.trim(), nature, montant: m, devise, taux: devise === 'USD' ? tauxLu : null });
+        await enregistrerFacture(db, exercice.id, genre, {
+          date,
+          facture: facture.trim(),
+          nom: tiers.trim(),
+          nature,
+          montant: m,
+          devise,
+          taux: devise === 'USD' ? tauxLu : null,
+          ...(genre === 'creance' ? { client: typeClient, ...(adresse.trim() ? { adresse: adresse.trim() } : {}) } : {}),
+        });
         annoncer(t(genre === 'creance' ? 'saisir.okCreance' : 'saisir.okDette'));
         aller(genre === 'creance' ? '/clients' : '/clients/dettes');
         return;
@@ -226,6 +237,21 @@ export function Saisir() {
             {t('saisir.facture')}
             <input value={facture} onChange={(e) => setFacture(e.target.value)} placeholder={t('saisir.facultatif')} autoComplete="off" />
           </label>
+          {type === 'recette' && (
+            <>
+              <label className="champ">
+                {t('client.question')}
+                <select value={typeClient} onChange={(e) => setTypeClient(e.target.value as TypeClient)}>
+                  <option value="particulier">{t('client.particulier')}</option>
+                  <option value="commercant">{t('client.commercant')}</option>
+                </select>
+              </label>
+              <label className="champ">
+                {t('client.adresse')}
+                <input value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder={t('saisir.facultatif')} autoComplete="off" />
+              </label>
+            </>
+          )}
         </div>
       ) : (
         <div className="deux-col">

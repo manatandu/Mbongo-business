@@ -63,6 +63,9 @@ export interface Operation {
 }
 
 /** Une créance impayée ou une dette à payer. */
+/** Client d'une vente à crédit : un particulier ou un autre commerçant. */
+export type TypeClient = 'particulier' | 'commercant';
+
 export interface PieceTiers {
   id: string;
   date: DateISO;
@@ -74,6 +77,10 @@ export interface PieceTiers {
   taux: number | null;
   /** Part déjà réglée avant l'ouverture de l'exercice (facture reportée). */
   regleAvant?: Montant;
+  /** Créance : particulier par défaut. Contre un particulier, l'action du marchand se prescrit par un an (Code civil, livre III, art. 653). */
+  client?: TypeClient;
+  /** Créance : adresse du client, exigée pour une injonction de payer (AUPSRVE, art. 4). */
+  adresse?: string;
 }
 
 export interface SortieImmobilisation {

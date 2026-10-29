@@ -136,10 +136,10 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 
 | Écran | Contenu |
 |---|---|
-| Accueil | argent disponible, entré et sorti du mois, on me doit, je dois, deux alertes au plus |
+| Accueil | argent disponible, entré et sorti du mois, on me doit, je dois, deux alertes au plus, les échéances des quinze prochains jours |
 | Saisir | recette, dépense, transfert, change de dollars ; payé ou à crédit ; photo ; le reste sous « Plus d'options » |
 | Journal | un compte, un mois, en liste lisible : début du mois, entré, sorti, fin du mois |
-| Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois |
+| Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois ; pour chaque créance, un dossier imprimable (facture, paiements, reste dû, délai, reconnaissance de dette) |
 | Plus | matériel, stock (inventaire), états, livre des recettes et des dépenses, registre des achats, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
 
 Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
@@ -208,6 +208,8 @@ Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête 
 | solde négatif | une caisse ou un compte mobile passe sous zéro, à n'importe quelle date | à traiter |
 | découvert bancaire | un compte en banque passe sous zéro | à revoir |
 | créances anciennes | encours de plus de 30 jours | à traiter |
+| créance bientôt prescrite | vente à un particulier, moins de trois mois avant un an (Code civil, livre III, art. 653) | à traiter |
+| créance de plus d'un an | vente à un particulier, délai d'un an passé | à revoir |
 | seuil SMT | ventes estimées à 80 % puis 100 % du seuil du secteur | à revoir, puis à traiter |
 | stock non inventorié | exercice terminé sans inventaire validé | à traiter |
 | taux de clôture manquant | exercice terminé, comptes en dollars, pas de taux du 31 décembre | à traiter |

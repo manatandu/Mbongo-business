@@ -5,7 +5,7 @@
  * Mois écoulés : totaux repris du cahier de caisse. Mois précédent et mois en cours : saisies détaillées.
  */
 import { ajouterJours, jourSemaine } from '../moteur/dates';
-import type { DateISO, DossierExercice, GenreTiers, Immobilisation, Nature, Operation, PieceTiers, TypeOperation } from '../moteur';
+import type { DateISO, DossierExercice, GenreTiers, Immobilisation, Nature, Operation, PieceTiers, TypeClient, TypeOperation } from '../moteur';
 import type { LigneCompte, LigneEntreprise, LigneExercice, LigneTaux } from '../donnees/types';
 
 export interface JeuDemo {
@@ -118,9 +118,10 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
 
   // Factures : deux de l'an dernier, puis des ventes et achats à crédit récents.
   const tiers: (PieceTiers & { genre: GenreTiers })[] = [];
-  const facture = (genre: GenreTiers, date: DateISO, numero: string, nom: string, montant: number, nature: Nature = genre === 'creance' ? 'ventes' : 'achats_marchandises') => {
+  const facture = (genre: GenreTiers, date: DateISO, numero: string, nom: string, montant: number, client?: TypeClient, adresse?: string) => {
     if (date > aujourdhui) return null;
-    const t = { id: id(), genre, date, facture: numero, nom, nature, montant, devise: 'CDF' as const, taux: null };
+    const nature: Nature = genre === 'creance' ? 'ventes' : 'achats_marchandises';
+    const t = { id: id(), genre, date, facture: numero, nom, nature, montant, devise: 'CDF' as const, taux: null, ...(client ? { client } : {}), ...(adresse ? { adresse } : {}) };
     tiers.push(t);
     return t;
   };
@@ -131,12 +132,12 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
       reglementDe: { genre, ligne: t.id },
     });
   };
-  reglement(facture('creance', `${annee - 1}-12-20`, 'V-118', 'Restaurant Chez Tantine', 520_000), 'creance', `${annee}-01-12`, caisse, 520_000);
-  reglement(facture('creance', `${annee - 1}-12-28`, 'V-121', 'École primaire Lisanga', 280_000), 'creance', `${annee}-02-03`, caisse, 100_000);
+  reglement(facture('creance', `${annee - 1}-12-20`, 'V-118', 'Restaurant Chez Tantine', 520_000, 'commercant', 'Avenue Kasa-Vubu, Kinshasa (fictif)'), 'creance', `${annee}-01-12`, caisse, 520_000);
+  reglement(facture('creance', `${annee - 1}-12-28`, 'V-121', 'École primaire Lisanga', 280_000, 'particulier', 'Quartier Matonge, Kalamu (fictif)'), 'creance', `${annee}-02-03`, caisse, 100_000);
   reglement(facture('dette', `${annee - 1}-12-23`, 'F-3390', 'Ets Mukoko', 1_150_000), 'dette', `${annee}-01-08`, banque, 1_150_000);
-  facture('creance', avant(40), 'V-204', 'Restaurant Chez Tantine', 610_000);
-  facture('creance', avant(18), 'V-219', 'Paroisse Saint-Pierre, kermesse', 385_000);
-  facture('creance', avant(7), 'V-226', 'M. Kalala, voisin', 74_000);
+  facture('creance', avant(40), 'V-204', 'Restaurant Chez Tantine', 610_000, 'commercant', 'Avenue Kasa-Vubu, Kinshasa (fictif)');
+  facture('creance', avant(18), 'V-219', 'Paroisse Saint-Pierre, kermesse', 385_000, 'particulier');
+  facture('creance', avant(7), 'V-226', 'M. Kalala, voisin', 74_000, 'particulier');
   facture('dette', avant(8), 'F-5120', 'Ets Mukoko', 1_480_000);
   facture('dette', avant(4), 'B-0877', 'Dépôt de boissons du quartier', 690_000);
 

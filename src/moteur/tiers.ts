@@ -78,6 +78,40 @@ export function situationDepuisContexte(ctx: Contexte, genre: GenreTiers, date: 
     });
 }
 
+/**
+ * Date à partir de laquelle la créance sur un particulier ne se réclame plus en justice : un an après la vente
+ * (Code civil, livre III, art. 653). Une reconnaissance de dette ou une citation interrompt ce délai (art. 638 et 640).
+ * Null pour un client commerçant : cinq ans (AUDCG, art. 16), hors de portée d'une petite boutique.
+ */
+export function prescription(l: PieceTiers): DateISO | null {
+  if (l.client === 'commercant') return null;
+  const [a, m, j] = l.date.split('-');
+  return `${Number(a) + 1}-${m}-${m === '02' && j === '29' ? '28' : j}`;
+}
+
+export interface DossierCreance {
+  ligne: PieceTiers;
+  /** Paiements reçus, dans l'ordre, dans la devise de la facture. Une annulation est négative. */
+  paiements: { date: DateISO; compte: string; montant: Montant }[];
+  regle: Montant;
+  reste: Montant;
+  ageJours: number;
+  prescription: DateISO | null;
+}
+
+/** Tout ce qu'il faut pour réclamer une créance : la facture, les paiements, le reste dû, le délai. */
+export function dossierCreance(dossier: DossierExercice, ligneId: string, date: DateISO): DossierCreance {
+  verifierDossier(dossier);
+  const ctx = preparer(dossier);
+  const ligne = dossier.creances.find((l) => l.id === ligneId);
+  if (!ligne) throw new Error(`Créance inconnue : ${ligneId}`);
+  const paiements = ctx.operations
+    .filter((op) => op.date <= date && op.reglementDe?.genre === 'creance' && op.reglementDe.ligne === ligneId)
+    .map((op) => ({ date: op.date, compte: compte(ctx, op.compte).libelle, montant: signe(op) * op.montant }));
+  const regle = regleA(ctx, 'creance', ligne, date);
+  return { ligne, paiements, regle, reste: ligne.montant - regle, ageJours: ecartJours(ligne.date, date), prescription: prescription(ligne) };
+}
+
 export interface ParametresReglement {
   id: string;
   date: DateISO;

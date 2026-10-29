@@ -194,6 +194,9 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
   .hero .big { font-size: 23px; }
 }
 
+.signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 28px; font-size: 13px; color: var(--muted); }
+.signatures span { border-top: 1px solid var(--line-strong); padding-top: 6px; }
+
 @media print {
   body { background: #fff; }
   .app { max-width: none; border: 0; }

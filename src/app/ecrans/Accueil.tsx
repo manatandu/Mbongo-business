@@ -6,6 +6,7 @@ import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
 import { useLangue, type Cle } from '../../i18n';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { useDossier } from '../session';
+import { LigneEcheance, useEcheances } from './Echeances';
 import { FinAnnee } from './FinAnnee';
 import { LigneOperation } from './LigneOperation';
 
@@ -20,6 +21,8 @@ const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   jours_sans_vente: { cle: 'alerte.jours_sans_vente', ecran: '/saisir/recette' },
   mois_sans_saisie: { cle: 'alerte.mois_sans_saisie', ecran: '/saisir/recette' },
   sans_piece: { cle: 'alerte.sans_piece', ecran: '/journal' },
+  creance_prescription: { cle: 'alerte.creance_prescription', ecran: '/clients' },
+  creance_prescrite: { cle: 'alerte.creance_prescrite', ecran: '/clients' },
 };
 
 /** « Entré » et « sorti » : l'activité seule, sans les apports, prélèvements, prêts ni matériel. */
@@ -29,6 +32,7 @@ const valeur = (o: Operation): number => (o.annule ? -1 : 1) * versFC(o.montant,
 
 export function Accueil() {
   const { chargement, dateRef, taux, aujourdhui } = useDossier();
+  const prochaines = useEcheances(15).slice(0, 2);
   const { t, mois } = useLangue();
   const { dossier, comptes } = chargement;
 
@@ -77,6 +81,22 @@ export function Accueil() {
           </Link>
         ) : null;
       })}
+
+      {prochaines.length > 0 && (
+        <>
+          <h2 className="titre-section">
+            {t('echeances.prochaines')}
+            <Link href="/echeances" className="bouton discret petit">
+              {t('accueil.toutVoir')}
+            </Link>
+          </h2>
+          <div className="liste">
+            {prochaines.map((e) => (
+              <LigneEcheance key={`${e.date}-${e.cle}`} e={e} />
+            ))}
+          </div>
+        </>
+      )}
 
       <div className="comptes">
         {vue.soldes.map((s) => (

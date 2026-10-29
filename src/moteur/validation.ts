@@ -62,6 +62,7 @@ export function valider(d: DossierExercice): string[] {
       if (!l.nom || !l.nom.trim()) err.push(`${quoi} ${l.id} : nom du ${genre === 'creance' ? 'client' : 'fournisseur'} manquant.`);
       if (!DEVISES.includes(l.devise)) err.push(`${quoi} ${l.id} : devise inconnue.`);
       if (l.devise === 'USD' && !estTaux(l.taux)) err.push(`${quoi} ${l.id} en dollars : taux manquant.`);
+      if (l.client !== undefined && l.client !== 'particulier' && l.client !== 'commercant') err.push(`${quoi} ${l.id} : type de client inconnu.`);
       if (!natures.includes(l.nature)) {
         err.push(
           genre === 'dette' && NATURES_IMMOBILISATION.includes(l.nature)

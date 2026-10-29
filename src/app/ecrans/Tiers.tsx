@@ -119,10 +119,16 @@ export function Tiers() {
               <span>{s.ligne.facture || t('tiers.sansNumero')}</span>
               <Pastille ton={s.ageJours > 30 ? 'bad' : s.ageJours > 14 ? 'warn' : 'info'}>{t('tiers.jours', { n: s.ageJours })}</Pastille>
               {s.regle > 0 && <span>{t('tiers.reste', { reste: fmtMontant(s.encours, s.ligne.devise), total: fmtMontant(s.ligne.montant, s.ligne.devise) })}</span>}
+              {genre === 'creance' && <span>{t(s.ligne.client === 'commercant' ? 'client.commercant' : 'client.particulier')}</span>}
               {ouverte !== s.ligne.id && (
                 <button className="bouton petit" onClick={() => setOuverte(s.ligne.id)}>
                   {t(genre === 'creance' ? 'tiers.encaisser' : 'tiers.payer')}
                 </button>
+              )}
+              {genre === 'creance' && ouverte !== s.ligne.id && (
+                <Link href={`/creance/${s.ligne.id}`} className="bouton discret petit">
+                  {t('tiers.dossier')}
+                </Link>
               )}
             </div>
             {ouverte === s.ligne.id && <Reglement s={s} genre={genre} fermer={() => setOuverte(null)} />}

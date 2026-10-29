@@ -10,6 +10,8 @@ import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
 import { Bienvenue, CreerEntreprise } from './ecrans/Bienvenue';
 import { Livre, RegistreAchats } from './ecrans/Livres';
+import { DossierCreance } from './ecrans/DossierCreance';
+import { Echeances } from './ecrans/Echeances';
 import { Etats } from './ecrans/Etats';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
@@ -24,8 +26,8 @@ const ONGLETS: { href: string; icone: string; cle: Cle; actif: (chemin: string) 
   { href: '/', icone: 'accueil', cle: 'nav.accueil', actif: (c) => c === '/' },
   { href: '/saisir', icone: 'saisir', cle: 'nav.saisir', actif: (c) => c.startsWith('/saisir') },
   { href: '/journal', icone: 'journal', cle: 'nav.journal', actif: (c) => c.startsWith('/journal') },
-  { href: '/clients', icone: 'clients', cle: 'nav.clients', actif: (c) => c.startsWith('/clients') },
-  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats'].some((p) => c.startsWith(p)) },
+  { href: '/clients', icone: 'clients', cle: 'nav.clients', actif: (c) => c.startsWith('/clients') || c.startsWith('/creance') },
+  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats', '/echeances'].some((p) => c.startsWith(p)) },
 ];
 
 function Coque() {
@@ -62,6 +64,8 @@ function Coque() {
           <Route path="/reglages" component={Reglages} />
           <Route path="/livre/:mois?" component={Livre} />
           <Route path="/achats" component={RegistreAchats} />
+          <Route path="/creance/:id" component={DossierCreance} />
+          <Route path="/echeances" component={Echeances} />
           <Route>
             <Accueil />
           </Route>
