@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useLangue } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
-import { retirerEntreprise } from '../../donnees/entreprise';
+import { modifierStatut, retirerEntreprise } from '../../donnees/entreprise';
+import type { StatutJuridique } from '../../moteur';
 import { codeDefini, definirCode } from '../../donnees/reglages';
 import { Erreurs } from '../composants';
 import { installer, useInstallation } from '../installation';
@@ -41,6 +42,8 @@ export function Reglages() {
   const [erreurs, setErreurs] = useState<string[]>([]);
   const aCode = useLiveQuery(() => codeDefini(db), []);
   const appli = useInstallation();
+  const [statut, setStatut] = useState<StatutJuridique>(entreprise.statut ?? 'commercant');
+  const [immatriculation, setImmatriculation] = useState(entreprise.immatriculation ?? '');
   const nonEnvoyees = useLiveQuery(() => db.operations.where('entrepriseId').equals(entreprise.id).filter((o) => o.envoi === 'local').count(), [entreprise.id]);
 
   async function enregistrerCode() {
@@ -73,6 +76,24 @@ export function Reglages() {
           {t('reglages.installer')}
         </button>
       )}
+
+      <h2 className="titre-section">{t('reglages.statut')}</h2>
+      <label className="champ">
+        {t('statut.titre')}
+        <select value={statut} onChange={(e) => setStatut(e.target.value as StatutJuridique)}>
+          <option value="entreprenant">{t('statut.entreprenant')}</option>
+          <option value="commercant">{t('statut.commercant')}</option>
+          <option value="societe">{t('statut.societe')}</option>
+        </select>
+      </label>
+      <label className="champ">
+        {t('creer.immatriculation')}
+        <input value={immatriculation} onChange={(e) => setImmatriculation(e.target.value)} autoComplete="off" />
+      </label>
+      <button className="bouton discret" onClick={() => void modifierStatut(db, entreprise.id, statut, immatriculation).then(() => annoncer(t('reglages.statutOk')))}>
+        {t('reglages.enregistrer')}
+      </button>
+      {entreprise.statut === 'entreprenant' && entreprise.immatriculation && <p className="aide">{t('reglages.mentionFactures', { numero: entreprise.immatriculation })}</p>}
 
       <h2 className="titre-section">{t('reglages.code')}</h2>
       <p className="aide">{t('reglages.codeAide')}</p>

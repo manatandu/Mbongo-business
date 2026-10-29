@@ -51,7 +51,10 @@ export function Clients() {
                     </span>
                   )}
                 </td>
-                <td>{SECTEURS[e.secteur]}</td>
+                <td>
+                  {SECTEURS[e.secteur]}
+                  {e.statut === 'entreprenant' ? ', entreprenant' : ''}
+                </td>
                 <td>{resume.derniereSaisie ? fmtDate(resume.derniereSaisie) : 'aucune'}</td>
                 <td className="m">{fmt(resume.ventes)}</td>
                 <td className="m">{fmt(resume.resultat)}</td>

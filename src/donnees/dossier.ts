@@ -31,6 +31,7 @@ function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
   if (l.montantDestination !== undefined) o.montantDestination = l.montantDestination;
   if (l.annule !== undefined) o.annule = l.annule;
   if (l.reprise) o.reprise = true;
+  if (l.reference) o.reference = l.reference;
   if (l.reglementDe) o.reglementDe = { genre: l.reglementDe.genre, ligne: l.reglementDe.ligne };
   return o;
 }
@@ -100,7 +101,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   const dossier: DossierExercice = {
-    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif },
+    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif, statut: entreprise.statut ?? 'commercant' },
     exercice: { annee: exercice.annee, debut, fin },
     comptes: comptes.map((c) => ({ id: c.id, type: c.type, libelle: c.libelle, devise: c.devise })),
     soldesOuverture: { ...exercice.soldesOuverture },
@@ -115,6 +116,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     stockFinal: exercice.stockFinal,
     // Un seul taux de clôture, saisi au bureau : pas de confirmation opération par opération.
     tauxCloture: exercice.tauxCloture,
+    chiffreAffairesPrecedent: exercice.chiffreAffairesPrecedent ?? null,
   };
   if (inventaire.length) {
     dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant }));

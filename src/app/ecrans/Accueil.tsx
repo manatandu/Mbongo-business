@@ -20,6 +20,8 @@ const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   jours_sans_vente: { cle: 'alerte.jours_sans_vente', ecran: '/saisir/recette' },
   mois_sans_saisie: { cle: 'alerte.mois_sans_saisie', ecran: '/saisir/recette' },
   sans_piece: { cle: 'alerte.sans_piece', ecran: '/journal' },
+  entreprenant_statut: { cle: 'alerte.entreprenant_statut', ecran: '/reglages' },
+  entreprenant_seuil: { cle: 'alerte.entreprenant_seuil', ecran: '/reglages' },
 };
 
 /** « Entré » et « sorti » : l'activité seule, sans les apports, prélèvements, prêts ni matériel. */

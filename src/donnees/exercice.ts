@@ -2,7 +2,7 @@
  * Fin d'année : le commerçant compte son stock, puis commence l'année suivante.
  * L'arrêté des états par l'expert-comptable partenaire vient après, sans bloquer les saisies de janvier.
  */
-import { cloturer, ErreurDossier, type DateISO } from '../moteur';
+import { chiffreAffairesEstime, cloturer, ErreurDossier, type DateISO } from '../moteur';
 import type { BaseMbongo } from './base';
 import type { Chargement } from './dossier';
 import { nouvelId } from './ids';
@@ -57,6 +57,7 @@ export async function ouvrirExerciceSuivant(db: BaseMbongo, c: Chargement, aujou
       stockInitial: o.stockInitial,
       stockFinal: null,
       tauxCloture: null,
+      chiffreAffairesPrecedent: chiffreAffairesEstime(c.dossier, c.exercice.fin),
     });
   });
   return id;

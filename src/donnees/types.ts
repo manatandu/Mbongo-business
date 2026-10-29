@@ -13,6 +13,7 @@ import type {
   PieceTiers,
   SecteurSMT,
   SortieImmobilisation,
+  StatutJuridique,
 } from '../moteur';
 
 export type EtatEnvoi = 'local' | 'envoye';
@@ -38,6 +39,10 @@ export interface LigneEntreprise {
   telephone: string;
   /** Données fictives de démonstration. */
   demo: boolean;
+  /** Commerçant immatriculé si absent (entreprises créées avant le mode entreprenant). */
+  statut?: StatutJuridique;
+  /** N° de déclaration d'activité (entreprenant) ou n° RCCM. */
+  immatriculation?: string;
   creeLe: string;
 }
 
@@ -58,6 +63,8 @@ export interface LigneExercice {
   tauxCloture: number | null;
   /** Date de l'arrêté des états par l'expert-comptable partenaire. */
   arreteLe?: DateISO | null;
+  /** Chiffre d'affaires de l'année précédente, gardé à l'ouverture (seuil de l'entreprenant sur deux ans). */
+  chiffreAffairesPrecedent?: Montant | null;
 }
 
 export interface LigneCompte extends CompteTresorerie {

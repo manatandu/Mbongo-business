@@ -4,7 +4,7 @@ import { BaseMbongo } from '../../src/donnees/base';
 import { arreterEtats, definirTauxCloture, obstaclesArrete } from '../../src/donnees/bureau';
 import { chargerDemo } from '../../src/donnees/demo';
 import { chargerDossier } from '../../src/donnees/dossier';
-import { creerEntreprise, exerciceCourant } from '../../src/donnees/entreprise';
+import { creerEntreprise, exerciceCourant, modifierStatut } from '../../src/donnees/entreprise';
 import { obstaclesAnneeSuivante, ouvrirExerciceSuivant, tauxClotureDemande } from '../../src/donnees/exercice';
 import { enregistrerFacture, enregistrerInventaire, enregistrerOperation, validerInventaire } from '../../src/donnees/saisie';
 import { calculerEtats } from '../../src/moteur';
@@ -120,5 +120,21 @@ describe("démonstration de fin d'année", () => {
     const e = calculerEtats((await chargerDossier(base, suivant)).dossier, { auDate: '2027-01-01' });
     const en = calculerEtats(c.dossier);
     expect(e.bilan.passif.compteExploitant).toBe(en.bilan.passif.compteExploitant + en.bilan.passif.resultat);
+  });
+});
+
+describe("statut d'entreprenant", () => {
+  it('se garde, se change, et passe au moteur', async () => {
+    expect((await chargerDossier(db, exerciceId)).dossier.entreprise.statut).toBe('commercant');
+    await modifierStatut(db, entrepriseId, 'entreprenant', ' DA-0042 ');
+    expect(await db.entreprises.get(entrepriseId)).toMatchObject({ statut: 'entreprenant', immatriculation: 'DA-0042' });
+    expect((await chargerDossier(db, exerciceId)).dossier.entreprise.statut).toBe('entreprenant');
+  });
+
+  it("garde le chiffre d'affaires de l'année passée à l'ouverture de la suivante", async () => {
+    await validerInventaire(db, exerciceId);
+    const id = await ouvrirExerciceSuivant(db, await chargerDossier(db, exerciceId), '2027-01-02', 2900);
+    // 400 000 FC + 200 $ à 2 850 FC + hausse des créances clients de 150 000 FC.
+    expect((await chargerDossier(db, id)).dossier.chiffreAffairesPrecedent).toBe(400_000 + 570_000 + 150_000);
   });
 });

@@ -28,6 +28,8 @@ Sommaire
 
 Le commerçant note sur son téléphone ce qui entre et ce qui sort, à crédit ou payé, avec la photo de la facture. Le logiciel tient ses journaux de trésorerie, suit ce qu'on lui doit et ce qu'il doit, et prépare ses états SMT.
 
+Un commerçant au statut d'entreprenant (AUDCG, art. 30) a aussi son livre des recettes et des dépenses et son registre des achats, tirés des mêmes saisies (`docs/regles-smt.md`, § 9).
+
 Au bureau, la structure voit ses clients, ce qui cloche dans leurs saisies, et leurs états. L'expert-comptable partenaire arrête les états.
 
 Ce que le logiciel ne fait pas : la comptabilité à la place du commerçant, le Système normal, les déclarations fiscales, la paie.
@@ -138,7 +140,7 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 | Saisir | recette, dépense, transfert, change de dollars ; payé ou à crédit ; photo ; le reste sous « Plus d'options » |
 | Journal | un compte, un mois, en liste lisible : début du mois, entré, sorti, fin du mois |
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois |
-| Plus | matériel, stock (inventaire), états, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
+| Plus | matériel, stock (inventaire), états, réglages (statut, « Mettre Mbongo sur l'écran d'accueil ») ; pour un entreprenant, son livre des recettes et des dépenses et son registre des achats |
 
 Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
 
@@ -159,7 +161,7 @@ Un bouton, réservé à l'expert : « Arrêter les états ». Il s'ouvre quand t
 ### 8.3 Exports
 
 - **PDF** : la page des états est prévue pour l'impression A4 ; « Enregistrer en PDF » du navigateur. Aucune bibliothèque.
-- **Excel** : un classeur de trois feuilles (compte de résultat, bilan, notes), montants en vrais nombres, mention fixe en pied de chaque feuille. Bibliothèque `write-excel-file`, chargée au clic seulement (environ 20 Ko compressés). Le téléphone ne la télécharge jamais.
+- **Excel** : un classeur de trois feuilles (compte de résultat, bilan, notes), montants en vrais nombres, mention fixe en pied de chaque feuille. Pour un entreprenant, deux feuilles de plus : le livre (AUDCG, art. 31) et le registre des achats (art. 32). Bibliothèque `write-excel-file`, chargée au clic seulement (environ 20 Ko compressés). Le téléphone ne la télécharge jamais.
 
 ### 8.4 Habillage
 
@@ -209,6 +211,8 @@ Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête 
 | seuil SMT | ventes estimées à 80 % puis 100 % du seuil du secteur | à revoir, puis à traiter |
 | stock non inventorié | exercice terminé sans inventaire validé | à traiter |
 | taux de clôture manquant | exercice terminé, comptes en dollars, pas de taux du 31 décembre | à traiter |
+| seuil de l'entreprenant | entreprenant au-dessus du seuil SMT de son secteur cette année | à revoir |
+| statut d'entreprenant perdu | deux années de suite au-dessus du seuil (AUDCG, art. 30) | à traiter |
 
 Le seuil SMT est fixé en FCFA. L'équivalent en francs congolais est un paramètre (`src/donnees/parametres.ts`, 5 FC pour 1 FCFA en 2026, à revoir chaque année). Le logiciel alerte ; le passage au Système normal se fait chez l'expert-comptable partenaire.
 
@@ -289,6 +293,8 @@ Chaque étape se termine par un état de ce qui marche et de ce qui reste.
 Reste à faire sur un vrai téléphone Android d'entrée de gamme, avant la soutenance : l'installer, couper le réseau, refaire le parcours.
 
 **3. Bureau et exports** · fait. Trois écrans, arrêté, PDF, Excel.
+
+**3 bis. Mode entreprenant** · fait. Statut de l'entreprise, livre et registre des achats (AUDCG, art. 30 à 32), alerte de seuil sur deux ans, feuilles Excel.
 
 **4. Site vitrine** · maquette faite (`site/index.html`).
 Reste : numéro WhatsApp, formules et tarifs, mentions légales, adresse de l'appli.

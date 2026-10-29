@@ -51,6 +51,7 @@ export function Saisir() {
   const [versId, setVersId] = useState(comptes.find((c) => c.type === 'banque')?.id ?? comptes[1]?.id ?? '');
   const [recu, setRecu] = useState('');
   const [libelle, setLibelle] = useState('');
+  const [reference, setReference] = useState('');
   const [date, setDate] = useState(dateRef);
   const [tauxTexte, setTauxTexte] = useState(taux ? String(taux) : '');
   const [tiers, setTiers] = useState('');
@@ -140,6 +141,7 @@ export function Saisir() {
           taux: tauxVisible ? tauxLu : null,
           piece: photo !== null || papier,
           ...(reprise ? { reprise: true } : {}),
+          ...(reference.trim() ? { reference: reference.trim() } : {}),
         },
         estBien ? { designation: designation.trim() || texte, categorie, duree: nature === 'caution' ? 0 : dureeLue } : undefined,
       );
@@ -334,6 +336,12 @@ export function Saisir() {
             {t('saisir.libelle')}
             <input value={libelle} onChange={(e) => setLibelle(e.target.value)} placeholder={t(`saisir.libelleAide.${type}` as Cle)} />
           </label>
+          {!credit && type !== 'transfert' && (
+            <label className="champ">
+              {t('saisir.reference')}
+              <input value={reference} onChange={(e) => setReference(e.target.value)} autoComplete="off" />
+            </label>
+          )}
           {!credit && !photo && (
             <label className="case">
               <input type="checkbox" checked={papier} onChange={(e) => setPapier(e.target.checked)} />

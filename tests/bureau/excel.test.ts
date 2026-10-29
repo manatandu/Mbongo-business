@@ -27,3 +27,26 @@ describe('export Excel des états', () => {
     expect(nomFichier(e)).toBe('Etats-SMT-Alimentation-Maman-Nsimba-fictif-2026.xlsx');
   });
 });
+
+describe("export Excel d'un entreprenant", () => {
+  const d = { ...jeuPrototype(), entreprise: { ...jeuPrototype().entreprise, statut: 'entreprenant' as const } };
+  const ee = calculerEtats(d);
+  const feuilles = classeurEtats(ee, d);
+  const texte = (i: number) => (feuilles[i]?.data ?? []).flat().map((c) => (c && typeof c === 'object' && 'value' in c ? c.value : c));
+
+  it('ajoute le livre (art. 31) et le registre des achats (art. 32)', () => {
+    expect(feuilles.map((f) => f.sheet)).toEqual(['Compte de résultat', 'Bilan', 'Notes', 'Livre', 'Registre des achats']);
+    expect(texte(3)).toContain('Recettes en espèces');
+    expect(texte(4)).toContain('Récapitulation');
+    for (const i of [3, 4]) expect(texte(i)).toContain('Mbongo prépare, il ne certifie pas.');
+  });
+
+  it("n'ajoute rien pour un commerçant immatriculé", () => {
+    expect(classeurEtats(e, jeuPrototype()).map((f) => f.sheet)).toHaveLength(3);
+  });
+
+  it('produit toujours un vrai fichier .xlsx', async () => {
+    const tampon = await writeExcelFile(feuilles).toBuffer();
+    expect(tampon.subarray(0, 2).toString()).toBe('PK');
+  });
+});

@@ -22,7 +22,9 @@ export type CodeAnomalie =
   | 'seuil_smt_depasse'
   | 'mois_sans_saisie'
   | 'stock_non_inventorie'
-  | 'taux_cloture_manquant';
+  | 'taux_cloture_manquant'
+  | 'entreprenant_seuil'
+  | 'entreprenant_statut';
 
 export interface Anomalie {
   code: CodeAnomalie;
@@ -151,6 +153,30 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
         message: `Chiffre d'affaires de ${lisible(ca, 'CDF')}, ${part} % du seuil SMT (${lisible(s.seuil, 'CDF')}).`,
         references: [],
       });
+    }
+  }
+
+  // Entreprenant : statut perdu après deux années de suite au-dessus du seuil (AUDCG, art. 30).
+  if (p.fcfaVersCdf && dossier.entreprise.statut === 'entreprenant') {
+    const s = evaluerSeuil(dossier.entreprise.secteur, chiffreAffairesDepuisContexte(ctx, ref), p.fcfaVersCdf);
+    if (s.niveau === 'depasse') {
+      const precedent = dossier.chiffreAffairesPrecedent;
+      const deuxAns = precedent != null && evaluerSeuil(dossier.entreprise.secteur, precedent, p.fcfaVersCdf).niveau === 'depasse';
+      anomalies.push(
+        deuxAns
+          ? {
+              code: 'entreprenant_statut',
+              niveau: 'a_traiter',
+              message: `Deux années de suite au-dessus du seuil de l'entreprenant (${lisible(s.seuil, 'CDF')}) : le statut d'entreprenant est perdu. Se mettre en règle dès le 1er janvier ${dossier.exercice.annee + 1} et avant la fin du premier trimestre (AUDCG, art. 30), avec l'expert-comptable partenaire.`,
+              references: [],
+            }
+          : {
+              code: 'entreprenant_seuil',
+              niveau: 'a_revoir',
+              message: `Ventes au-dessus du seuil de l'entreprenant (${lisible(s.seuil, 'CDF')}) cette année. Si cela se répète en ${dossier.exercice.annee + 1}, le statut d'entreprenant sera perdu (AUDCG, art. 30).`,
+              references: [],
+            },
+      );
     }
   }
 

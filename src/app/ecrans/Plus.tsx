@@ -2,6 +2,7 @@
 import { Link } from 'wouter';
 import { useLangue, type Cle } from '../../i18n';
 import { Icone } from '../composants';
+import { useDossier } from '../session';
 
 const ENTREES: { href: string; icone: string; titre: Cle; aide: Cle }[] = [
   { href: '/etats', icone: 'etats', titre: 'plus.etats', aide: 'plus.etatsAide' },
@@ -10,11 +11,19 @@ const ENTREES: { href: string; icone: string; titre: Cle; aide: Cle }[] = [
   { href: '/reglages', icone: 'reglages', titre: 'plus.reglages', aide: 'plus.reglagesAide' },
 ];
 
+/** Livres de l'entreprenant (AUDCG, art. 31 et 32). Le registre des achats ne concerne que la vente de marchandises. */
+const LIVRES: typeof ENTREES = [
+  { href: '/livre', icone: 'journal', titre: 'plus.livre', aide: 'plus.livreAide' },
+  { href: '/achats', icone: 'stock', titre: 'plus.achats', aide: 'plus.achatsAide' },
+];
+
 export function Plus() {
   const { t } = useLangue();
+  const { entreprise } = useDossier();
+  const livres = entreprise.statut === 'entreprenant' ? LIVRES.filter((e) => e.href !== '/achats' || entreprise.secteur !== 'services') : [];
   return (
     <nav className="menu">
-      {ENTREES.map((e) => (
+      {[...livres, ...ENTREES].map((e) => (
         <Link key={e.href} href={e.href}>
           <Icone nom={e.icone} />
           <span>

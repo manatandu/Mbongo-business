@@ -9,6 +9,7 @@ import { Icone } from './composants';
 import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
 import { Bienvenue, CreerEntreprise } from './ecrans/Bienvenue';
+import { Livre, RegistreAchats } from './ecrans/Entreprenant';
 import { Etats } from './ecrans/Etats';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
@@ -24,7 +25,7 @@ const ONGLETS: { href: string; icone: string; cle: Cle; actif: (chemin: string) 
   { href: '/saisir', icone: 'saisir', cle: 'nav.saisir', actif: (c) => c.startsWith('/saisir') },
   { href: '/journal', icone: 'journal', cle: 'nav.journal', actif: (c) => c.startsWith('/journal') },
   { href: '/clients', icone: 'clients', cle: 'nav.clients', actif: (c) => c.startsWith('/clients') },
-  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages'].some((p) => c.startsWith(p)) },
+  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats'].some((p) => c.startsWith(p)) },
 ];
 
 function Coque() {
@@ -59,6 +60,8 @@ function Coque() {
           <Route path="/materiel" component={Materiel} />
           <Route path="/stock" component={Stock} />
           <Route path="/reglages" component={Reglages} />
+          <Route path="/livre/:mois?" component={Livre} />
+          <Route path="/achats" component={RegistreAchats} />
           <Route>
             <Accueil />
           </Route>

@@ -4,7 +4,7 @@
  * La bibliothèque n'est chargée qu'au clic, et jamais par le téléphone du commerçant.
  */
 import type { Cell, SheetData } from 'write-excel-file/browser';
-import type { Etats, Montant } from '../moteur';
+import { livreEntreprenant, registreAchats, type DossierExercice, type Etats, type Montant } from '../moteur';
 
 const FORMAT = '#,##0';
 const gras = (value: string): Cell => ({ value, fontWeight: 'bold' });
@@ -30,8 +30,40 @@ export interface FeuilleEtats {
   columns: { width: number }[];
 }
 
-/** Les trois feuilles du classeur, prêtes à écrire. */
-export function classeurEtats(e: Etats): FeuilleEtats[] {
+const MODE = { especes: 'Espèces', autre: 'Autre mode', credit: 'À crédit' } as const;
+
+/** Livres de l'entreprenant (AUDCG, art. 31 et 32), ajoutés au classeur quand le client a ce statut. */
+function feuillesEntreprenant(e: Etats, d: DossierExercice): FeuilleEtats[] {
+  const l = livreEntreprenant(d, d.exercice.debut, e.auDate);
+  const livre: SheetData = [
+    ...entete(e, "Livre des recettes et des dépenses (AUDCG, art. 31)"),
+    [gras('Date'), gras('Origine ou destination'), gras('Compte'), gras('Mode'), gras('Recette (FC)'), gras('Dépense (FC)')],
+    ...l.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.compte, MODE[x.mode], x.sens === 'ressource' ? nombre(x.montantFC) : '', x.sens === 'emploi' ? nombre(x.montantFC) : '']),
+    [],
+    ['Recettes en espèces', '', '', '', nombre(l.ressourcesEspeces, 'bold')],
+    ['Recettes par un autre mode', '', '', '', nombre(l.ressourcesAutres, 'bold')],
+    ['Dépenses', '', '', '', '', nombre(l.emplois, 'bold')],
+    ...pied(e),
+  ];
+  const r = registreAchats(d);
+  const achats: SheetData = [
+    ...entete(e, `Registre des achats ${r.annee} (AUDCG, art. 32)`),
+    [gras('Date'), gras('Détail'), gras('Mode de règlement'), gras('Référence de la pièce'), gras('Montant (FC)')],
+    ...r.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.mode === 'credit' ? MODE.credit : `${MODE[x.mode]} (${x.compte})`, x.reference || (x.reprise ? 'repris du cahier' : ''), nombre(x.montantFC)]),
+    [],
+    [gras('Récapitulation')],
+    ...r.parMois.map((m): Cell[] => [`${m.mois.slice(5, 7)}/${m.mois.slice(0, 4)}`, '', '', '', nombre(m.total)]),
+    [gras(`Total ${r.annee}`), '', '', '', nombre(r.total, 'bold')],
+    ...pied(e),
+  ];
+  return [
+    { sheet: 'Livre', data: livre, columns: [{ width: 12 }, { width: 40 }, { width: 18 }, { width: 12 }, { width: 16 }, { width: 16 }] },
+    { sheet: 'Registre des achats', data: achats, columns: [{ width: 12 }, { width: 40 }, { width: 28 }, { width: 22 }, { width: 16 }] },
+  ];
+}
+
+/** Les feuilles du classeur, prêtes à écrire : états SMT, plus les livres de l'entreprenant si le client a ce statut. */
+export function classeurEtats(e: Etats, d?: DossierExercice): FeuilleEtats[] {
   const r = e.compteDeResultat;
   const b = e.bilan;
   const n = e.notes;
@@ -103,10 +135,12 @@ export function classeurEtats(e: Etats): FeuilleEtats[] {
     ...pied(e),
   ];
 
+  const livres = d?.entreprise.statut === 'entreprenant' ? feuillesEntreprenant(e, d) : [];
   return [
     { sheet: 'Compte de résultat', data: resultat, columns: [{ width: 58 }, { width: 8 }, { width: 18 }] },
     { sheet: 'Bilan', data: bilan, columns: [{ width: 52 }, { width: 8 }, { width: 18 }] },
     { sheet: 'Notes', data: notes, columns: [{ width: 34 }, { width: 34 }, { width: 16 }, { width: 14 }, { width: 14 }, { width: 12 }, { width: 16 }] },
+    ...livres,
   ];
 }
 
@@ -120,7 +154,7 @@ export function nomFichier(e: Etats): string {
 }
 
 /** Fabrique et télécharge le classeur dans le navigateur. */
-export async function telechargerExcel(e: Etats): Promise<void> {
+export async function telechargerExcel(e: Etats, d?: DossierExercice): Promise<void> {
   const { default: ecrire } = await import('write-excel-file/browser');
-  await ecrire(classeurEtats(e)).toFile(nomFichier(e));
+  await ecrire(classeurEtats(e, d)).toFile(nomFichier(e));
 }
