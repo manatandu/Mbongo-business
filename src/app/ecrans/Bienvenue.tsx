@@ -85,7 +85,7 @@ export function CreerEntreprise() {
   const { t } = useLangue();
   const { aujourdhui } = useSession();
   const [, aller] = useLocation();
-  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: 'Lingwala', telephone: '', nif: '', stock: '', taux: '' });
+  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: '', telephone: '', nif: '', stock: '', taux: '' });
   const [secteur, setSecteur] = useState<SecteurSMT>('negoce');
   const [comptes, setComptes] = useState(COMPTES_PROPOSES);
   const [erreurs, setErreurs] = useState<string[]>([]);

@@ -7,7 +7,7 @@ import type { Cle } from './fr';
 
 export const ln: Record<Cle, string> = {
   'app.nom': 'Mbongo',
-  'app.devise': 'Lisalisi na makambo ya mbongo · Lingwala',
+  'app.devise': 'Lisalisi na makambo ya mbongo',
   'app.fictif': 'Ba données ya lokuta',
   'app.chargement': 'Ezali kofungwama…',
   'app.mention': 'Mbongo prépare, il ne certifie pas.',

@@ -1,5 +1,5 @@
 /**
- * Jeu de démonstration : « Alimentation Maman Nsimba », Lingwala. DONNÉES FICTIVES.
+ * Jeu de démonstration : « Alimentation Maman Nsimba », Kinshasa. DONNÉES FICTIVES.
  * Construit par rapport à la date du jour, pour que la démonstration montre toujours
  * l'exercice en cours, des ventes récentes et des factures à suivre.
  * Mois écoulés : totaux repris du cahier de caisse. Mois précédent et mois en cours : saisies détaillées.
@@ -102,7 +102,7 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
       const js = jourSemaine(date);
       if (js === 1 || js === 3 || js === 5 || js === 6) ajouter(date, 'recette', caisse, 'ventes', 'Ventes de la journée', varier(520_000, date, 0.3));
       if (js === 2) ajouter(date, 'recette', mpesa, 'ventes', 'Ventes payées par M-Pesa', varier(200_000, date, 0.2));
-      if (js === 4) ajouter(date, 'depense', caisse, 'achats_marchandises', d < 15 ? 'Riz et huile, grossiste Marché central' : 'Boissons, dépôt de Lingwala', varier(1_500_000, date, 0.25));
+      if (js === 4) ajouter(date, 'depense', caisse, 'achats_marchandises', d < 15 ? 'Riz et huile, grossiste Marché central' : 'Boissons, dépôt Bralima', varier(1_500_000, date, 0.25));
     }
     ajouter(j(8), 'recette', orange, 'ventes', 'Ventes payées par Orange Money', 92_000);
     ajouter(j(12), 'recette', dollars, 'ventes', 'Vente en gros payée en dollars', 12_000);
@@ -137,7 +137,7 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
   facture('creance', avant(18), 'V-219', 'Paroisse Saint-Pierre, kermesse', 385_000);
   facture('creance', avant(7), 'V-226', 'M. Kalala, voisin', 74_000);
   facture('dette', avant(8), 'F-5120', 'Ets Mukoko', 1_480_000);
-  facture('dette', avant(4), 'B-0877', 'Dépôt boissons Lingwala', 690_000);
+  facture('dette', avant(4), 'B-0877', 'Dépôt de boissons du quartier', 690_000);
 
   const soldesOuverture = { [caisse.id]: 2_350_000, [dollars.id]: 30_000, [mpesa.id]: 240_000, [orange.id]: 60_000, [banque.id]: 3_900_000, [likelemba.id]: 0 };
   const entreprise: LigneEntreprise = {
@@ -145,7 +145,7 @@ export function creerJeuDemo(aujourdhui: DateISO, id: () => string): JeuDemo {
     nom: 'Alimentation Maman Nsimba',
     activite: 'Commerce de détail, alimentation générale',
     secteur: 'negoce',
-    commune: 'Lingwala, Kinshasa',
+    commune: 'Kinshasa',
     nif: 'démo A0000000',
     responsable: 'Mme Nsimba (fictif)',
     telephone: '+243 000 000 000',

@@ -557,7 +557,7 @@ Règle du dépôt maintenue : tout calcul comptable a son test.
 |---|---|---|
 | local | jeu fictif | développement |
 | démo | projet Supabase dédié, données fictives | soutenance |
-| pilote | projet Supabase séparé, vraies données | quelques commerçants de Lingwala |
+| pilote | projet Supabase séparé, vraies données | quelques commerçants de Kinshasa |
 
 - Appli et bureau : hébergement statique (Cloudflare Pages, Netlify ou GitHub Pages), gratuit à ce volume.
 - Site vitrine : même type d'hébergement, projet séparé.

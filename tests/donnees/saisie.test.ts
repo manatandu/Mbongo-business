@@ -30,7 +30,7 @@ beforeEach(async () => {
     nom: 'Boutique de test (fictif)',
     activite: 'Alimentation',
     secteur: 'negoce',
-    commune: 'Lingwala',
+    commune: 'Kinshasa',
     nif: '',
     responsable: 'Test (fictif)',
     telephone: '',

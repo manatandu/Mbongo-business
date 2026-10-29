@@ -1,4 +1,4 @@
-<title>Mbongo Lingwala</title>
+<title>Mbongo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,7 +154,7 @@ tr.res td{font-weight:600;background:var(--accent-soft);color:var(--fg)}
 </style>
 
 <header class="top">
-  <div class="brand"><div class="mark" aria-hidden="true"><span>M</span></div><div><h1>Mbongo</h1><small>Assistance comptable et de gestion · Lingwala</small></div></div>
+  <div class="brand"><div class="mark" aria-hidden="true"><span>M</span></div><div><h1>Mbongo</h1><small>Assistance comptable et de gestion</small></div></div>
   <div class="roles" role="group" aria-label="Choisir l'espace">
     <button id="r-com" data-role="com" aria-pressed="true">Commerçant</button>
     <button id="r-ass" data-role="ass" aria-pressed="false">Assistant</button>
@@ -203,11 +203,11 @@ function seed(){
   add(d(30,9),"depense","caisse","prelev","Prélèvement pour le ménage, septembre",700000);
   add(d(2),"depense","banque","loyers","Loyer du dépôt, octobre",450000);
   add(d(3),"recette","caisse","ventes","Ventes de la semaine",2105000);
-  add(d(6),"depense","caisse","achats_m","Boissons, dépôt Bralima de Lingwala",1340000,"CDF",true,{tiers:"Dépôt boissons Lingwala"});
+  add(d(6),"depense","caisse","achats_m","Boissons, dépôt Bralima",1340000,"CDF",true,{tiers:"Dépôt de boissons du quartier"});
   add(d(8),"recette","orange","ventes","Ventes payées par Orange Money",92000);
   add(d(10),"recette","caisse","ventes","Ventes de la semaine",2380000);
   add(d(13),"depense","caisse","autres_d","Réparation de l'étagère",60000,"CDF",false);
-  add(d(14),"depense","banque","impots","Taxe sur l'enseigne, commune de Lingwala",95000);
+  add(d(14),"depense","banque","impots","Taxe communale sur l'enseigne",95000);
   add(d(17),"recette","caisse","ventes","Ventes de la semaine",2210000);
   add(d(18),"recette","mpesa","ventes","Ventes payées par M-Pesa",214000);
   add(d(20),"depense","caisse","achats_m","Conserves et savon",380,"USD",true,{tiers:"Ets Mukoko"});
@@ -215,7 +215,7 @@ function seed(){
   add(d(27),"depense","mpesa","autres_d","Livraison par moto",25000,"CDF",false);
   return {
     rate:2850,
-    ent:{nom:"Alimentation Maman Nsimba",activite:"Commerce de détail, alimentation générale",commune:"Lingwala, Kinshasa",nif:"démo A0000000",resp:"Mme Nsimba (fictif)"},
+    ent:{nom:"Alimentation Maman Nsimba",activite:"Commerce de détail, alimentation générale",commune:"Kinshasa",nif:"démo A0000000",resp:"Mme Nsimba (fictif)"},
     opening:{caisse:1850000,mpesa:240000,orange:60000,banque:3900000,stock:6500000},
     entries:E,
     creances:[
@@ -227,7 +227,7 @@ function seed(){
     dettes:[
       {id:1,date:`${YEAR-1}-12-23`,facture:"F-3390",nom:"Ets Mukoko",montant:1150000,paid:`${YEAR}-01-08`,compte:"caisse"},
       {id:2,date:d(21),facture:"F-5120",nom:"Ets Mukoko",montant:1480000,paid:null,compte:null},
-      {id:3,date:d(25),facture:"B-0877",nom:"Dépôt boissons Lingwala",montant:690000,paid:null,compte:null}],
+      {id:3,date:d(25),facture:"B-0877",nom:"Dépôt de boissons du quartier",montant:690000,paid:null,compte:null}],
     immos:[{id:1,date:"2023-03-10",designation:"Étagères métalliques",montant:1800000,duree:5,auto:false},{id:2,date:"2024-06-02",designation:"Balance électronique",montant:420000,duree:5,auto:false},{id:3,date:d(27,9),designation:"Congélateur pour les boissons",montant:0,duree:5,auto:true,entryId:congel}],
     stockFinal:7350000,
     validation:null,nextId:1000

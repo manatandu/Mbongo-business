@@ -3,9 +3,9 @@
 ## Contexte
 
 Projet tutoré de Licence 3 (Sciences de gestion, RDC), année 2026-2027.
-Sujet : **Création d'une structure d'assistance comptable et de gestion destinée aux micro et petites entreprises de la commune de Lingwala** (Kinshasa).
+Sujet : **Création d'une structure d'assistance comptable et de gestion destinée aux micro et petites entreprises** (Kinshasa).
 
-Le logiciel illustre l'offre de la structure. Il sert d'abord à la démonstration devant le jury, ensuite éventuellement à un pilote réel auprès de quelques commerçants de Lingwala.
+Le logiciel illustre l'offre de la structure. Il sert d'abord à la démonstration devant le jury, ensuite éventuellement à un pilote réel auprès de quelques commerçants de Kinshasa.
 
 Langue du produit et du code commenté : **français**. Interface commerçant bilingue français / lingala.
 

@@ -79,11 +79,11 @@ export function jeuPrototype(): DossierExercice {
   // Octobre
   ajouter('2026-10-02', 'depense', 'banque', 'loyers', 'Loyer du dépôt, octobre', 450_000);
   ajouter('2026-10-03', 'recette', 'caisse', 'ventes', 'Ventes de la semaine', 2_105_000);
-  ajouter('2026-10-06', 'depense', 'caisse', 'achats_marchandises', 'Boissons, dépôt Bralima de Lingwala', 1_340_000);
+  ajouter('2026-10-06', 'depense', 'caisse', 'achats_marchandises', 'Boissons, dépôt Bralima', 1_340_000);
   ajouter('2026-10-08', 'recette', 'orange', 'ventes', 'Ventes payées par Orange Money', 92_000);
   ajouter('2026-10-10', 'recette', 'caisse', 'ventes', 'Ventes de la semaine', 2_380_000);
   ajouter('2026-10-13', 'depense', 'caisse', 'autres_depenses', "Réparation de l'étagère", 60_000, { piece: false });
-  ajouter('2026-10-14', 'depense', 'banque', 'impots_taxes', "Taxe sur l'enseigne, commune de Lingwala", 95_000);
+  ajouter('2026-10-14', 'depense', 'banque', 'impots_taxes', "Taxe communale sur l'enseigne", 95_000);
   ajouter('2026-10-17', 'recette', 'caisse', 'ventes', 'Ventes de la semaine', 2_210_000);
   ajouter('2026-10-18', 'recette', 'mpesa', 'ventes', 'Ventes payées par M-Pesa', 214_000);
   ajouter('2026-10-20', 'depense', 'caisse', 'achats_marchandises', 'Conserves et savon (380 $ au taux 2 850)', 380 * TAUX_PROTOTYPE);
@@ -113,7 +113,7 @@ export function jeuPrototype(): DossierExercice {
     dettes: [
       { id: 'd-1', date: '2025-12-23', facture: 'F-3390', nom: 'Ets Mukoko', nature: 'achats_marchandises', montant: 1_150_000, devise: 'CDF', taux: null },
       { id: 'd-2', date: '2026-10-21', facture: 'F-5120', nom: 'Ets Mukoko', nature: 'achats_marchandises', montant: 1_480_000, devise: 'CDF', taux: null },
-      { id: 'd-3', date: '2026-10-25', facture: 'B-0877', nom: 'Dépôt boissons Lingwala', nature: 'achats_marchandises', montant: 690_000, devise: 'CDF', taux: null },
+      { id: 'd-3', date: '2026-10-25', facture: 'B-0877', nom: 'Dépôt de boissons du quartier', nature: 'achats_marchandises', montant: 690_000, devise: 'CDF', taux: null },
     ],
     immobilisations: [
       { id: 'i-1', date: '2023-03-10', designation: 'Étagères métalliques', categorie: 'mobilier', montant: 1_800_000, duree: 5 },

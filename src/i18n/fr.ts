@@ -1,7 +1,7 @@
 /** Libellés de l'appli commerçant, en français. Mots simples, sans jargon. */
 export const fr = {
   'app.nom': 'Mbongo',
-  'app.devise': 'Assistance comptable et de gestion · Lingwala',
+  'app.devise': 'Assistance comptable et de gestion',
   'app.fictif': 'Données fictives',
   'app.chargement': 'Ouverture…',
   'app.mention': 'Mbongo prépare, il ne certifie pas.',
