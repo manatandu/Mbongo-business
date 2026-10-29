@@ -142,7 +142,7 @@ Total actif = total passif, au franc près, pour n'importe quelle suite d'opéra
 | Clients et fournisseurs | ce qu'on me doit, ce que je dois, encaisser ou payer en une ou plusieurs fois ; pour chaque créance, un dossier imprimable (facture, paiements, reste dû, délai, reconnaissance de dette) |
 | Plus | matériel, stock (inventaire), états, livre des recettes et des dépenses, registre des achats, réglages (dont « Mettre Mbongo sur l'écran d'accueil ») |
 
-Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
+Même charte que le bureau (§ 8.4) : bandeau bleu de Mbongo et filet jaune, cartes blanches sur fond gris-bleu, tableaux à en-tête bleu, police du système. Principes : grands boutons, une action par écran, français ou lingala, chiffres en gros, code à quatre chiffres pour le téléphone partagé (discrétion familiale, pas une sécurité forte). Mode démonstration : la boutique fictive « Alimentation Maman Nsimba », marquée fictive partout.
 
 ## 8. Le bureau
 
@@ -165,7 +165,7 @@ Un bouton, réservé à l'expert : « Arrêter les états ». Il s'ouvre quand t
 
 ### 8.4 Habillage
 
-Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête bleu, police du système, 14 px. Rien à télécharger. Contrastes mesurés (WCAG 2.1, AA : 4,5:1 pour le texte, 3:1 pour un bord de champ ou un trait).
+Le même pour le bureau et pour le téléphone. Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête bleu, police du système, 14 px. Rien à télécharger. Contrastes mesurés (WCAG 2.1, AA : 4,5:1 pour le texte, 3:1 pour un bord de champ ou un trait).
 
 | Couple | Rapport |
 |---|---|
@@ -222,7 +222,7 @@ Mesuré à la construction, compressé :
 
 | Élément | Poids |
 |---|---|
-| appli du commerçant (React, Dexie, moteur, écrans, deux langues, mise en cache) | environ 150 Ko, une fois ; ensuite zéro octet à l'ouverture |
+| appli du commerçant (React, Dexie, moteur, écrans, deux langues, mise en cache) | environ 155 Ko, une fois ; ensuite zéro octet à l'ouverture |
 | bureau, en plus du code partagé | environ 9 Ko |
 | export Excel, au clic seulement | environ 20 Ko |
 

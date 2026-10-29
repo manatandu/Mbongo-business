@@ -5,7 +5,7 @@ import { Link, Route, Router, Switch, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { FournisseurLangue, useLangue, type Cle } from '../i18n';
 import { codeDefini, verifierCode } from '../donnees/reglages';
-import { Icone } from './composants';
+import { Icone, Marque } from './composants';
 import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
 import { Bienvenue, CreerEntreprise } from './ecrans/Bienvenue';
@@ -41,6 +41,7 @@ function Coque() {
   return (
     <>
       <header className="entete">
+        <Marque />
         <div className="txt">
           <div className="qui">
             {entreprise.responsable}
