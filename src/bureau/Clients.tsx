@@ -17,7 +17,9 @@ export function Clients() {
     const r = [];
     for (const e of await db.entreprises.toArray()) {
       const ex = await exerciceCourant(db, e.id, Number(aujourdhui.slice(0, 4)));
-      if (ex) r.push({ e, ex, resume: resumeDossier(await chargerDossier(db, ex.id), aujourdhui) });
+      // Une année passée dont les états attendent l'arrêté de l'expert.
+      const enAttente = (await db.exercices.where('entrepriseId').equals(e.id).toArray()).filter((x) => x.annee < (ex?.annee ?? 0) && x.statut !== 'arrete').map((x) => x.annee);
+      if (ex) r.push({ e, ex, enAttente, resume: resumeDossier(await chargerDossier(db, ex.id), aujourdhui) });
     }
     return r.sort((a, b) => b.resume.aTraiter - a.resume.aTraiter || a.e.nom.localeCompare(b.e.nom));
   }, [aujourdhui]);
@@ -37,7 +39,7 @@ export function Clients() {
             </tr>
           </thead>
           <tbody>
-            {(lignes ?? []).map(({ e, ex, resume }) => (
+            {(lignes ?? []).map(({ e, ex, enAttente, resume }) => (
               <tr key={e.id} className="cursor-pointer" onClick={() => aller(`/client/${e.id}`)}>
                 <td className="font-semibold">
                   <a href={`#/client/${e.id}`} className="text-text no-underline">
@@ -54,15 +56,22 @@ export function Clients() {
                 <td className="m">{fmt(resume.ventes)}</td>
                 <td className="m">{fmt(resume.resultat)}</td>
                 <td>
-                  {ex.statut === 'arrete' ? (
-                    <Pastille ton="ok">États arrêtés</Pastille>
-                  ) : resume.aTraiter ? (
-                    <Pastille ton="danger">À traiter ({resume.aTraiter})</Pastille>
-                  ) : resume.aRevoir ? (
-                    <Pastille ton="avert">À revoir ({resume.aRevoir})</Pastille>
-                  ) : (
-                    <Pastille ton="ok">Rien à signaler</Pastille>
-                  )}
+                  <div className="flex flex-wrap gap-1">
+                    {enAttente.map((a) => (
+                      <Pastille key={a} ton="avert">
+                        États {a} à arrêter
+                      </Pastille>
+                    ))}
+                    {ex.statut === 'arrete' ? (
+                      <Pastille ton="ok">États arrêtés</Pastille>
+                    ) : resume.aTraiter ? (
+                      <Pastille ton="danger">À traiter ({resume.aTraiter})</Pastille>
+                    ) : resume.aRevoir ? (
+                      <Pastille ton="avert">À revoir ({resume.aRevoir})</Pastille>
+                    ) : (
+                      <Pastille ton="ok">Rien à signaler</Pastille>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

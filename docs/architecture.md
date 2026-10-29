@@ -74,7 +74,7 @@ Un projet Vite, deux pages. Le téléphone ne télécharge jamais le code du bur
 ```
 Mbongo-business/
 ├── CLAUDE.md
-├── docs/                  ce plan, règles SMT, cadre juridique
+├── docs/                  ce plan, règles SMT, cadre juridique, soutenance
 ├── prototype/index.html   référence métier et visuelle
 ├── index.html             appli du commerçant
 ├── bureau.html            bureau de la structure
@@ -87,6 +87,7 @@ Mbongo-business/
 │   ├── app/               écrans du commerçant
 │   └── bureau/            trois écrans, export Excel
 ├── tests/                 moteur, données, bureau, format
+├── scripts/               icônes, essai en mode avion, scénario de soutenance
 ├── public/                icônes
 └── site/                  site vitrine
 ```
@@ -145,11 +146,11 @@ Principes : grands boutons, une action par écran, français ou lingala, chiffre
 
 ### 8.1 Trois écrans
 
-1. **Clients** : un tableau. Entreprise, secteur, dernière saisie, ventes de l'année, résultat provisoire, et ce qu'il y a à faire (à traiter, à revoir, rien à signaler, états arrêtés).
+1. **Clients** : un tableau. Entreprise, secteur, dernière saisie, ventes de l'année, résultat provisoire, et ce qu'il y a à faire (à traiter, à revoir, rien à signaler, états arrêtés, états d'une année passée à arrêter).
 2. **Contrôles d'un client** : la liste de ce qui cloche, à voir avec le commerçant. C'est lui qui corrige, depuis son téléphone.
 3. **États d'un client** : compte de résultat, bilan, notes 1 à 3, mention fixe. Imprimer ou enregistrer en PDF, exporter en Excel.
 
-Un sélecteur « Je suis : assistant / expert-comptable partenaire » en haut. Pas de comptes ni de mots de passe tant qu'il n'y a pas de serveur.
+Un client suivi depuis plus d'un an a un choix d'exercice. Un sélecteur « Je suis : assistant / expert-comptable partenaire » en haut. Pas de comptes ni de mots de passe tant qu'il n'y a pas de serveur.
 
 ### 8.2 L'arrêté
 
@@ -184,14 +185,16 @@ Sobre : bandeau bleu de Mbongo avec un filet jaune, tableaux blancs à en-tête 
 - Un compte par devise : « Caisse » et « Caisse dollars ». Le journal d'un compte en dollars se tient en dollars ; le comptage physique se compare directement.
 - Chaque opération en dollars porte le taux saisi par le commerçant ce jour-là. L'appli propose le dernier taux utilisé.
 - Changer des dollars chez le cambiste = un transfert entre les deux caisses, avec les deux montants réels.
-- **Un seul taux décidé au bureau** : le taux du 31 décembre, saisi par l'expert avant l'arrêté. Les soldes en dollars y sont convertis ; l'écart est un gain ou une perte de change (D3).
+- **Un seul taux de fin d'année** : le taux du 31 décembre. Le commerçant le donne en commençant l'année suivante, s'il n'est pas déjà saisi ; l'expert le corrige au bureau avant l'arrêté s'il le faut. Les soldes en dollars y sont convertis ; l'écart est un gain ou une perte de change (D3). L'année suivante s'ouvre toujours sur ce taux, même corrigé après coup.
 
 ## 10. Fin d'exercice
 
 - **Exercice** : année civile. Statuts : ouvert, puis arrêté.
 - **Entrée en cours d'année** : soldes d'ouverture au 1er janvier, puis un total par mois manquant, repris du cahier de caisse.
 - **Inventaire** : fait par le commerçant sur son téléphone (écran Stock), ligne par ligne, puis validé. Le stock final validé entre dans les états. L'assistant l'aide sur place s'il le faut ; il ne saisit pas à sa place.
-- **Clôture** : `cloturer()` ouvre l'exercice suivant. Soldes de clôture, stock final devenu initial, créances et dettes reportées, matériel à sa valeur nette, compte exploitant N+1 = compte exploitant N + résultat N.
+- **Nouvelle année** : à partir du 1er janvier, l'accueil du téléphone affiche « L'année N est finie ». Le commerçant compte son stock, donne le prix du dollar au 31 décembre si besoin, puis « Commencer N+1 ». Il note ses ventes de janvier tout de suite, sans attendre l'arrêté (`src/donnees/exercice.ts`).
+- **Clôture** : `cloturer()` ouvre l'exercice suivant. Soldes de clôture, stock final devenu initial, créances et dettes reportées, matériel à sa valeur nette, compte exploitant N+1 = compte exploitant N + résultat N, vérifié au franc près par un test.
+- **Arrêté** : ensuite, au bureau, par l'expert (§ 8.2). Plus aucune saisie possible sur l'année arrêtée.
 
 ## 11. Contrôles automatiques
 
@@ -228,10 +231,10 @@ Une micro-entreprise saisit 1 000 à 5 000 opérations par an. Le moteur recalcu
 | moteur | Vitest | chaque règle, chaque nature, chaque cas limite |
 | invariant | Vitest + fast-check | actif = passif sur des milliers d'exercices tirés au hasard |
 | non-régression | Vitest | le jeu du prototype redonne ses montants |
-| données | Vitest + fake-indexeddb | saisie validée, annulations, démonstration valide chaque jour de 2026 à 2028, arrêté |
+| données | Vitest + fake-indexeddb | saisie validée, annulations, démonstration valide chaque jour de 2026 à 2028, arrêté, passage à l'année suivante |
 | bureau | Vitest | le classeur Excel reprend les montants des états et porte la mention |
 | mode avion | Playwright, `npm run essai:hors-ligne` | sur un téléphone simulé (360 px, processeur ralenti quatre fois) : l'appli s'ouvre sans réseau, la démonstration se charge, une vente s'enregistre et reste après réouverture, le bureau n'est pas en cache |
-| parcours | Playwright | scénario de la soutenance, de bout en bout (à faire) |
+| parcours | Playwright, `npm run scenario` | les 19 étapes de la soutenance, téléphone et bureau, de la vente du jour à l'arrêté ; captures, classeur Excel et vidéos |
 
 `npm run verifier` avant chaque commit. Règle du dépôt : tout calcul comptable a son test.
 
@@ -262,7 +265,7 @@ Le modèle SMT ne tranche pas ces cas. Retenues le 29 octobre 2026, à faire con
 | D9 | tontine (likelemba) | compte de type tontine, présenté sur la ligne Banque, hors résultat |
 | D10 | matériel à crédit | refusé : le matériel se saisit à la date du paiement |
 
-Allègements décidés le 29 octobre 2026 : bureau réduit à trois écrans ; arrêté réduit à un bouton ; un seul taux décidé au bureau (le taux de clôture), plus de confirmation opération par opération ; inventaire fait par le commerçant seul ; pas de serveur avant un pilote. L'export Excel est gardé.
+Allègements décidés le 29 octobre 2026 : bureau réduit à trois écrans ; arrêté réduit à un bouton ; un seul taux de fin d'année (le taux de clôture), plus de confirmation opération par opération ; inventaire fait par le commerçant seul ; pas de serveur avant un pilote. L'export Excel est gardé.
 
 ## 16. Risques
 
@@ -290,7 +293,7 @@ Reste à faire sur un vrai téléphone Android d'entrée de gamme, avant la sout
 **4. Site vitrine** · maquette faite (`site/index.html`).
 Reste : numéro WhatsApp, formules et tarifs, mentions légales, adresse de l'appli.
 
-**5. Soutenance**
-Livrable : scénario minuté sur la boutique fictive, parcours Playwright qui le rejoue, plan B sans réseau, captures pour le mémoire.
+**5. Soutenance** · préparée (`docs/soutenance.md`). Scénario minuté en trois parties, rejoué par `npm run scenario` ; questions probables du jury ; plan B en quatre niveaux.
+Reste : l'essai sur un vrai téléphone, les diapositives (avec les captures du script), une répétition chronométrée.
 
 **Plus tard, seulement s'il y a un pilote** : le serveur de la section 14.

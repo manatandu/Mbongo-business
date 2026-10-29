@@ -6,6 +6,7 @@ import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
 import { useLangue, type Cle } from '../../i18n';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { useDossier } from '../session';
+import { FinAnnee } from './FinAnnee';
 import { LigneOperation } from './LigneOperation';
 
 /** Alertes montrées au commerçant, et l'écran où il peut agir. */
@@ -27,7 +28,7 @@ const ACTIVITE: ReadonlySet<Nature> = new Set<Nature>(['ventes', 'autres_recette
 const valeur = (o: Operation): number => (o.annule ? -1 : 1) * versFC(o.montant, o.devise, o.taux);
 
 export function Accueil() {
-  const { chargement, dateRef, taux } = useDossier();
+  const { chargement, dateRef, taux, aujourdhui } = useDossier();
   const { t, mois } = useLangue();
   const { dossier, comptes } = chargement;
 
@@ -51,6 +52,7 @@ export function Accueil() {
 
   return (
     <>
+      {aujourdhui > chargement.exercice.fin && <FinAnnee />}
       <div className="hero">
         <div className="lbl">{t('accueil.disponible')}</div>
         <div className="big">{fmtMontant(totalFC, 'CDF')}</div>

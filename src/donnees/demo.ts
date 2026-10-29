@@ -5,13 +5,28 @@ import type { BaseMbongo } from './base';
 import { retirerEntreprise } from './entreprise';
 import { nouvelId } from './ids';
 import { ecrireReglage } from './reglages';
+import { enregistrerInventaire } from './saisie';
 import type { Trace } from './types';
 
-/** Remplace toute démonstration existante par un jeu neuf, daté par rapport à aujourd'hui. */
-export async function chargerDemo(db: BaseMbongo, aujourdhui: DateISO): Promise<string> {
+/** Inventaire compté le 31 décembre dans la boutique fictive, prêt à être validé. */
+const INVENTAIRE_DEMO: [string, number, number][] = [
+  ['Riz, sac de 25 kg', 40, 62_000],
+  ['Huile, bidon de 5 L', 60, 18_500],
+  ['Sucre, sac de 50 kg', 12, 98_000],
+  ['Farine de maïs, sac de 25 kg', 30, 31_000],
+  ['Lait en poudre, boîte', 80, 7_500],
+  ['Savon, carton', 25, 24_000],
+  ['Sardines, carton', 10, 52_000],
+];
+
+/**
+ * Remplace toute démonstration existante par un jeu neuf, daté par rapport à aujourd'hui.
+ * `finAnnee` : l'année passée entière, inventaire compté mais pas validé, pour montrer le passage à l'année suivante et l'arrêté.
+ */
+export async function chargerDemo(db: BaseMbongo, aujourdhui: DateISO, finAnnee = false): Promise<string> {
   for (const e of await db.entreprises.toArray()) if (e.demo) await retirerEntreprise(db, e.id);
 
-  const jeu = creerJeuDemo(aujourdhui, () => nouvelId());
+  const jeu = creerJeuDemo(finAnnee ? `${Number(aujourdhui.slice(0, 4)) - 1}-12-31` : aujourdhui, () => nouvelId());
   const erreurs = valider(jeu.dossier);
   if (erreurs.length) throw new Error(`Jeu de démonstration invalide : ${erreurs.join(' ')}`);
 
@@ -27,5 +42,12 @@ export async function chargerDemo(db: BaseMbongo, aujourdhui: DateISO): Promise<
     await db.taux.bulkPut(jeu.taux);
     await ecrireReglage(db, 'entrepriseActive', jeu.entreprise.id);
   });
+  if (finAnnee) {
+    await enregistrerInventaire(
+      db,
+      jeu.exercice.id,
+      INVENTAIRE_DEMO.map(([designation, quantite, prixUnitaire], k) => ({ reference: `L${k + 1}`, designation, quantite, prixUnitaire, montant: quantite * prixUnitaire })),
+    );
+  }
   return jeu.entreprise.id;
 }

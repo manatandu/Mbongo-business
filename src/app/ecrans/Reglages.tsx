@@ -123,6 +123,17 @@ export function Reglages() {
             {t('reglages.demoRecharger')}
           </button>
           <button
+            className="bouton discret"
+            onClick={() =>
+              void chargerDemo(db, aujourdhui, true).then(() => {
+                annoncer(t('reglages.demoOk'));
+                aller('/');
+              })
+            }
+          >
+            {t('reglages.demoFinAnnee')}
+          </button>
+          <button
             className="bouton danger"
             onClick={() =>
               void retirerEntreprise(db, entreprise.id).then(() => {

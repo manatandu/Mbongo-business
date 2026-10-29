@@ -92,7 +92,7 @@ Compte exploitant d'ouverture = trésorerie d'ouverture + stock initial + créan
 
 ## 7. Devises
 
-Opérations en USD fréquentes à Kinshasa. Stocker le montant d'origine, la devise et le taux appliqué à la date de l'opération. États présentés en francs congolais. Le commerçant saisit le taux du jour avec chaque opération en dollars. Un seul taux est décidé au bureau : celui du 31 décembre, saisi par l'expert-comptable avant l'arrêté.
+Opérations en USD fréquentes à Kinshasa. Stocker le montant d'origine, la devise et le taux appliqué à la date de l'opération. États présentés en francs congolais. Le commerçant saisit le taux du jour avec chaque opération en dollars. Un seul taux de fin d'année : celui du 31 décembre, donné par le commerçant en commençant l'année suivante, corrigé si besoin par l'expert-comptable avant l'arrêté.
 
 ## 8. Conventions complémentaires retenues (décisions D1 à D10)
 

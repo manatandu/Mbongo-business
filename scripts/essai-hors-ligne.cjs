@@ -9,38 +9,21 @@
  *
  * Usage : npm run build && npm run essai:hors-ligne [dossier-des-captures]
  */
-const { spawn } = require('node:child_process');
-const path = require('node:path');
 const { chromium } = require('playwright');
+const { attendre, lancerServeur } = require('./serveur.cjs');
 
 const PORT = 4174;
 const URL_APPLI = `http://localhost:${PORT}/`;
 const captures = process.argv[2];
 
-const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
 let echecs = 0;
 function verifier(condition, message) {
   console.log(`${condition ? 'OK   ' : 'ÉCHEC'} ${message}`);
   if (!condition) echecs++;
 }
 
-async function serveur() {
-  // Vite lancé directement (pas par npx) : à la fin, on arrête bien le serveur lui-même.
-  const p = spawn(path.join(__dirname, '..', 'node_modules', '.bin', 'vite'), ['preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
-  for (let i = 0; i < 50; i++) {
-    try {
-      if ((await fetch(URL_APPLI)).ok) return p;
-    } catch {
-      // pas encore prêt
-    }
-    await attendre(200);
-  }
-  p.kill();
-  throw new Error('Le serveur de prévisualisation ne répond pas. La construction a-t-elle été faite (npm run build) ?');
-}
-
 (async () => {
-  const srv = await serveur();
+  const srv = await lancerServeur(PORT);
   const navigateur = await chromium.launch();
   try {
     const ctx = await navigateur.newContext({ viewport: { width: 360, height: 760 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'fr-FR' });

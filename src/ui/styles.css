@@ -40,6 +40,10 @@ button { cursor: pointer; }
 h1, h2, h3 { text-wrap: balance; }
 
 /* Coque */
+.fin-annee { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
+.fin-annee h2 { margin: 0; font-size: 18px; }
+.fin-annee p { margin: 0; }
+.fin-annee .fait { font-weight: 600; }
 .maj { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: var(--accent-soft); border-bottom: 1px solid var(--line); font-size: 15px; }
 .maj .bouton { min-height: 44px; padding: 8px 14px; font-size: 15px; }
 .app { max-width: 520px; min-height: 100dvh; margin: 0 auto; background: var(--surface); display: flex; flex-direction: column; }

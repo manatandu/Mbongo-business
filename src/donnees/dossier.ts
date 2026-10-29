@@ -49,7 +49,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   const id = entreprise.id;
   const { debut, fin } = exercice;
 
-  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, pieces] = await Promise.all([
+  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, pieces, precedent] = await Promise.all([
     db.comptes.where('entrepriseId').equals(id).sortBy('ordre'),
     db.operations.where('entrepriseId').equals(id).toArray(),
     db.tiers.where('entrepriseId').equals(id).toArray(),
@@ -57,6 +57,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     db.sorties.where('entrepriseId').equals(id).toArray(),
     db.inventaires.where('exerciceId').equals(exerciceId).sortBy('ordre'),
     db.pieces.where('entrepriseId').equals(id).toArray(),
+    db.exercices.where('entrepriseId').equals(id).filter((e) => e.annee === exercice.annee - 1).first(),
   ]);
 
   const avecPhoto = new Set(pieces.map((p) => p.operationId));
@@ -103,7 +104,8 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     exercice: { annee: exercice.annee, debut, fin },
     comptes: comptes.map((c) => ({ id: c.id, type: c.type, libelle: c.libelle, devise: c.devise })),
     soldesOuverture: { ...exercice.soldesOuverture },
-    tauxOuverture: exercice.tauxOuverture,
+    // Le taux d'ouverture suit le taux de clôture de l'année précédente, même corrigé par l'expert après coup.
+    tauxOuverture: precedent?.tauxCloture ?? exercice.tauxOuverture,
     empruntOuverture: exercice.empruntOuverture,
     operations,
     creances: tiers('creance'),

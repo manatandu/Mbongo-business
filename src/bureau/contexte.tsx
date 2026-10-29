@@ -48,14 +48,19 @@ export function useBureau(): ContexteBureau {
   return c;
 }
 
-/** Dossier de l'exercice en cours d'un client, rechargé à chaque écriture. `null` : introuvable. */
-export function useDossierBureau(entrepriseId: string | undefined): Chargement | null | undefined {
+/** Dossier d'un client pour l'année demandée (l'année en cours par défaut), rechargé à chaque écriture. `null` : introuvable. */
+export function useDossierBureau(entrepriseId: string | undefined, annee?: number | null): Chargement | null | undefined {
   const { aujourdhui } = useBureau();
   return useLiveQuery(async () => {
     if (!entrepriseId) return null;
-    const ex = await exerciceCourant(db, entrepriseId, Number(aujourdhui.slice(0, 4)));
+    const ex = await exerciceCourant(db, entrepriseId, annee ?? Number(aujourdhui.slice(0, 4)));
     return ex ? chargerDossier(db, ex.id) : null;
-  }, [entrepriseId, aujourdhui]);
+  }, [entrepriseId, annee, aujourdhui]);
+}
+
+/** Années d'un client, de la plus récente à la plus ancienne. */
+export function useExercicesBureau(entrepriseId: string | undefined) {
+  return useLiveQuery(async () => (entrepriseId ? (await db.exercices.where('entrepriseId').equals(entrepriseId).toArray()).sort((a, b) => b.annee - a.annee) : []), [entrepriseId]);
 }
 
 export const dateRefDe = (c: Chargement, aujourdhui: DateISO): DateISO => (aujourdhui > c.exercice.fin ? c.exercice.fin : aujourdhui);

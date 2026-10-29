@@ -3,7 +3,7 @@
  * Le formulaire vérifie l'évident ; le moteur vérifie le reste avant toute écriture.
  */
 import { useEffect, useState, type FormEvent } from 'react';
-import { useLocation, useParams } from 'wouter';
+import { Link, useLocation, useParams } from 'wouter';
 import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeOperation } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { ajouterPhoto, enregistrerFacture, enregistrerOperation, ErreurSaisie } from '../../donnees/saisie';
@@ -35,7 +35,7 @@ function natures(type: TypeOperation, credit: boolean): Nature[] {
 }
 
 export function Saisir() {
-  const { chargement, dateRef, taux, annoncer, entreprise } = useDossier();
+  const { chargement, dateRef, taux, annoncer, entreprise, aujourdhui } = useDossier();
   const { t } = useLangue();
   const [, aller] = useLocation();
   const params = useParams<{ type?: string }>();
@@ -157,6 +157,17 @@ export function Saisir() {
     const c = comptes.find((x) => x.id === id);
     return c ? `${c.libelle}${c.devise === 'USD' ? ' ($)' : ''}` : id;
   };
+
+  if (aujourdhui > exercice.fin) {
+    return (
+      <>
+        <p className="aide">{t('fin.saisir', { annee: exercice.annee, suivante: exercice.annee + 1 })}</p>
+        <Link href="/" className="bouton">
+          {t('fin.accueil')}
+        </Link>
+      </>
+    );
+  }
 
   return (
     <form onSubmit={enregistrer} noValidate>

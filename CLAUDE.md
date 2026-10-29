@@ -39,7 +39,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 |---|---|---|
 | Commerçant | téléphone Android, hors ligne | saisir recettes, dépenses, transferts, ventes et achats à crédit, photo des pièces, inventaire ; voir soldes, tableau de bord, journaux, états |
 | Assistant (structure) | navigateur, bureau | voir ses clients, leurs contrôles et leurs états ; **aucune écriture** dans les saisies |
-| Expert-comptable partenaire | navigateur, bureau | la même chose, plus le taux du dollar au 31 décembre et l'arrêté des états |
+| Expert-comptable partenaire | navigateur, bureau | la même chose, plus la correction du taux du dollar au 31 décembre et l'arrêté des états |
 
 Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 
@@ -86,6 +86,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - `npm run typage` : vérification TypeScript.
 - `npm run verifier` : les deux, à lancer avant chaque commit.
 - `npm run build` puis `npm run essai:hors-ligne` : essai de l'appli en mode avion (Playwright).
+- `npm run build` puis `npm run scenario [dossier]` : scénario de soutenance rejoué (captures, Excel, vidéos). `DATE=2027-07-12` pour le rejouer à une autre date.
 
 ## Feuille de route
 
@@ -93,7 +94,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 2. Appli du commerçant : faite, installable, marche sans réseau (essai en mode avion automatisé).
 3. Bureau et exports PDF / Excel : faits.
 4. Site vitrine : maquette faite ; restent les informations réelles.
-5. Préparation de la soutenance (scénario, parcours Playwright, plan B).
+5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
 Plus tard, seulement s'il y a un pilote : serveur.
 
 ## Références
@@ -102,3 +103,4 @@ Plus tard, seulement s'il y a un pilote : serveur.
 - `docs/regles-smt.md` : règles comptables détaillées.
 - `docs/cadre-juridique.md` : partage des rôles structure / expert-comptable.
 - `docs/architecture.md` : plan du logiciel, conventions D1 à D10, feuille de route.
+- `docs/soutenance.md` : scénario de démonstration, questions du jury, plan B.

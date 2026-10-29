@@ -1,6 +1,6 @@
 /** Coque de l'appli commerçant : verrou, accueil sans entreprise, ou écrans avec la barre d'onglets. */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Route, Router, Switch, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { FournisseurLangue, useLangue, type Cle } from '../i18n';
@@ -31,6 +31,10 @@ function Coque() {
   const { entreprise } = useDossier();
   const { t } = useLangue();
   const [chemin] = useLocation();
+  // Chaque écran s'ouvre en haut, pas à la hauteur où l'on avait laissé le précédent.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [chemin]);
   return (
     <>
       <header className="entete">

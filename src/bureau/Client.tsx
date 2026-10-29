@@ -8,7 +8,7 @@ import { annulerArrete, arreterEtats, definirTauxCloture, obstaclesArrete, resum
 import { ErreurSaisie } from '../donnees/saisie';
 import { calculerEtats } from '../moteur';
 import { fmt, fmtDate, lireTaux } from '../ui/format';
-import { dateRefDe, db, useBureau, useDossierBureau } from './contexte';
+import { dateRefDe, db, useBureau, useDossierBureau, useExercicesBureau } from './contexte';
 import { telechargerExcel } from './excel';
 import { TablesEtats } from './TablesEtats';
 import { Carte, Message, Pastille } from './ui';
@@ -19,7 +19,9 @@ export function Client() {
   const { id, onglet } = useParams<{ id: string; onglet?: string }>();
   const [, aller] = useLocation();
   const { aujourdhui, role } = useBureau();
-  const c = useDossierBureau(id);
+  const [annee, setAnnee] = useState<number | null>(null);
+  const exercices = useExercicesBureau(id);
+  const c = useDossierBureau(id, annee);
   const [taux, setTaux] = useState('');
   const [erreurs, setErreurs] = useState<string[]>([]);
 
@@ -54,9 +56,19 @@ export function Client() {
         </Link>
         <h1 className="m-0 text-[17px] font-semibold">{c.entreprise.nom}</h1>
         {c.entreprise.demo && <Pastille ton="neutre">fictif</Pastille>}
-        <span className="text-text-dim">
-          Exercice {c.exercice.annee} · situation au {fmtDate(vue.ref)}
-        </span>
+        {exercices && exercices.length > 1 ? (
+          <select className="champ" aria-label="Exercice" value={c.exercice.annee} onChange={(e) => setAnnee(Number(e.target.value))}>
+            {exercices.map((x) => (
+              <option key={x.id} value={x.annee}>
+                Exercice {x.annee}
+                {x.statut === 'arrete' ? ' (arrêté)' : ''}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className="text-text-dim">Exercice {c.exercice.annee}</span>
+        )}
+        <span className="text-text-dim">situation au {fmtDate(vue.ref)}</span>
       </div>
 
       <div className="flex border-b border-border" role="tablist">

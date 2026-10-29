@@ -9,7 +9,8 @@ const compteur = () => {
   return () => `id-${++n}`;
 };
 
-const jours: string[] = [];
+// Le 31 décembre de l'année d'avant : la démonstration de fin d'année, si on l'ouvre en 2026.
+const jours: string[] = ['2025-12-31'];
 for (let d = '2026-01-01'; d <= '2028-12-31'; d = ajouterJours(d, 1)) jours.push(d);
 
 describe('jeu de démonstration', () => {
