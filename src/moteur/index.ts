@@ -9,7 +9,7 @@ export { estDateISO } from './dates';
 export { valider, verifierDossier, ErreurDossier } from './validation';
 export { valoriser, LIBELLE_METHODE, type MethodeValorisation, type MouvementStock, type EtatArticle, type SortieValorisee } from './valorisation';
 export { soldesTresorerie, journalMensuel, ligneBilan, type SoldeCompte, type JournalTresorerie, type LigneJournal } from './tresorerie';
-export { situationTiers, encaisser, regler, prescription, dossierCreance, type SituationTiers, type ParametresReglement, type DossierCreance } from './tiers';
+export { situationTiers, encaisser, regler, prescription, dossierCreance, type SituationTiers, type ParametresReglement, type DossierCreance, type LigneNote3 } from './tiers';
 export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';
 export { calculerEtats, type Etats, type CompteDeResultat, type Bilan, type Notes, type LigneNote1 } from './etats';
 export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';

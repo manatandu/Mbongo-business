@@ -7,16 +7,19 @@ import { useMemo, useState } from 'react';
 import { calculerEtats, type Etats as EtatsSMT, type Montant } from '../../moteur';
 import { useLangue } from '../../i18n';
 import { fmt, fmtDate } from '../../ui/format';
+import { etatsPrecedents } from '../../donnees/dossier';
 import { mentionMethodeStock } from '../../donnees/stock';
 import { db, useDossier } from '../session';
 
 type Vue = 'cr' | 'bilan' | 'notes';
 
-const L = ({ libelle, note, valeur, classe }: { libelle: string; note?: string; valeur: Montant; classe?: string }) => (
+/** Une ligne d'état : exercice N, puis N-1 (tiret la première année tenue dans Mbongo). */
+const L = ({ libelle, note, valeur, n1, classe }: { libelle: string; note?: string; valeur: Montant; n1: Montant | undefined; classe?: string }) => (
   <tr className={classe}>
     <td>{libelle}</td>
     <td>{note ?? ''}</td>
     <td className="d num">{fmt(valeur)}</td>
+    <td className="d num">{n1 === undefined ? '—' : fmt(n1)}</td>
   </tr>
 );
 
@@ -42,7 +45,7 @@ function Entete({ e, titre }: { e: EtatsSMT; titre: string }) {
   );
 }
 
-function CompteDeResultat({ e }: { e: EtatsSMT }) {
+function CompteDeResultat({ e, p }: { e: EtatsSMT; p: EtatsSMT | null }) {
   const r = e.compteDeResultat;
   return (
     <div className="doc">
@@ -53,26 +56,27 @@ function CompteDeResultat({ e }: { e: EtatsSMT }) {
             <tr>
               <th>Rubriques</th>
               <th>Note</th>
-              <th className="d">Exercice {e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee - 1}</th>
             </tr>
           </thead>
           <tbody>
-            <L libelle="Recettes sur ventes ou prestations de services" note="4" valeur={r.recettesVentes} />
-            <L libelle="Autres recettes sur activités" note="4" valeur={r.autresRecettes} />
-            <L libelle="Total des recettes sur produits (A)" valeur={r.A} classe="total" />
-            <L libelle="Dépenses sur achats" note="4" valeur={r.achats} />
-            <L libelle="Dépenses sur loyers" note="4" valeur={r.loyers} />
-            <L libelle="Dépenses sur salaires" note="4" valeur={r.salaires} />
-            <L libelle="Dépenses sur impôts et taxes" note="4" valeur={r.impotsTaxes} />
-            <L libelle="Charges d'intérêts" valeur={r.interets} />
-            <L libelle="Autres dépenses sur activités" note="4" valeur={r.autresDepenses} />
-            <L libelle="Total dépenses sur charges (B)" valeur={r.B} classe="total" />
-            <L libelle="Solde : excédent ou insuffisance de recettes (C = A − B)" valeur={r.C} classe="sous" />
-            <L libelle="− Variation des stocks N / N-1" note="2" valeur={r.variationStocks} />
-            <L libelle="− Variation des créances N / N-1" note="3" valeur={r.variationCreances} />
-            <L libelle="+ Variation des dettes d'exploitation N / N-1" note="3" valeur={r.variationDettes} />
-            <L libelle="Dotations amortissements (F)" note="1" valeur={r.F} />
-            <L libelle="Résultat exercice (G = C − D + E − F)" valeur={r.G} classe="resultat" />
+            <L libelle="Recettes sur ventes ou prestations de services" note="4" valeur={r.recettesVentes} n1={p?.compteDeResultat.recettesVentes} />
+            <L libelle="Autres recettes sur activités" note="4" valeur={r.autresRecettes} n1={p?.compteDeResultat.autresRecettes} />
+            <L libelle="Total des recettes sur produits (A)" valeur={r.A} n1={p?.compteDeResultat.A} classe="total" />
+            <L libelle="Dépenses sur achats" note="4" valeur={r.achats} n1={p?.compteDeResultat.achats} />
+            <L libelle="Dépenses sur loyers" note="4" valeur={r.loyers} n1={p?.compteDeResultat.loyers} />
+            <L libelle="Dépenses sur salaires" note="4" valeur={r.salaires} n1={p?.compteDeResultat.salaires} />
+            <L libelle="Dépenses sur impôts et taxes" note="4" valeur={r.impotsTaxes} n1={p?.compteDeResultat.impotsTaxes} />
+            <L libelle="Charges d'intérêts" valeur={r.interets} n1={p?.compteDeResultat.interets} />
+            <L libelle="Autres dépenses sur activités" note="4" valeur={r.autresDepenses} n1={p?.compteDeResultat.autresDepenses} />
+            <L libelle="Total dépenses sur charges (B)" valeur={r.B} n1={p?.compteDeResultat.B} classe="total" />
+            <L libelle="Solde : excédent ou insuffisance de recettes (C = A − B)" valeur={r.C} n1={p?.compteDeResultat.C} classe="sous" />
+            <L libelle="− Variation des stocks N / N-1" note="2" valeur={r.variationStocks} n1={p?.compteDeResultat.variationStocks} />
+            <L libelle="− Variation des créances N / N-1" note="3" valeur={r.variationCreances} n1={p?.compteDeResultat.variationCreances} />
+            <L libelle="+ Variation des dettes d'exploitation N / N-1" note="3" valeur={r.variationDettes} n1={p?.compteDeResultat.variationDettes} />
+            <L libelle="Dotations amortissements (F)" note="1" valeur={r.F} n1={p?.compteDeResultat.F} />
+            <L libelle="Résultat exercice (G = C − D + E − F)" valeur={r.G} n1={p?.compteDeResultat.G} classe="resultat" />
           </tbody>
         </table>
       </div>
@@ -80,7 +84,7 @@ function CompteDeResultat({ e }: { e: EtatsSMT }) {
   );
 }
 
-function Bilan({ e }: { e: EtatsSMT }) {
+function Bilan({ e, p }: { e: EtatsSMT; p: EtatsSMT | null }) {
   const b = e.bilan;
   return (
     <div className="doc">
@@ -91,16 +95,17 @@ function Bilan({ e }: { e: EtatsSMT }) {
             <tr>
               <th>Actif</th>
               <th>Note</th>
-              <th className="d">Exercice {e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee - 1}</th>
             </tr>
           </thead>
           <tbody>
-            <L libelle="Immobilisations (valeur nette)" note="1" valeur={b.actif.immobilisations} />
-            <L libelle="Stocks" note="2" valeur={b.actif.stocks} />
-            <L libelle="Clients et débiteurs divers" note="3" valeur={b.actif.creances} />
-            <L libelle="Caisse" valeur={b.actif.caisse} />
-            <L libelle="Banque, monnaie électronique et tontine (en + ou en −)" valeur={b.actif.banque} />
-            <L libelle="Total actif" valeur={b.actif.total} classe="total" />
+            <L libelle="Immobilisations (valeur nette)" note="1" valeur={b.actif.immobilisations} n1={p?.bilan.actif.immobilisations} />
+            <L libelle="Stocks" note="2" valeur={b.actif.stocks} n1={p?.bilan.actif.stocks} />
+            <L libelle="Clients et débiteurs divers" note="3" valeur={b.actif.creances} n1={p?.bilan.actif.creances} />
+            <L libelle="Caisse" valeur={b.actif.caisse} n1={p?.bilan.actif.caisse} />
+            <L libelle="Banque, monnaie électronique et tontine (en + ou en −)" valeur={b.actif.banque} n1={p?.bilan.actif.banque} />
+            <L libelle="Total actif" valeur={b.actif.total} n1={p?.bilan.actif.total} classe="total" />
           </tbody>
         </table>
       </div>
@@ -110,15 +115,16 @@ function Bilan({ e }: { e: EtatsSMT }) {
             <tr>
               <th>Passif</th>
               <th>Note</th>
-              <th className="d">Exercice {e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee}</th>
+              <th className="d">{e.exercice.annee - 1}</th>
             </tr>
           </thead>
           <tbody>
-            <L libelle="Compte exploitant" note="1" valeur={b.passif.compteExploitant} />
-            <L libelle="Résultat exercice" valeur={b.passif.resultat} />
-            <L libelle="Emprunt" valeur={b.passif.emprunt} />
-            <L libelle="Fournisseurs et créditeurs divers" note="3" valeur={b.passif.dettes} />
-            <L libelle="Total passif" valeur={b.passif.total} classe="total" />
+            <L libelle="Compte exploitant" note="1" valeur={b.passif.compteExploitant} n1={p?.bilan.passif.compteExploitant} />
+            <L libelle="Résultat exercice" valeur={b.passif.resultat} n1={p?.bilan.passif.resultat} />
+            <L libelle="Emprunt" valeur={b.passif.emprunt} n1={p?.bilan.passif.emprunt} />
+            <L libelle="Fournisseurs et créditeurs divers" note="3" valeur={b.passif.dettes} n1={p?.bilan.passif.dettes} />
+            <L libelle="Total passif" valeur={b.passif.total} n1={p?.bilan.passif.total} classe="total" />
           </tbody>
         </table>
       </div>
@@ -194,20 +200,36 @@ function Notes({ e }: { e: EtatsSMT }) {
         <table>
           <thead>
             <tr>
-              <th />
+              <th>Client ou fournisseur</th>
               <th className="d">Au 31 décembre</th>
               <th className="d">Au 1er janvier</th>
               <th className="d">Variation</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            {n.note3.creances.lignes.map((l) => (
+              <tr key={'creances' + l.nom}>
+                <td>{l.nom}</td>
+                <td className="d num">{fmt(l.cloture)}</td>
+                <td className="d num">{fmt(l.ouverture)}</td>
+                <td className="d num">{pct(l.variation)}</td>
+              </tr>
+            ))}
+            <tr className="total">
               <td>Total des créances</td>
               <td className="d num">{fmt(n.note3.creances.cloture)}</td>
               <td className="d num">{fmt(n.note3.creances.ouverture)}</td>
               <td className="d num">{pct(n.note3.creances.variation)}</td>
             </tr>
-            <tr>
+            {n.note3.dettes.lignes.map((l) => (
+              <tr key={'dettes' + l.nom}>
+                <td>{l.nom}</td>
+                <td className="d num">{fmt(l.cloture)}</td>
+                <td className="d num">{fmt(l.ouverture)}</td>
+                <td className="d num">{pct(l.variation)}</td>
+              </tr>
+            ))}
+            <tr className="total">
               <td>Total des dettes</td>
               <td className="d num">{fmt(n.note3.dettes.cloture)}</td>
               <td className="d num">{fmt(n.note3.dettes.ouverture)}</td>
@@ -231,6 +253,7 @@ export function Etats() {
   const { t, langue } = useLangue();
   const [vue, setVue] = useState<Vue>('cr');
   const e = useMemo(() => calculerEtats(chargement.dossier, { auDate: dateRef }), [chargement.dossier, dateRef]);
+  const precedent = useLiveQuery(() => etatsPrecedents(db, chargement.exercice.id), [chargement.exercice.id]);
   const arrete = chargement.exercice.statut === 'arrete' || chargement.exercice.statut === 'clos';
 
   return (
@@ -244,8 +267,8 @@ export function Etats() {
       </div>
       {langue === 'ln' && <p className="aide">{t('etats.francais')}</p>}
       {e.provisoire && <p className="aide">{t('etats.provisoire', { date: fmtDate(e.auDate) })}</p>}
-      {vue === 'cr' && <CompteDeResultat e={e} />}
-      {vue === 'bilan' && <Bilan e={e} />}
+      {vue === 'cr' && <CompteDeResultat e={e} p={precedent ?? null} />}
+      {vue === 'bilan' && <Bilan e={e} p={precedent ?? null} />}
       {vue === 'notes' && <Notes e={e} />}
       <hr className="filet-cloture" />
       <div className={`tampon ${arrete ? 'ok' : ''}`}>{arrete ? t('etats.arretes', { date: fmtDate(chargement.exercice.arreteLe ?? e.auDate) }) : t('etats.attente')}</div>

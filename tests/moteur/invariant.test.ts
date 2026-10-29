@@ -33,6 +33,19 @@ describe('invariant actif = passif', () => {
     );
   });
 
+  it('la note 3 détaillée par client et par fournisseur retombe sur les totaux', () => {
+    fc.assert(
+      fc.property(graine, (g) => {
+        const n3 = calculerEtats(construire(g)).notes.note3;
+        for (const genre of ['creances', 'dettes'] as const) {
+          expect(n3[genre].lignes.reduce((t, l) => t + l.cloture, 0)).toBe(n3[genre].cloture);
+          expect(n3[genre].lignes.reduce((t, l) => t + l.ouverture, 0)).toBe(n3[genre].ouverture);
+        }
+      }),
+      { numRuns: Math.ceil(TIRAGES / 2) },
+    );
+  });
+
   it("le bilan s'équilibre à n'importe quelle date de l'exercice", () => {
     fc.assert(
       fc.property(graine, fc.integer({ min: 0, max: 364 }), (g, j) => {

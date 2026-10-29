@@ -6,7 +6,7 @@ import { preparer, signe, valeurFC } from './contexte';
 import { registre, type LigneRegistre } from './immobilisations';
 import { somme, versFC } from './montants';
 import { NATURES, type RubriqueResultat } from './natures';
-import { totalFC, totalOuvertureFC } from './tiers';
+import { note3ParTiers, totalFC, totalOuvertureFC, type LigneNote3 } from './tiers';
 import { calculerSoldes, ligneBilan } from './tresorerie';
 import { ErreurDossier, verifierDossier } from './validation';
 import { VERSION_MOTEUR } from './version';
@@ -73,8 +73,8 @@ export interface Notes {
   note1: { lignes: LigneNote1[]; totalMontant: Montant; totalDotations: Montant; totalValeurNette: Montant };
   note2: { stockInitial: Montant; stockFinal: Montant; inventaireFait: boolean; lignes: LigneStock[] };
   note3: {
-    creances: { cloture: Montant; ouverture: Montant; variation: number | null };
-    dettes: { cloture: Montant; ouverture: Montant; variation: number | null };
+    creances: { cloture: Montant; ouverture: Montant; variation: number | null; lignes: LigneNote3[] };
+    dettes: { cloture: Montant; ouverture: Montant; variation: number | null; lignes: LigneNote3[] };
   };
 }
 
@@ -254,8 +254,8 @@ export function calculerEtats(dossier: DossierExercice, options: { auDate?: Date
       },
       note2: { stockInitial: SI, stockFinal: SF, inventaireFait, lignes: dossier.lignesStock ?? [] },
       note3: {
-        creances: { cloture: CF, ouverture: CI, variation: variation(CF, CI) },
-        dettes: { cloture: DF, ouverture: DI, variation: variation(DF, DI) },
+        creances: { cloture: CF, ouverture: CI, variation: variation(CF, CI), lignes: note3ParTiers(ctx, 'creance', ref, tauxValorisation) },
+        dettes: { cloture: DF, ouverture: DI, variation: variation(DF, DI), lignes: note3ParTiers(ctx, 'dette', ref, tauxValorisation) },
       },
     },
     ecartChange,

@@ -1,7 +1,7 @@
 /** Écran 1 : la liste des clients suivis, avec ce qui demande de l'attention. */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation } from 'wouter';
-import { resumeDossier } from '../donnees/bureau';
+import { limiteArrete, resumeDossier } from '../donnees/bureau';
 import { chargerDossier } from '../donnees/dossier';
 import { exerciceCourant } from '../donnees/entreprise';
 import { fmt, fmtDate } from '../ui/format';
@@ -58,8 +58,8 @@ export function Clients() {
                 <td>
                   <div className="flex flex-wrap gap-1">
                     {enAttente.map((a) => (
-                      <Pastille key={a} ton="avert">
-                        États {a} à arrêter
+                      <Pastille key={a} ton={aujourdhui > limiteArrete(a) ? 'danger' : 'avert'}>
+                        États {a} à arrêter {aujourdhui > limiteArrete(a) ? `(délai dépassé le ${fmtDate(limiteArrete(a))})` : `avant le ${fmtDate(limiteArrete(a))}`}
                       </Pastille>
                     ))}
                     {ex.statut === 'arrete' ? (

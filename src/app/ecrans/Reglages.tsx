@@ -9,6 +9,7 @@ import { SITE_TRK } from '../../donnees/parametres';
 import { codeDefini, definirCode } from '../../donnees/reglages';
 import { Erreurs } from '../composants';
 import { MesComptes } from './Comptes';
+import { ChoixMethodeStock } from './FichesStock';
 import { installer, useInstallation } from '../installation';
 import { db, useDossier } from '../session';
 
@@ -103,6 +104,8 @@ export function Reglages() {
         </div>
       )}
       <Erreurs messages={erreurs} />
+
+      <ChoixMethodeStock />
 
       <h2 className="titre-section">{t('reglages.donnees')}</h2>
       <button className="bouton discret" onClick={() => void telechargerCopie(entreprise.id, entreprise.nom, aujourdhui)}>

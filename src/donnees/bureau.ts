@@ -9,6 +9,9 @@ import { PARAMETRES_CONTROLE } from './parametres';
 import { ErreurSaisie } from './saisie';
 
 /** Résumé d'un dossier pour la liste des clients. */
+/** AUDCIF, art. 23 : les états sont arrêtés au plus tard dans les quatre mois qui suivent la clôture, soit le 30 avril. */
+export const limiteArrete = (annee: number): DateISO => `${annee + 1}-04-30`;
+
 export function resumeDossier(c: Chargement, aujourdhui: DateISO) {
   const ref = aujourdhui > c.exercice.fin ? c.exercice.fin : aujourdhui;
   const anomalies = controler(c.dossier, ref, PARAMETRES_CONTROLE).filter((a) => a.niveau !== 'information');

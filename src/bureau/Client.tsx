@@ -2,15 +2,17 @@
  * Écrans 2 et 3 : les contrôles d'un client, puis ses états SMT.
  * L'assistant consulte ; l'expert-comptable partenaire saisit le taux de clôture et arrête les états.
  */
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
-import { annulerArrete, arreterEtats, definirTauxCloture, obstaclesArrete, resumeDossier } from '../donnees/bureau';
+import { annulerArrete, arreterEtats, definirTauxCloture, limiteArrete, obstaclesArrete, resumeDossier } from '../donnees/bureau';
+import { etatsPrecedents } from '../donnees/dossier';
 import { ErreurSaisie } from '../donnees/saisie';
 import { calculerEtats } from '../moteur';
 import { fmt, fmtDate, lireTaux } from '../ui/format';
 import { dateRefDe, db, useBureau, useDossierBureau, useExercicesBureau } from './contexte';
-import { telechargerExcel } from './excel';
 import { mentionMethodeStock } from '../donnees/stock';
+import { telechargerExcel } from './excel';
 import { TablesEtats } from './TablesEtats';
 import { Carte, Fenetre, Message, Pastille } from './ui';
 
@@ -32,6 +34,7 @@ export function Client() {
     return { ref, resume: resumeDossier(c, aujourdhui), etats: calculerEtats(c.dossier, { auDate: ref }) };
   }, [c, aujourdhui]);
 
+  const precedent = useLiveQuery(() => (c ? etatsPrecedents(db, c.exercice.id) : Promise.resolve(null)), [c?.exercice.id]);
   if (c === undefined) return <p className="text-text-dim">Ouverture du dossier…</p>;
   if (!c || !vue) return <Message ton="avert">Client introuvable sur cet ordinateur.</Message>;
 
@@ -97,8 +100,10 @@ export function Client() {
 
       {etats && (
         <>
-          <TablesEtats e={vue.etats} />
-          <Carte titre="Arrêté par l'expert-comptable partenaire" droite={arrete ? <Pastille ton="ok">Arrêtés le {fmtDate(c.exercice.arreteLe ?? vue.ref)}</Pastille> : <Pastille ton="avert">Non arrêtés</Pastille>}>
+          <TablesEtats e={vue.etats} precedent={precedent ?? null} />
+          <Carte titre="Arrêté par l'expert-comptable partenaire" droite={arrete ? <Pastille ton="ok">Arrêtés le {fmtDate(c.exercice.arreteLe ?? vue.ref)}</Pastille> : (
+                <Pastille ton={aujourdhui > limiteArrete(c.exercice.annee) ? 'danger' : 'avert'}>Non arrêtés · à arrêter avant le {fmtDate(limiteArrete(c.exercice.annee))}</Pastille>
+              )}>
             {role !== 'expert' && <p className="m-0 text-text-dim">Réservé à l'expert-comptable partenaire.</p>}
             {role === 'expert' && !arrete && (
               <>
@@ -150,7 +155,7 @@ export function Client() {
             <button className="btn btn-neutre" onClick={() => window.print()}>
               Imprimer ou enregistrer en PDF
             </button>
-            <button className="btn btn-neutre" onClick={() => void agir(async () => telechargerExcel(vue.etats, c.dossier, await mentionMethodeStock(db, c.entreprise.id)))}>
+            <button className="btn btn-neutre" onClick={() => void agir(async () => telechargerExcel(vue.etats, c.dossier, await mentionMethodeStock(db, c.entreprise.id), precedent ?? null))}>
               Exporter en Excel
             </button>
           </div>

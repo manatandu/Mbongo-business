@@ -2,7 +2,7 @@
  * Construit le dossier d'un exercice, tel que le moteur l'attend, à partir de la base locale.
  * Les lignes d'exercices précédents (factures reportées, matériel ancien) sont reprises ici.
  */
-import type { DossierExercice, Immobilisation, Operation, PieceTiers } from '../moteur';
+import { calculerEtats, type DossierExercice, type Etats, type Immobilisation, type Operation, type PieceTiers } from '../moteur';
 import type { BaseMbongo } from './base';
 import type { LigneCompte, LigneEntreprise, LigneExercice, LigneOperation, LigneTiers } from './types';
 
@@ -123,4 +123,13 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant }));
   }
   return { entreprise, exercice, comptes, dossier };
+}
+
+/** États de l'exercice précédent, pour la colonne N-1 du bilan et du compte de résultat (AUDCIF, art. 34). Null la première année. */
+export async function etatsPrecedents(db: BaseMbongo, exerciceId: string): Promise<Etats | null> {
+  const ex = await db.exercices.get(exerciceId);
+  if (!ex) return null;
+  const precedent = await db.exercices.where('[entrepriseId+annee]').equals([ex.entrepriseId, ex.annee - 1]).first();
+  if (!precedent) return null;
+  return calculerEtats((await chargerDossier(db, precedent.id)).dossier);
 }

@@ -19,8 +19,8 @@ describe('échéancier', () => {
   });
 
   it("suit le régime fiscal pour l'impôt annuel", () => {
-    expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'petite' })).toEqual(['2027-01-31 impotPremier', '2027-04-30 impotSolde']);
-    expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'micro' })).toEqual(['2027-04-30 forfaitMicro']);
+    expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'petite' })).toEqual(['2027-01-31 impotPremier', '2027-04-30 arreteEtats', '2027-04-30 impotSolde']);
+    expect(cles('2027-01-20', 120, { salaries: false, loyer: false, regime: 'micro' })).toEqual(['2027-04-30 arreteEtats', '2027-04-30 forfaitMicro']);
   });
 
   it('passe le cap de l’année', () => {

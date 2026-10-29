@@ -18,7 +18,8 @@ export type CleEcheance =
   | 'impotSolde'
   | 'forfaitMicro'
   | 'mainOeuvre'
-  | 'salairesAnnuel';
+  | 'salairesAnnuel'
+  | 'arreteEtats';
 
 export interface Echeance {
   date: DateISO;
@@ -69,6 +70,8 @@ function duMois(a: number, m: number, p: ProfilEcheancier): Echeance[] {
   }
   if (m === 3 && p.salaries && p.regime === 'petite') r.push({ date: d(31), cle: 'salairesAnnuel', texte: 'LPF, art. 22 ter' });
   if (m === 4) {
+    // Pour tous : les états de l'année passée sont arrêtés par l'expert-comptable au plus tard le 30 avril.
+    r.push({ date: d(30), cle: 'arreteEtats', texte: 'AUDCIF, art. 23' });
     if (p.regime === 'petite') r.push({ date: d(30), cle: 'impotSolde', texte: 'LPF, art. 57 quater' });
     if (p.regime === 'micro') r.push({ date: d(30), cle: 'forfaitMicro', texte: 'AM n° 015/2025' });
   }

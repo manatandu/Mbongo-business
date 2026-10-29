@@ -52,6 +52,31 @@ export function totalFC(ctx: Contexte, genre: GenreTiers, date: DateISO, tauxVal
   return total;
 }
 
+/** Ligne de la note 3 : un client ou un fournisseur, ce qu'il doit (ou ce qu'on lui doit) au 31 décembre et au 1er janvier. */
+export interface LigneNote3 {
+  nom: string;
+  cloture: Montant;
+  ouverture: Montant;
+  /** (clôture − ouverture) / ouverture ; null si rien au 1er janvier. */
+  variation: number | null;
+}
+
+/** Note 3 détaillée par tiers (modèle du Titre X). Les lignes s'additionnent exactement aux totaux du bilan. */
+export function note3ParTiers(ctx: Contexte, genre: GenreTiers, date: DateISO, tauxValorisation: number | null): LigneNote3[] {
+  const parNom = new Map<string, LigneNote3>();
+  for (const l of lignesTiers(ctx.dossier, genre)) {
+    const cle = l.nom.trim().toLowerCase();
+    const ligne = parNom.get(cle) ?? { nom: l.nom.trim(), cloture: 0, ouverture: 0, variation: null };
+    ligne.cloture += valeurTiersFC(encoursA(ctx, genre, l, date), l, tauxValorisation);
+    ligne.ouverture += valeurTiersFC(encoursOuverture(ctx, l), l, ctx.dossier.tauxOuverture);
+    parNom.set(cle, ligne);
+  }
+  return [...parNom.values()]
+    .filter((x) => x.cloture !== 0 || x.ouverture !== 0)
+    .map((x) => ({ ...x, variation: x.ouverture === 0 ? null : (x.cloture - x.ouverture) / x.ouverture }))
+    .sort((a, b) => a.nom.localeCompare(b.nom));
+}
+
 export interface SituationTiers {
   ligne: PieceTiers;
   regle: Montant;

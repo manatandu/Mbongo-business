@@ -129,10 +129,12 @@ Conforme :
 - amortissement linéaire sans prorata temporis ; correction par écriture en négatif (art. 20) ; irréversibilité (art. 22) ; conservation dix ans (art. 24) ;
 - seuils de l'art. 13 en francs CFA (60 M négoce, 40 M artisanat, 30 M services) ; nos montants en CDF sont des équivalents du projet.
 
-Écarts à traiter :
-- colonne de l'exercice précédent (N-1) au bilan et au compte de résultat (modèle du ch. 2 et art. 34) : absente ;
-- note 3 : le modèle détaille chaque client et chaque fournisseur ; Mbongo n'en donne que les totaux ;
-- arrêté des états dans les quatre mois (art. 23) : pas de rappel du délai ;
-- « travaux en cours » à l'inventaire : pas de rubrique distincte.
+Écarts corrigés (octobre 2026) :
+- colonne de l'exercice précédent (N-1) au bilan et au compte de résultat, dans l'appli, le bureau et l'export Excel (tiret la première année tenue dans Mbongo) ;
+- note 3 détaillée par client et par fournisseur (au 31 décembre, au 1er janvier, variation), les lignes retombant sur les totaux (test d'invariant) ;
+- délai d'arrêté de l'art. 23 : date limite du 30 avril affichée au bureau (en rouge une fois dépassée) et rappel dans l'échéancier ;
+- stocks : fiches de stock facultatives, valorisées selon l'art. 44 (CUMP après chaque entrée par défaut, CUMP de période, PEPS), méthode mentionnée en note 2.
+
+Reste : « travaux en cours » à l'inventaire, sans rubrique distincte.
 
 À trancher avec l'expert-comptable partenaire : l'art. 28 cite un tableau des flux de trésorerie que le Titre X ne prévoit pas ; aucune règle de sortie du SMT (nombre d'exercices de dépassement) dans le texte lu.
