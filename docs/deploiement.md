@@ -91,6 +91,7 @@ Il lui faut une clé, à créer une seule fois :
 3. Sur GitHub, dépôt `mbongo-business`, « Settings », « Secrets and variables », « Actions », « New repository secret ».
 4. Nom : `FIREBASE_SERVICE_ACCOUNT`. Valeur : tout le contenu du fichier `.json` (l'ouvrir avec le Bloc-notes, tout copier).
 5. Enregistrer, puis supprimer le fichier `.json` de l'ordinateur.
+6. Donner à ce compte le droit de publier : console.cloud.google.com/iam-admin/iam?project=mbongo-8a748, crayon sur la ligne `firebase-adminsdk-…@mbongo-8a748.iam.gserviceaccount.com`, ajouter les rôles « Administrateur Firebase Hosting » et « Consommateur Service Usage », enregistrer. Sans eux, la publication échoue avec « Permission denied … firebasehosting.googleapis.com ».
 
 Cette clé ouvre le projet Firebase : ne la donner à personne, ne pas la mettre dans le dépôt.
 
