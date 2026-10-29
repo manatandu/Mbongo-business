@@ -33,6 +33,7 @@ export function Bienvenue() {
         <Marque />
         <div>
           <strong style={{ fontFamily: 'var(--display)', fontSize: 20 }}>{t('app.nom')}</strong>
+          <div className="aide">{t('app.editeur')}</div>
         </div>
       </div>
       <h1>{t('bienvenue.titre')}</h1>

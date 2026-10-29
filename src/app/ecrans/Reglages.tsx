@@ -5,6 +5,7 @@ import { useLocation } from 'wouter';
 import { useLangue } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
 import { retirerEntreprise } from '../../donnees/entreprise';
+import { SITE_TRK } from '../../donnees/parametres';
 import { codeDefini, definirCode } from '../../donnees/reglages';
 import { Erreurs } from '../composants';
 import { installer, useInstallation } from '../installation';
@@ -141,6 +142,14 @@ export function Reglages() {
           </button>
         </>
       )}
+
+      <h2 className="titre-section">{t('reglages.apropos')}</h2>
+      <p className="aide">
+        Mbongo Business · {t('app.editeur')}
+      </p>
+      <a className="bouton discret" href={SITE_TRK} target="_blank" rel="noopener">
+        {t('reglages.site')}
+      </a>
     </>
   );
 }

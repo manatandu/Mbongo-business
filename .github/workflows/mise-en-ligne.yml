@@ -1,5 +1,5 @@
 # Remet en ligne les trois sites sur Firebase Hosting à chaque push, si les tests passent :
-# l'appli (mbongo-8a748), le site de Mbongo Business et celui de TRK Consulting.
+# l'appli et le bureau (mbongo-business), le site de TRK Consulting, et la redirection de l'ancienne adresse (mbongo-8a748).
 # Il faut le secret FIREBASE_SERVICE_ACCOUNT dans le dépôt (voir docs/deploiement.md).
 name: Mise en ligne
 

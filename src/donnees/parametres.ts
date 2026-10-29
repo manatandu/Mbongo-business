@@ -9,3 +9,6 @@ import type { ParametresControle } from '../moteur';
 export const PARAMETRES_CONTROLE: ParametresControle = {
   seuilsSMT: { negoce: 240_000_000, artisanat: 160_000_000, services: 120_000_000 },
 };
+
+/** Site de TRK Consulting, qui détient les droits de Mbongo Business. */
+export const SITE_TRK = 'https://trk-consulting-rdc.web.app/';

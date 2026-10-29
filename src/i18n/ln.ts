@@ -8,6 +8,9 @@ import type { Cle } from './fr';
 export const ln: Record<Cle, string> = {
   'app.nom': 'Mbongo',
   'app.fictif': 'Ba données ya lokuta',
+  'app.editeur': 'Logiciel ya TRK Consulting',
+  'reglages.apropos': 'Mpo na biso',
+  'reglages.site': 'Site ya TRK Consulting',
   'app.chargement': 'Ezali kofungwama…',
 
   'nav.accueil': 'Ebandeli',

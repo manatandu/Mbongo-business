@@ -2,6 +2,9 @@
 export const fr = {
   'app.nom': 'Mbongo',
   'app.fictif': 'Données fictives',
+  'app.editeur': 'Un logiciel de TRK Consulting',
+  'reglages.apropos': 'À propos',
+  'reglages.site': 'Site de TRK Consulting',
   'app.chargement': 'Ouverture…',
 
   'nav.accueil': 'Accueil',

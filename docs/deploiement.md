@@ -2,11 +2,11 @@
 
 Trois sites dans le même projet Firebase (`mbongo-8a748`), réglés dans `firebase.json` :
 
-- l'appli et le bureau : `https://mbongo-8a748.web.app` (dossier `dist`) ;
-- le logiciel présenté : `https://mbongo-business.web.app` (dossier `sites/mbongo-business`) ;
-- TRK Consulting : `https://trk-consulting-rdc.web.app` (dossier `sites/trk-consulting`).
+- l'appli et le bureau : `https://mbongo-business.web.app` (dossier `dist`) ;
+- TRK Consulting : `https://trk-consulting-rdc.web.app` (dossier `sites/trk-consulting`), avec la présentation du logiciel en `/mbongo-business/` ;
+- l'ancienne adresse de l'appli, `https://mbongo-8a748.web.app` (dossier `sites/ancienne-adresse`) : elle redirige vers la nouvelle. C'est le site par défaut du projet, Firebase ne permet pas de le supprimer. Son `sw.js` efface l'ancienne appli installée sur les téléphones ; il faut réinstaller depuis la nouvelle adresse.
 
-La mise en ligne automatique (plus bas) crée les deux derniers sites s'ils n'existent pas. À la main : `firebase hosting:sites:create mbongo-business` et `firebase hosting:sites:create trk-consulting-rdc`.
+La mise en ligne automatique (plus bas) crée les sites qui n'existent pas. À la main : `firebase hosting:sites:create trk-consulting-rdc`.
 
 Tout se fait depuis un ordinateur. Une seule fois pour les étapes 1 à 5, ensuite seule l'étape 6 revient.
 
@@ -69,8 +69,8 @@ firebase deploy --only hosting
 
 La commande construit le logiciel (`npm run build`) puis l'envoie. À la fin, elle affiche l'adresse :
 
-- l'appli : `https://<identifiant>.web.app`
-- le bureau : `https://<identifiant>.web.app/bureau.html`
+- l'appli : `https://mbongo-business.web.app`
+- le bureau : `https://mbongo-business.web.app/bureau.html`
 
 Pour une mise à jour : `git pull`, puis la même commande.
 
