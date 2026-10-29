@@ -60,6 +60,40 @@
       "trailingSlash": true
     },
     {
+      "site": "trkconsole",
+      "public": "dist-console",
+      "predeploy": [
+        "npm run build:console"
+      ],
+      "ignore": [
+        "**/.*"
+      ],
+      "headers": [
+        {
+          "source": "**/*.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "key": "X-Robots-Tag",
+              "value": "noindex"
+            }
+          ]
+        },
+        {
+          "source": "assets/**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "site": "mbongo-8a748",
       "public": "sites/ancienne-adresse",
       "ignore": [

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0b2a52"/>
+  <rect x="96" y="388" width="320" height="20" fill="#d9a400"/>
+  <text x="256" y="330" text-anchor="middle" font-family="system-ui, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="700" font-size="190" letter-spacing="-6" fill="#ffffff">TRK</text>
+</svg>

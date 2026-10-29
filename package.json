@@ -14,9 +14,12 @@
     "verifier": "tsc --noEmit && vitest run",
     "icones": "NODE_PATH=/opt/node-tools/node_modules node scripts/icones.cjs",
     "essai:hors-ligne": "NODE_PATH=/opt/node-tools/node_modules node scripts/essai-hors-ligne.cjs",
-    "scenario": "NODE_PATH=/opt/node-tools/node_modules node scripts/scenario-soutenance.cjs"
+    "scenario": "NODE_PATH=/opt/node-tools/node_modules node scripts/scenario-soutenance.cjs",
+    "build:console": "tsc --noEmit && vite build --config vite.console.config.ts",
+    "console": "vite --config vite.console.config.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
     "react": "^19.1.0",

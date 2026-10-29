@@ -42,7 +42,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 | Assistant (structure) | navigateur, bureau | voir ses clients, leurs contrôles et leurs états ; **aucune écriture** dans les saisies |
 | Expert-comptable partenaire | navigateur, bureau | la même chose, plus la correction du taux du dollar au 31 décembre et l'arrêté des états |
 
-Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
+Administrateurs TRK : console à part (`src/console/`, trkconsole.web.app) sur le serveur Supabase « mbongo » ; clients, abonnements, paiements, suivi, rappels SMS. Ils ne voient jamais les saisies comptables des clients. Voir `docs/console.md`.
 
 ## Modules fonctionnels
 
@@ -58,7 +58,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 
 - **Front** : React + TypeScript + Vite, deux pages (appli, bureau), application installable (PWA) pour Android d'entrée de gamme et iPhone (Safari, « Sur l'écran d'accueil »).
 - **Données** : IndexedDB (Dexie) dans le navigateur, en ajout seulement. Pas de serveur pour la soutenance.
-- **Serveur** : seulement pour un éventuel pilote réel (Supabase, RLS, envoi des saisies). Voir `docs/architecture.md`, § 14.
+- **Serveur** : Supabase, projet « mbongo » (`supabase/migrations/`). Sert la console ; tables des saisies cloisonnées par client (RLS, essai `supabase/tests/cloisonnement.sql`). L'appli reste locale tant que l'envoi des saisies n'est pas branché. Voir `docs/architecture.md`, § 14, et `docs/console.md`.
 - **Moteur de calcul SMT** : module TypeScript pur, sans dépendance à l'interface, couvert par des tests (Vitest, fast-check). C'est la pièce critique.
 - **Site de TRK Consulting** (qui détient les droits du logiciel) : pages statiques dans `sites/trk-consulting/`, dont la présentation du logiciel dans `sites/trk-consulting/mbongo-business/`. `sites/ancienne-adresse/` renvoie l'ancienne adresse de l'appli vers la nouvelle.
 - Montants stockés en **entiers** (francs congolais ; centimes de dollar pour l'USD). Jamais de flottants pour l'argent.
@@ -89,6 +89,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 - `npm run verifier` : les deux, à lancer avant chaque commit.
 - `npm run build` puis `npm run essai:hors-ligne` : essai de l'appli en mode avion (Playwright).
 - `npm run build` puis `npm run scenario [dossier]` : scénario de soutenance rejoué (captures, Excel, vidéos). `DATE=2027-07-12` pour le rejouer à une autre date.
+- `npm run build:console` : construction de la console TRK (`dist-console`).
 - Mise en ligne : automatique à chaque push (GitHub Actions, Firebase Hosting), ou `firebase deploy --only hosting`. L'appli et le bureau : mbongo-business.web.app ; TRK Consulting : trkconsulting.web.app, présentation du logiciel en /mbongo-business/ ; mbongo-8a748.web.app (site par défaut, impossible à supprimer) ne fait que rediriger (voir `docs/deploiement.md`).
 
 ## Feuille de route
@@ -98,7 +99,7 @@ Pas d'administrateur ni de comptes tant qu'il n'y a pas de serveur.
 3. Bureau et exports PDF / Excel : faits.
 4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent adresse et immatriculation (WhatsApp : +243 983 510 725 ; tarifs : mise en place 30 000 CDF, Essentiel 25 000 CDF/mois, Suivi 50 000 CDF/mois).
 5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
-Plus tard, seulement s'il y a un pilote : serveur.
+6. Console TRK et serveur : faits (rappels SMS en mode test). Restent l'envoi réel des SMS et l'envoi des saisies du téléphone.
 
 ## Références
 

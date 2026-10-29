@@ -26,7 +26,7 @@ const SYSTEME = ['"Segoe UI"', 'ui-sans-serif', 'system-ui', '-apple-system', 'R
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./bureau.html', './src/bureau/**/*.{ts,tsx}'],
+  content: ['./bureau.html', './src/bureau/**/*.{ts,tsx}', './console/index.html', './src/console/**/*.{ts,tsx}'],
   theme: {
     extend: {
       fontFamily: { sans: SYSTEME, mono: SYSTEME },
