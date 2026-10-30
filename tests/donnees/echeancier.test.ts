@@ -45,6 +45,26 @@ describe('échéancier', () => {
         op({ type: 'depense', nature: 'salaires', montant: 600_000 }),
       ],
     });
-    expect(profilEcheancier(d, '2026-06-30')).toEqual({ salaries: true, loyer: false, regime: 'petite' });
+    expect(profilEcheancier(d, '2026-06-30')).toMatchObject({ salaries: true, loyer: false, regime: 'petite' });
+  });
+
+  it("en janvier et en avril, paie pour l'année close : son régime et ses salariés comptent", () => {
+    // 2026 : petite entreprise avec un salarié. 2027 : peu de ventes, pas encore de paie notée.
+    const p = { annee: 2027, salaries: false, loyer: false, regime: 'micro' as const, precedent: { salaries: true, loyer: false, regime: 'petite' as const } };
+    const janvier = cles('2027-01-01', 30, p);
+    expect(janvier).toContain('2027-01-15 cotisations');
+    expect(janvier).toContain('2027-01-31 impotPremier');
+    expect(janvier).toContain('2027-01-31 inpp');
+    expect(janvier).not.toContain('2027-01-15 irppSalaries');
+    expect(cles('2027-03-01', 31, p)).toContain('2027-03-31 salairesAnnuel');
+    const avril = cles('2027-04-20', 15, p);
+    expect(avril).toContain('2027-04-30 impotSolde');
+    expect(avril).not.toContain('2027-04-30 forfaitMicro');
+  });
+
+  it("garde l'employeur de l'an passé et suit le régime confirmé par l'expert", () => {
+    const d = dossierDeBase({ exercice: { annee: 2027, debut: '2027-01-01', fin: '2027-12-31' }, operations: [op({ date: '2027-01-05', type: 'recette', nature: 'ventes', montant: 1_000_000 })] });
+    const p = profilEcheancier(d, '2027-01-10', { anterieurs: [{ annee: 2026, ca: 40_000_000 }], naturesAnterieures: ['salaires'], confirmes: [{ annee: 2027, regime: 'reel', tva: true }] });
+    expect(p).toMatchObject({ salaries: true, regime: 'petite', precedent: { salaries: true, regime: 'petite' } });
   });
 });

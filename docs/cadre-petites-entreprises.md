@@ -121,7 +121,7 @@ La TVA (assujettissement à partir de 80 M FC, OL 10/001, art. 14 ; après une b
 ### 3.3 Retenues que le commerçant doit faire
 
 - **Salariés d'une micro-entreprise** : retenue forfaitaire, équivalent de 36 USD par an et par salarié, reversée par quart (9 USD) au plus tard le 15 du mois qui suit chaque trimestre (AM n° 019/2025 ; loi 23/053, art. 70 et 121). Le skill `mes-cours-droit-fiscalite` numérote cet arrêté 012 : à vérifier.
-- **Salariés d'une petite entreprise** : retenue IRPP reversée le 15 du mois suivant (LPF, art. 18), déclaration annuelle des salaires au plus tard le 31 mars (LPF, art. 22 ter). Le taux n'est dans aucun des skills lus.
+- **Salariés d'une petite entreprise** : retenue IRPP reversée le 15 du mois suivant (LPF, art. 18), déclaration annuelle des salaires au plus tard le 31 mars (LPF, art. 22 ter). Le taux est celui du barème de l'art. 118, appliqué chaque mois par l'employeur (art. 119).
 - **Loyer de la boutique, à Kinshasa** : le locataire retient 20 % du loyer (1er rang) ou 15 % (2e à 4e rang) et reverse à la DGRK au plus tard le 10 du mois suivant (arrêté provincial n° 015/CAB/MIN.PROV/FIN.ECO/2023 du 7 décembre 2023).
 
 ### 3.4 Taxes locales
@@ -326,7 +326,7 @@ Inscrit en section A ou B de l'ONEC (attestation à jour). Mission de compilatio
 7. Numéros d'arrêtés fiscaux (019/2025 ou 012) et articles de la LF 2026 tirés du projet de loi.
 8. Norme ONEC 2024/001 : elle renvoie au régime de l'OL 13/006, abrogée depuis.
 9. L'entreprenant doit-il produire les états du SMT en plus de son livre ? (AUDCIF, art. 2.)
-10. Taux de l'impôt retenu sur les salaires d'une petite entreprise : absent des skills.
+10. Taux de l'impôt retenu sur les salaires d'une petite entreprise : barème de l'art. 118 (art. 119).
 11. Le seuil de 25 M FC et celui de 300 M FC peuvent être réajustés par arrêté (loi 23/053, art. 107 et 109).
 
 ---

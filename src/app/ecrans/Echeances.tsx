@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { echeances, profilEcheancier, type Echeance } from '../../donnees/echeancier';
 import { useLangue, type Cle } from '../../i18n';
 import { fmtDate } from '../../ui/format';
+import { contexteFiscal } from '../../donnees/dossier';
 import { useDossier } from '../session';
 
 export function useEcheances(jours: number): Echeance[] {
   const { chargement, aujourdhui } = useDossier();
-  return useMemo(() => echeances(aujourdhui, jours, profilEcheancier(chargement.dossier, aujourdhui, chargement.caAnterieurs)), [chargement.dossier, chargement.caAnterieurs, aujourdhui, jours]);
+  return useMemo(() => echeances(aujourdhui, jours, profilEcheancier(chargement.dossier, aujourdhui, contexteFiscal(chargement))), [chargement, aujourdhui, jours]);
 }
 
 export function LigneEcheance({ e }: { e: Echeance }) {

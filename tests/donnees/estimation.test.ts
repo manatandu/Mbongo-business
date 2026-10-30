@@ -24,12 +24,14 @@ describe('estimation de l’IRPP (loi n° 23/053, art. 127, 128, 103 ; LPF art. 
 
   it('année en cours : montant à ce jour, et projection au même rythme jusqu’au 31 décembre', () => {
     const e = estimerImpots({ ...base, regime: 'petite', ca: 50_000_000, date: '2026-07-02', profil: { activite: 'vente', salaries: 0 } });
-    // 183 jours écoulés sur 365 : 50 M × 365 / 183.
-    expect(e.irpp).toMatchObject({ montant: 500_000, projectionCa: Math.round((50_000_000 * 365) / 183), projection: Math.round(Math.round((50_000_000 * 365) / 183) * 0.01) });
+    // 183 jours écoulés sur 365 : 50 M × 365 / 183 = 99 726 776 ; 1 % = 997 267,76, arrondi à 997 300 (art. 150).
+    expect(e.irpp).toMatchObject({ montant: 500_000, projectionCa: 99_726_776, projection: 997_300 });
   });
 
   it('cultures vivrières sur moins de 10 ha : exonéré (art. 103) ; régime réel : pas d’estimation', () => {
-    expect(estimerImpots({ ...base, regime: 'petite', ca: 50_000_000, date: '2026-12-31', profil: { activite: 'vivrieres', salaries: 0 } }).irpp).toEqual({ cas: 'exonere' });
+    expect(estimerImpots({ ...base, regime: 'petite', ca: 50_000_000, date: '2026-12-31', profil: { activite: 'agricole', vivrieresSeules: true, moinsDe10ha: true, salaries: 0 } }).irpp).toEqual({ cas: 'exonerePossible' });
+    // Une seule condition manque : imposé comme la vente de la récolte (1 %).
+    expect(estimerImpots({ ...base, regime: 'petite', ca: 50_000_000, date: '2026-12-31', profil: { activite: 'agricole', vivrieresSeules: true, moinsDe10ha: false, salaries: 0 } }).irpp).toMatchObject({ cas: 'proportionnel', taux: 0.01 });
     expect(estimerImpots({ ...base, regime: 'reel', ca: 400_000_000, date: '2026-12-31', profil: { activite: 'vente', salaries: 0 } }).irpp).toEqual({ cas: 'reel' });
   });
 
@@ -38,5 +40,14 @@ describe('estimation de l’IRPP (loi n° 23/053, art. 127, 128, 103 ; LPF art. 
     expect(micro.salaries).toEqual({ nombre: 2, cas: 'forfait', usdAn: 72, usdTrimestre: 18, cdfAn: 201_600 });
     const petite = estimerImpots({ ...base, regime: 'petite', ca: 30_000_000, date: '2026-12-31', profil: { activite: 'vente', salaries: 2 } });
     expect(petite.salaries).toEqual({ nombre: 2, cas: 'bareme' });
+  });
+});
+
+describe('arrondi de l’art. 150', () => {
+  it('ramène à la centaine de francs, vers le haut à partir de 50', async () => {
+    const { arrondiFiscal } = await import('../../src/donnees/estimation');
+    expect(arrondiFiscal(1_234_549.4)).toBe(1_234_500);
+    expect(arrondiFiscal(1_234_550)).toBe(1_234_600);
+    expect(arrondiFiscal(84_000)).toBe(84_000);
   });
 });

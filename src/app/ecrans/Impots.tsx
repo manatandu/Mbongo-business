@@ -1,98 +1,143 @@
 /**
  * Mes impôts : le chiffre d'affaires, le régime qui lui correspond, les seuils, les échéances et les impôts payés.
- * L'estimation de l'impôt est repliée : le commerçant l'ouvre et la fait lui-même, sur ses chiffres, avec les taux
- * de la loi. Ce n'est ni une déclaration ni un avis : l'expert-comptable partenaire établit la déclaration
- * (loi n° 15/002, art. 43.6 à 43.8). Voir src/donnees/estimation.ts.
+ * L'estimation de l'impôt n'apparaît que si l'expert-comptable partenaire l'a activée pour ce client, sous son nom
+ * (loi n° 15/002, art. 43.6 et 43.7 ; décision du 30 octobre 2026 après l'audit juridique). Le commerçant l'ouvre et la
+ * fait lui-même, sur ses chiffres, avec les taux de la loi. Voir src/donnees/estimation.ts et fiscal-expert.ts.
  */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo } from 'react';
 import { Link } from 'wouter';
 import { useLangue, type Cle } from '../../i18n';
-import { activiteParDefaut, estimerImpots, type ActiviteFiscale, type ProfilFiscal } from '../../donnees/estimation';
+import { contexteFiscal } from '../../donnees/dossier';
+import { activiteParDefaut, estimerImpots, type ActiviteFiscale, type EstimationImpots, type ProfilFiscal } from '../../donnees/estimation';
+import { activationEstimation } from '../../donnees/fiscal-expert';
 import { situationImpots } from '../../donnees/impots';
+import { regimeFiscal, type Regime } from '../../donnees/regimes';
 import { ecrireReglage, lireReglage } from '../../donnees/reglages';
+import { dernierTaux } from '../../donnees/saisie';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { Montant, Pastille } from '../composants';
 import { db, useDossier } from '../session';
 import { LigneEcheance } from './Echeances';
 
-/** Estimation de l'IRPP : deux questions, puis le calcul, entouré de ses garde-fous. */
-function Estimation({ regime, ca }: { regime: 'micro' | 'petite' | 'reel'; ca: number }) {
-  const { chargement, aujourdhui, taux, entreprise } = useDossier();
+/** Le résultat d'une estimation, pour une année. */
+function Resultat({ e }: { e: EstimationImpots }) {
   const { t } = useLangue();
+  const cdf = (v: number | null | undefined, usd: number) => (v ? `${fmtMontant(v, 'CDF')} (${usd} USD)` : `${usd} USD`);
+  return (
+    <>
+      {e.irpp.cas === 'exonerePossible' && <p>{t('estim.exonere')}</p>}
+      {e.irpp.cas === 'reel' && <p>{t('estim.reel')}</p>}
+      {e.irpp.cas === 'forfait' && (
+        <div className="registre">
+          <div>
+            <span className="n">{t('estim.forfait')}</span>
+            <span className="v num">{cdf(e.irpp.cdf, e.irpp.usd)}</span>
+            <span />
+          </div>
+          <div>
+            <span className="n">{t('estim.avantLe')}</span>
+            <span className="v num">{fmtDate(e.irpp.date)}</span>
+            <span />
+          </div>
+        </div>
+      )}
+      {e.irpp.cas === 'proportionnel' && (
+        <div className="registre">
+          <div>
+            <span className="n">{t(e.irpp.projection === null ? 'estim.annee' : 'estim.aCeJour', { taux: e.irpp.taux * 100, ca: fmt(e.irpp.ca) })}</span>
+            <span className="v num">{fmtMontant(e.irpp.montant, 'CDF')}</span>
+            <span />
+          </div>
+          {e.irpp.projection !== null && (
+            <div>
+              <span className="n">{t('estim.projection', { ca: fmt(e.irpp.projectionCa ?? 0) })}</span>
+              <span className="v num">{fmtMontant(e.irpp.projection, 'CDF')}</span>
+              <span />
+            </div>
+          )}
+          {e.irpp.quotites.map((q) => (
+            <div key={q.date}>
+              <span className="n">{t('estim.quotite', { part: q.part * 100, date: fmtDate(q.date) })}</span>
+              <span className="v num">{fmtMontant(q.montant, 'CDF')}</span>
+              <span />
+            </div>
+          ))}
+        </div>
+      )}
+      {e.salaries.cas === 'forfait' && <p>{t('estim.salariesForfait', { n: e.salaries.nombre, an: cdf(e.salaries.cdfAn, e.salaries.usdAn ?? 0), trimestre: e.salaries.usdTrimestre ?? 0 })}</p>}
+      {e.salaries.cas === 'bareme' && <p>{t('estim.salariesBareme')}</p>}
+    </>
+  );
+}
+
+/** Estimation de l'IRPP, si l'expert l'a activée : quelques questions, puis le calcul, entouré de ses garde-fous. */
+function Estimation({ regime, ca }: { regime: Regime; ca: number }) {
+  const { chargement, aujourdhui, entreprise } = useDossier();
+  const { t } = useLangue();
+  const activation = useLiveQuery(() => activationEstimation(db, entreprise.id), [entreprise.id]);
+  const taux = useLiveQuery(() => dernierTaux(db, aujourdhui), [aujourdhui]);
   const cle = `profilFiscal:${entreprise.id}`;
   const defaut: ProfilFiscal = { activite: activiteParDefaut(entreprise.secteur), salaries: 0 };
   const profil = useLiveQuery(() => lireReglage<ProfilFiscal>(db, cle, defaut), [cle]) ?? defaut;
+  if (!activation?.active) return null;
   const changer = (p: Partial<ProfilFiscal>) => void ecrireReglage(db, cle, { ...profil, ...p });
   const { exercice } = chargement;
-  const e = estimerImpots({ regime, ca, annee: exercice.annee, debut: exercice.debut, fin: exercice.fin, date: aujourdhui, profil, taux });
-  const cdf = (v: number | null | undefined, usd: number) => (v ? `${fmtMontant(v, 'CDF')} (${usd} USD)` : `${usd} USD`);
+  const valeurTaux = taux?.valeur ?? null;
+  const e = estimerImpots({ regime, ca, annee: exercice.annee, debut: exercice.debut, fin: exercice.fin, date: aujourdhui, profil, taux: valeurTaux });
+
+  // De janvier à avril, on paie l'impôt de l'année close : on l'estime aussi, sur son chiffre complet.
+  const an1 = exercice.annee - 1;
+  const ca1 = chargement.caAnterieurs.find((x) => x.annee === an1)?.ca;
+  const regime1 = chargement.regimesConfirmes.find((c) => c.annee === an1)?.regime ?? (ca1 !== undefined ? regimeFiscal(chargement.caAnterieurs.filter((x) => x.annee <= an1)).regime : null);
+  const e1 =
+    aujourdhui <= `${exercice.annee}-04-30` && ca1 !== undefined && regime1
+      ? estimerImpots({ regime: regime1, ca: ca1, annee: an1, debut: `${an1}-01-01`, fin: `${an1}-12-31`, date: `${an1}-12-31`, profil, taux: valeurTaux })
+      : null;
 
   return (
     <details className="replie">
       <summary>{t('estim.ouvrir')}</summary>
       <div className="replie-contenu">
-        <p className="tampon">{t('estim.avertissement')}</p>
+        <p className="tampon">{t('estim.avertissement', { expert: activation.expert })}</p>
 
         <label className="champ">
           {t('estim.activite')}
           <select value={profil.activite} onChange={(x) => changer({ activite: x.target.value as ActiviteFiscale })}>
             <option value="vente">{t('estim.activite.vente')}</option>
             <option value="services">{t('estim.activite.services')}</option>
-            <option value="vivrieres">{t('estim.activite.vivrieres')}</option>
+            <option value="agricole">{t('estim.activite.agricole')}</option>
           </select>
         </label>
+        {profil.activite === 'agricole' && (
+          <>
+            <label className="case">
+              <input type="checkbox" checked={Boolean(profil.vivrieresSeules)} onChange={(x) => changer({ vivrieresSeules: x.target.checked })} />
+              {t('estim.vivrieresSeules')}
+            </label>
+            <label className="case">
+              <input type="checkbox" checked={Boolean(profil.moinsDe10ha)} onChange={(x) => changer({ moinsDe10ha: x.target.checked })} />
+              {t('estim.moinsDe10ha')}
+            </label>
+          </>
+        )}
         <label className="champ">
           {t('estim.salaries')}
           <input inputMode="numeric" value={String(profil.salaries)} onChange={(x) => changer({ salaries: Number(x.target.value.replace(/\D/g, '')) || 0 })} />
         </label>
 
-        <h3 className="titre-section">{t('estim.irpp')}</h3>
-        {e.irpp.cas === 'exonere' && <p>{t('estim.exonere')}</p>}
-        {e.irpp.cas === 'reel' && <p>{t('estim.reel')}</p>}
-        {e.irpp.cas === 'forfait' && (
-          <div className="registre">
-            <div>
-              <span className="n">{t('estim.forfait')}</span>
-              <span className="v num">{cdf(e.irpp.cdf, e.irpp.usd)}</span>
-              <span />
-            </div>
-            <div>
-              <span className="n">{t('estim.avantLe')}</span>
-              <span className="v num">{fmtDate(e.irpp.date)}</span>
-              <span />
-            </div>
-          </div>
+        {e1 && (
+          <>
+            <h3 className="titre-section">{t('estim.anneeClose', { annee: an1 })}</h3>
+            <Resultat e={e1} />
+          </>
         )}
-        {e.irpp.cas === 'proportionnel' && (
-          <div className="registre">
-            <div>
-              <span className="n">{t('estim.aCeJour', { taux: e.irpp.taux * 100, ca: fmt(e.irpp.ca) })}</span>
-              <span className="v num">{fmtMontant(e.irpp.montant, 'CDF')}</span>
-              <span />
-            </div>
-            {e.irpp.projection !== null && (
-              <div>
-                <span className="n">{t('estim.projection', { ca: fmt(e.irpp.projectionCa ?? 0) })}</span>
-                <span className="v num">{fmtMontant(e.irpp.projection, 'CDF')}</span>
-                <span />
-              </div>
-            )}
-            {e.irpp.quotites.map((q) => (
-              <div key={q.date}>
-                <span className="n">{t('estim.quotite', { part: q.part * 100, date: fmtDate(q.date) })}</span>
-                <span className="v num">{fmtMontant(q.montant, 'CDF')}</span>
-                <span />
-              </div>
-            ))}
-          </div>
+        <h3 className="titre-section">{t('estim.irpp', { annee: exercice.annee })}</h3>
+        <Resultat e={e} />
+
+        {(e.irpp.cas === 'forfait' || e.salaries.cas === 'forfait') && (
+          <p className="aide">{taux ? t('estim.tauxDuJour', { taux: fmt(taux.valeur), date: fmtDate(taux.date) }) : t('estim.sansTaux')}</p>
         )}
-
-        {e.salaries.cas !== 'aucun' && <h3 className="titre-section">{t('estim.salariesTitre')}</h3>}
-        {e.salaries.cas === 'forfait' && <p>{t('estim.salariesForfait', { n: e.salaries.nombre, an: cdf(e.salaries.cdfAn, e.salaries.usdAn ?? 0), trimestre: e.salaries.usdTrimestre ?? 0 })}</p>}
-        {e.salaries.cas === 'bareme' && <p>{t('estim.salariesBareme')}</p>}
-
-        {(e.irpp.cas === 'forfait' || e.salaries.cas === 'forfait') && <p className="aide">{taux ? t('estim.tauxDuJour', { taux: fmt(taux) }) : t('estim.sansTaux')}</p>}
         <p className="aide">{t('estim.garde')}</p>
       </div>
     </details>
@@ -102,7 +147,7 @@ function Estimation({ regime, ca }: { regime: 'micro' | 'petite' | 'reel'; ca: n
 export function Impots() {
   const { chargement, aujourdhui, dateRef } = useDossier();
   const { t, mois } = useLangue();
-  const s = useMemo(() => situationImpots(chargement.dossier, aujourdhui, chargement.caAnterieurs), [chargement.dossier, chargement.caAnterieurs, aujourdhui]);
+  const s = useMemo(() => situationImpots(chargement.dossier, aujourdhui, contexteFiscal(chargement)), [chargement, aujourdhui]);
   const annee = chargement.exercice.annee;
 
   return (

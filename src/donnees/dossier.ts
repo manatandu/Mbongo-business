@@ -4,6 +4,8 @@
  */
 import { calculerEtats, type DossierExercice, type Etats, type Immobilisation, type Operation, type PieceTiers } from '../moteur';
 import type { BaseMbongo } from './base';
+import type { ContexteFiscal } from './echeancier';
+import { regimeConfirme, type RegimeConfirme } from './fiscal-expert';
 import { chiffreAffairesRealise, type AnneeCA } from './regimes';
 import type { LigneCompte, LigneEntreprise, LigneExercice, LigneOperation, LigneTiers } from './types';
 
@@ -14,7 +16,14 @@ export interface Chargement {
   dossier: DossierExercice;
   /** Chiffre d'affaires réalisé des trois années précédentes tenues dans Mbongo (régime IRPP, art. 113 ; TVA, OL 10/001, art. 14). */
   caAnterieurs: AnneeCA[];
+  /** Natures saisies l'année d'avant (rappels d'employeur et de loyer en début d'année). */
+  naturesAnterieures: string[];
+  /** Régimes d'imposition confirmés par l'expert pour l'année et la précédente (src/donnees/fiscal-expert.ts). */
+  regimesConfirmes: RegimeConfirme[];
 }
+
+/** Ce que la fiscalité doit savoir de l'historique, tiré du chargement. */
+export const contexteFiscal = (c: Chargement): ContexteFiscal => ({ anterieurs: c.caAnterieurs, naturesAnterieures: c.naturesAnterieures, confirmes: c.regimesConfirmes });
 
 function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
   const o: Operation = {
@@ -63,7 +72,11 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     db.sorties.where('entrepriseId').equals(id).toArray(),
     db.inventaires.where('exerciceId').equals(exerciceId).sortBy('ordre'),
     db.pieces.where('entrepriseId').equals(id).toArray(),
-    db.exercices.where('entrepriseId').equals(id).filter((e) => e.annee === exercice.annee - 1).first(),
+    db.exercices
+      .where('entrepriseId')
+      .equals(id)
+      .filter((e) => e.annee === exercice.annee - 1)
+      .first(),
     db.exercices.where('entrepriseId').equals(id).toArray(),
   ]);
 
@@ -126,21 +139,33 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     tauxCloture: exercice.tauxCloture,
   };
   if (inventaire.length) {
-    dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant, ...(l.travauxEnCours ? { travauxEnCours: true } : {}) }));
+    dossier.lignesStock = inventaire.map((l) => ({
+      reference: l.reference,
+      designation: l.designation,
+      quantite: l.quantite,
+      prixUnitaire: l.prixUnitaire,
+      montant: l.montant,
+      ...(l.travauxEnCours ? { travauxEnCours: true } : {}),
+    }));
   }
   // Les trois années précédentes, si elles ont été tenues dans Mbongo.
   const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !annulees.has(l.id));
   const caAnterieurs = exercicesTenus
     .filter((e) => e.annee < exercice.annee && e.annee >= exercice.annee - 3)
     .map((e) => ({ annee: e.annee, ca: chiffreAffairesRealise(e.annee, lignesOps, facturesValides) }));
-  return { entreprise, exercice, comptes, dossier, caAnterieurs };
+  const naturesAnterieures = [...new Set(lignesOps.filter((o) => o.date.startsWith(`${exercice.annee - 1}-`)).map((o) => o.nature))];
+  const regimesConfirmes = (await Promise.all([regimeConfirme(db, id, exercice.annee), regimeConfirme(db, id, exercice.annee - 1)])).filter((r): r is RegimeConfirme => r !== null);
+  return { entreprise, exercice, comptes, dossier, caAnterieurs, naturesAnterieures, regimesConfirmes };
 }
 
 /** États de l'exercice précédent, pour la colonne N-1 du bilan et du compte de résultat (AUDCIF, art. 34). Null la première année. */
 export async function etatsPrecedents(db: BaseMbongo, exerciceId: string): Promise<Etats | null> {
   const ex = await db.exercices.get(exerciceId);
   if (!ex) return null;
-  const precedent = await db.exercices.where('[entrepriseId+annee]').equals([ex.entrepriseId, ex.annee - 1]).first();
+  const precedent = await db.exercices
+    .where('[entrepriseId+annee]')
+    .equals([ex.entrepriseId, ex.annee - 1])
+    .first();
   if (!precedent) return null;
   return calculerEtats((await chargerDossier(db, precedent.id)).dossier);
 }

@@ -8,7 +8,9 @@
  *   2 % pour les prestations de services ; activité mixte : CA cumulés, imposés suivant l'activité principale ;
  * - art. 128 et AM n° 015/CAB/MIN/FINANCES/2025 : micro-entreprises, forfait annuel égal à l'équivalent en CDF
  *   de 30 USD, payé au plus tard le 30 avril de l'année suivante ;
- * - art. 103 : exonération des revenus de terres exclusivement affectées à des cultures vivrières, moins de 10 ha ;
+ * - art. 103 : exonération des revenus de l'exploitation des terres exclusivement affectées à des cultures vivrières,
+ *   de moins de 10 ha : proposée seulement à qui cultive lui-même, « à confirmer par l'expert » ;
+ * - art. 150 : arrondi à la centaine de francs ;
  * - LPF art. 57, al. 3, et 57 quater : petites entreprises, deux quotités, 60 % avec la déclaration au plus tard
  *   le 31 janvier, 40 % au plus tard le 30 avril de l'année qui suit ;
  * - art. 70 et AM n° 019/CAB/MIN/FINANCES/2025 : salarié d'une micro-entreprise, forfait annuel de 36 USD retenu par
@@ -21,13 +23,24 @@
 import type { DateISO, Montant } from '../moteur';
 import type { Regime } from './regimes';
 
-export type ActiviteFiscale = 'vente' | 'services' | 'vivrieres';
+export type ActiviteFiscale = 'vente' | 'services' | 'agricole';
 
 export interface ProfilFiscal {
+  /** « agricole » : je cultive moi-même ma terre (art. 104 et 105). Une revendeuse de vivres est « vente ». */
   activite: ActiviteFiscale;
+  /** Agricole : toutes mes terres servent seulement à des cultures vivrières (art. 103, « exclusivement »). */
+  vivrieresSeules?: boolean;
+  /** Agricole : moins de dix hectares en tout (art. 103). */
+  moinsDe10ha?: boolean;
   /** Nombre de salariés, pour la retenue forfaitaire d'une micro-entreprise. */
   salaries: number;
 }
+
+/**
+ * Loi n° 23/053, art. 150 : décimale arrondie à l'unité (vers le haut à partir de 5), puis tranche de 50 FC ou plus
+ * ramenée à la centaine supérieure, moins de 50 FC à la centaine inférieure.
+ */
+export const arrondiFiscal = (x: number): Montant => Math.round(Math.round(x) / 100) * 100;
 
 export const FORFAIT_MICRO_USD = 30;
 export const FORFAIT_SALARIE_MICRO_USD = 36;
@@ -40,7 +53,7 @@ export interface Quotite {
 }
 
 export type EstimationIrpp =
-  | { cas: 'exonere' }
+  | { cas: 'exonerePossible' }
   | { cas: 'reel' }
   | { cas: 'forfait'; usd: number; cdf: Montant | null; date: DateISO }
   | { cas: 'proportionnel'; taux: number; ca: Montant; montant: Montant; projectionCa: Montant | null; projection: Montant | null; quotites: Quotite[] };
@@ -61,7 +74,7 @@ export interface EstimationImpots {
   taux: number | null;
 }
 
-const enCDF = (usd: number, taux: number | null): Montant | null => (taux ? Math.round(usd * taux) : null);
+const enCDF = (usd: number, taux: number | null): Montant | null => (taux ? arrondiFiscal(usd * taux) : null);
 
 /**
  * `ca` : chiffre d'affaires réalisé de l'année à la date ; `date` et `fin` servent à la projection sur l'année
@@ -71,22 +84,25 @@ export function estimerImpots(p: { regime: Regime; ca: Montant; annee: number; d
   const suivante = p.annee + 1;
   const ref = p.date > p.fin ? p.fin : p.date;
   let irpp: EstimationIrpp;
-  if (p.profil.activite === 'vivrieres') irpp = { cas: 'exonere' };
+  // Exonération seulement pour qui cultive lui-même des terres exclusivement vivrières, de moins de 10 ha, et à
+  // confirmer par l'expert (l'art. 103 vise les revenus de « l'exploitation des terres », pas le commerce de vivres).
+  if (p.profil.activite === 'agricole' && p.profil.vivrieresSeules && p.profil.moinsDe10ha) irpp = { cas: 'exonerePossible' };
   else if (p.regime === 'reel') irpp = { cas: 'reel' };
   else if (p.regime === 'micro') irpp = { cas: 'forfait', usd: FORFAIT_MICRO_USD, cdf: enCDF(FORFAIT_MICRO_USD, p.taux), date: `${suivante}-04-30` };
   else {
-    const taux = TAUX_PETITE[p.profil.activite];
+    // Bénéfices agricoles imposés comme la vente de la récolte (art. 104 ; art. 127, 1°).
+    const taux = TAUX_PETITE[p.profil.activite === 'services' ? 'services' : 'vente'];
     const jours = (a: DateISO, b: DateISO) => Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000) + 1;
     const enCours = ref < p.fin;
     const projectionCa = enCours ? Math.round((p.ca * jours(p.debut, p.fin)) / jours(p.debut, ref)) : null;
     const base = projectionCa ?? p.ca;
-    const total = Math.round(base * taux);
-    const premiere = Math.round(total * 0.6);
+    const total = arrondiFiscal(base * taux);
+    const premiere = arrondiFiscal(total * 0.6);
     irpp = {
       cas: 'proportionnel',
       taux,
       ca: p.ca,
-      montant: Math.round(p.ca * taux),
+      montant: arrondiFiscal(p.ca * taux),
       projectionCa,
       projection: projectionCa === null ? null : total,
       quotites: [
