@@ -6,21 +6,25 @@ import { aujourdhuiLocal, fmt, fmtDate } from '../ui/format';
 import {
   afficherTelephone,
   debutRenouvellement,
+  estFormuleTRK,
   etatAbonnement,
   finAbonnement,
+  FORMULES,
   LIBELLE_FORMULE,
   MISE_EN_PLACE,
   normaliserTelephone,
   TARIFS,
-  type Formule,
+  type FormuleTRK,
 } from './abonnement';
 import { EtatAbo } from './Console';
 import { useAdmin } from './role';
-import { sb, useLecture, type Abonnement, type Appareil, type Client, type ClientVue, type Paiement, type Sms, type Suivi } from './supabase';
+import { sb, useLecture, type Abonnement, type Appareil, type Client, type ClientVue, type FormeConsentement, type Paiement, type Sms, type Suivi } from './supabase';
 
 const SECTEUR = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Services' } as const;
 const STATUT = { prospect: 'Prospect', actif: 'Actif', suspendu: 'Suspendu', resilie: 'Résilié' } as const;
 const MODE = { especes: 'Espèces', mpesa: 'M-Pesa', orange: 'Orange Money', airtel: 'Airtel Money', banque: 'Banque' } as const;
+const FORME_ACCORD: Record<FormeConsentement, string> = { oral: 'De vive voix', ecrit: 'Par écrit (papier signé)', whatsapp: 'Par message WhatsApp' };
+const FORME_ACCORD_COURT: Record<FormeConsentement, string> = { oral: 'de vive voix', ecrit: 'par écrit', whatsapp: 'par WhatsApp' };
 const SUIVI = { visite: 'Visite', appel: 'Appel', formation: 'Formation', controle: 'Contrôle', autre: 'Autre' } as const;
 
 type Filtre = 'tous' | 'relancer' | 'actifs' | 'prospects' | 'anciens';
@@ -45,17 +49,23 @@ function FormClient({ depart, apres }: { depart?: Client; apres: (id: string) =>
     secteur: depart?.secteur ?? 'negoce',
     langue: depart?.langue ?? 'fr',
     sms_accepte: depart?.sms_accepte ?? false,
+    sms_consentement_le: depart?.sms_consentement_le ?? null,
+    sms_consentement_forme: depart?.sms_consentement_forme ?? null,
     statut: depart?.statut ?? 'actif',
     note: depart?.note ?? '',
   });
   const [erreur, setErreur] = useState<string | null>(null);
   const maj = (k: keyof typeof c) => (e: { target: { value: string } }) => setC((x) => ({ ...x, [k]: e.target.value }));
+  /** Cocher la case date l'accord du jour ; la décocher (retrait, STOP) efface l'accord. */
+  const accordSms = (oui: boolean) =>
+    setC((x) => ({ ...x, sms_accepte: oui, sms_consentement_le: oui ? (x.sms_consentement_le ?? aujourdhuiLocal()) : null, sms_consentement_forme: oui ? x.sms_consentement_forme : null }));
 
   async function enregistrer(e: FormEvent) {
     e.preventDefault();
     const telephone = normaliserTelephone(c.telephone);
     if (!c.nom.trim()) return setErreur('Le nom est obligatoire.');
     if (!telephone) return setErreur('Numéro de téléphone invalide.');
+    if (c.sms_accepte && (!c.sms_consentement_le || !c.sms_consentement_forme)) return setErreur("SMS : indiquez la date et la forme de l'accord du client.");
     const ligne = { ...c, telephone };
     const r = depart ? await sb.from('clients').update(ligne).eq('id', depart.id).select('id').single() : await sb.from('clients').insert(ligne).select('id').single();
     if (r.error) return setErreur(r.error.message);
@@ -105,9 +115,32 @@ function FormClient({ depart, apres }: { depart?: Client; apres: (id: string) =>
         </select>
       </Champ>
       <label className="sm:col-span-2 flex items-center gap-2">
-        <input type="checkbox" checked={c.sms_accepte} onChange={(e) => setC((x) => ({ ...x, sms_accepte: e.target.checked }))} />
+        <input type="checkbox" checked={c.sms_accepte} onChange={(e) => accordSms(e.target.checked)} />
         <span>Le client accepte de recevoir les rappels par SMS</span>
       </label>
+      {c.sms_accepte && (
+        <>
+          <Champ libelle="Accord donné le">
+            <input className="champ w-full" type="date" max={aujourdhuiLocal()} value={c.sms_consentement_le ?? ''} onChange={(e) => setC((x) => ({ ...x, sms_consentement_le: e.target.value || null }))} required />
+          </Champ>
+          <Champ libelle="Comment">
+            <select
+              className="champ w-full"
+              value={c.sms_consentement_forme ?? ''}
+              onChange={(e) => setC((x) => ({ ...x, sms_consentement_forme: (e.target.value || null) as FormeConsentement | null }))}
+              required
+            >
+              <option value="">choisir</option>
+              {Object.entries(FORME_ACCORD).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </Champ>
+          <p className="sm:col-span-2 m-0 text-text-dim text-[13px]">Gardez la preuve : le papier signé ou le message du client. Chaque SMS se termine par « Répondez STOP » ; à un STOP, décochez la case.</p>
+        </>
+      )}
       <Champ libelle="Note" large>
         <textarea className="champ w-full h-16 py-1" value={c.note} onChange={maj('note')} />
       </Champ>
@@ -213,7 +246,8 @@ export function ListeClients() {
 
 function NouvelAbonnement({ client, dernier, apres }: { client: string; dernier?: Abonnement; apres: () => void }) {
   const aujourdhui = aujourdhuiLocal();
-  const [formule, setFormule] = useState<Formule>(dernier?.formule ?? 'essentiel');
+  const precedente = dernier?.formule;
+  const [formule, setFormule] = useState<FormuleTRK>(estFormuleTRK(precedente) ? precedente : 'essentiel');
   const [mois, setMois] = useState(1);
   const [debut, setDebut] = useState(dernier ? debutRenouvellement(dernier.fin, aujourdhui) : aujourdhui);
   const [montant, setMontant] = useState('');
@@ -234,10 +268,10 @@ function NouvelAbonnement({ client, dernier, apres }: { client: string; dernier?
   return (
     <form className="flex flex-wrap gap-3 items-end" onSubmit={(e) => void creer(e)}>
       <Champ libelle="Formule">
-        <select className="champ" value={formule} onChange={(e) => setFormule(e.target.value as Formule)}>
-          {Object.entries(LIBELLE_FORMULE).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v}
+        <select className="champ" value={formule} onChange={(e) => setFormule(e.target.value as FormuleTRK)}>
+          {FORMULES.map((f) => (
+            <option key={f} value={f}>
+              {LIBELLE_FORMULE[f]}
             </option>
           ))}
         </select>
@@ -457,7 +491,17 @@ export function FicheClient({ id }: { id: string }) {
             <span className="text-text-dim">Statut </span>
             {STATUT[c.statut]}
           </span>
-          <span>{c.sms_accepte ? <Pastille ton="ok">SMS acceptés</Pastille> : <Pastille ton="neutre">SMS refusés</Pastille>}</span>
+          <span>
+            {!c.sms_accepte ? (
+              <Pastille ton="neutre">SMS refusés</Pastille>
+            ) : c.sms_consentement_le && c.sms_consentement_forme ? (
+              <Pastille ton="ok">
+                SMS acceptés le {fmtDate(c.sms_consentement_le)}, {FORME_ACCORD_COURT[c.sms_consentement_forme]}
+              </Pastille>
+            ) : (
+              <Pastille ton="avert">SMS acceptés, accord à dater (onglet Fiche)</Pastille>
+            )}
+          </span>
         </div>
 
         <Liaison client={id} />
@@ -502,6 +546,7 @@ export function FicheClient({ id }: { id: string }) {
                 })}
               </tbody>
             </table>
+            <p className="m-0 text-text-dim text-[13px]">Missions de l'expert-comptable partenaire : facturées par lui directement.</p>
           </>
         )}
 

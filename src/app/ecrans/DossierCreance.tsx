@@ -98,9 +98,12 @@ export function DossierCreance() {
         </div>
 
         <p className="aide">
-          {x.prescription
-            ? t(dateRef < x.prescription ? 'dossier.delai' : 'dossier.delaiPasse', { date: fmtDate(x.prescription), jours: x.ageJours })
-            : t('dossier.delaiCommercant', { jours: x.ageJours })}
+          {l.client === 'commercant'
+            ? t(dateRef < x.prescription ? (entreprise.secteur === 'services' ? 'dossier.delaiServices' : 'dossier.delaiCommercant') : 'dossier.delaiPasseCommercant', {
+                date: fmtDate(x.prescription),
+                jours: x.ageJours,
+              })
+            : t(dateRef < x.prescription ? 'dossier.delai' : 'dossier.delaiPasse', { date: fmtDate(x.prescription), jours: x.ageJours })}
         </p>
 
         <hr className="filet-cloture" />

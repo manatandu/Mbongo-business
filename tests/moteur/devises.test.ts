@@ -121,16 +121,25 @@ describe('réévaluation des dollars à la clôture (D3)', () => {
     expect(e.bilan.equilibre).toBe(true);
   });
 
-  it('présente une créance en dollars au taux de clôture', () => {
-    const d = dossierDeBase({
-      comptes,
-      creances: [{ id: 'c', date: '2026-09-01', facture: 'V-1', nom: 'Grossiste de Gombe', nature: 'ventes', montant: 50_000, devise: 'USD', taux: 2800 }],
-      tauxCloture: 2900,
-    });
-    const e = calculerEtats(d);
-    expect(e.bilan.actif.creances).toBe(1_450_000);
-    expect(e.compteDeResultat.variationCreances).toBe(-1_450_000);
-    expect(e.bilan.equilibre).toBe(true);
+  it("ne prend pas un gain latent sur une créance en dollars (AUDCIF, art. 54), mais prend la perte", () => {
+    const creance = (taux: number) =>
+      dossierDeBase({ comptes, creances: [{ id: 'c', date: '2026-09-01', facture: 'V-1', nom: 'Grossiste de Gombe', nature: 'ventes', montant: 50_000, devise: 'USD', taux: 2800 }], tauxCloture: taux });
+    // Dollar en hausse : la créance reste au taux de la facture.
+    const hausse = calculerEtats(creance(2900));
+    expect(hausse.bilan.actif.creances).toBe(1_400_000);
+    expect(hausse.bilan.equilibre).toBe(true);
+    // Dollar en baisse : la perte probable est prise.
+    const baisse = calculerEtats(creance(2700));
+    expect(baisse.bilan.actif.creances).toBe(1_350_000);
+    expect(baisse.bilan.equilibre).toBe(true);
+  });
+
+  it('prend la perte latente sur une dette en dollars, pas le gain', () => {
+    const dette = (taux: number) =>
+      dossierDeBase({ comptes, dettes: [{ id: 'd', date: '2026-09-01', facture: 'A-1', nom: 'Fournisseur de Matadi', nature: 'achats_marchandises', montant: 10_000, devise: 'USD', taux: 2800 }], tauxCloture: taux });
+    expect(calculerEtats(dette(2900)).bilan.passif.dettes).toBe(290_000);
+    expect(calculerEtats(dette(2700)).bilan.passif.dettes).toBe(280_000);
+    expect(calculerEtats(dette(2700)).bilan.equilibre).toBe(true);
   });
 
   it('marque les états provisoires tant que le taux de clôture manque', () => {

@@ -18,7 +18,7 @@ L'offre gratuite met le projet en pause après une semaine sans activité. Le ra
 
 | Qui | Voit | Écrit |
 |---|---|---|
-| Administrateur TRK | clients, abonnements, paiements, suivi, SMS, équipe | tout cela ; jamais les saisies comptables |
+| Administrateur TRK | clients, abonnements, paiements, suivi, SMS, équipe (la console ne montre pas les saisies comptables) | tout cela ; jamais les saisies comptables |
 | Assistant TRK | clients, abonnements, paiements, suivi, SMS | le suivi seulement (visites, appels, formations, contrôles) |
 | Membre d'un client (commerçant, assistant, expert) | sa fiche, ses abonnements, ses paiements, ses saisies | rien, sauf le commerçant |
 | Commerçant | idem | ajoute ses saisies, pour son entreprise seulement ; personne ne les modifie ni ne les efface |
@@ -33,13 +33,20 @@ Chaque client a un code de huit caractères (ex. KX7P-29QD), visible sur sa fich
 
 - Fonctions : `lier_appareil(code, nom)` et `envoyer_saisies(jeton, lignes)`, appelables sans compte (elles vérifient le code ou le jeton) ; `nouveau_code_client` et `delier_appareil`, pour l'équipe.
 - Les saisies comptables ne sont jamais modifiées ; les fiches (entreprise, exercice, compte, inventaire) sont remplacées par leur dernière version.
-- L'équipe voit les téléphones reliés, la date du dernier envoi et le nombre de lignes reçues. Elle ne lit pas les saisies.
+- La console montre les téléphones reliés, la date du dernier envoi et le nombre de lignes reçues, pas les saisies. Le tableau de bord Supabase, lui, montre toutes les tables : son accès est réservé à l'administrateur technique.
+- Les noms et adresses des clients et fournisseurs du commerçant ne partent pas : dans les lignes `tiers`, le nom devient un identifiant « tiers-… » (empreinte salée du nom normalisé, le sel reste sur le téléphone) et l'adresse est retirée ; le nom repris dans le libellé d'un encaissement ou d'un règlement est remplacé de même. Un nom tapé dans un libellé libre part tel quel.
 - Nouveau code : l'ancien ne relie plus de téléphone ; ceux déjà reliés continuent. Délier : le téléphone n'envoie plus.
 - Essai : `supabase/tests/code_client.sql`. Migration : `20261031_code_client.sql`.
 
+## Formules
+
+Essentiel et Suivi seulement. La formule « Avec l'expert-comptable » n'est plus vendue : l'expert partenaire facture et encaisse lui-même ses missions (loi n° 15/002, art. 50). La base refuse toute nouvelle ligne « expert » ; les anciennes restent lisibles (« Ancienne formule (plus vendue) »), sans tarif. Migration : `20261101_sans_formule_expert.sql` ; essai : `supabase/tests/sans_formule_expert.sql`.
+
 ## Rappels SMS
 
-Chaque jour à 8 h (Kinshasa), `prive.planifier_rappels()` prépare un rappel pour le dernier abonnement de chaque client actif qui a accepté les SMS : 10 jours avant la fin (fenêtre 4 à 10 jours), 3 jours avant (1 à 3), le jour même, puis une fois en retard (1 à 30 jours). Jamais deux fois le même rappel. Texte en français ou en lingala selon la fiche.
+Chaque jour à 8 h (Kinshasa), `prive.planifier_rappels()` prépare un rappel pour le dernier abonnement de chaque client actif qui a accepté les SMS : 10 jours avant la fin (fenêtre 4 à 10 jours), 3 jours avant (1 à 3), le jour même, puis une fois en retard (1 à 30 jours). Jamais deux fois le même rappel. Texte en français ou en lingala selon la fiche ; il se termine par « Répondez STOP pour ne plus recevoir ces messages. » (« Soki olingi lisusu te kozwa bansango oyo, zongisa STOP. »). Avec la mention, un rappel dépasse 160 signes et part en deux SMS.
+
+Accord du client (Code du numérique, art. 196) : cocher la case demande la date et la forme de l'accord (de vive voix, par écrit, par WhatsApp), gardées dans `sms_consentement_le` et `sms_consentement_forme`. La base les exige quand l'accord est donné et les efface quand il est retiré. Garder la preuve (papier signé, message). À un STOP, décocher la case. Les fiches cochées avant la migration restent valables ; la console les signale « accord à dater ». Migration : `20261102_consentement_sms.sql` ; essai : `supabase/tests/consentement_sms.sql` (et `cloisonnement.sql`, mis à jour).
 
 Mode test (`reglages_console.sms_mode = 'test'`) : les SMS sont préparés et visibles dans la console, rien ne part. Pour l'envoi réel : créer un compte chez un fournisseur (Africa's Talking ou Twilio), ajouter la clé dans les secrets du projet Supabase, brancher une fonction d'envoi des SMS « a_envoyer », puis passer `sms_mode` à `reel`.
 
@@ -47,4 +54,4 @@ Mode test (`reglages_console.sms_mode = 'test'`) : les SMS sont préparés et vi
 
 - Envoi réel des SMS (fournisseur à choisir).
 - Lecture des saisies reçues au bureau (pour l'instant, le bureau lit les données de l'ordinateur).
-- Données personnelles : consentement aux SMS déjà demandé sur la fiche ; registre, durée de conservation et hébergement hors RDC à documenter (Code du numérique, ordonnance-loi n° 23/010).
+- Données personnelles, avant un pilote (détail : `docs/architecture.md`, § 14.1) : hébergement hors RDC (Code du numérique, art. 201 : « Les données personnelles sont stockées et/ou hébergées en République Démocratique du Congo », sauf constat de l'Autorité de protection des données) ; projet Supabase rattaché à l'organisation « Orbit ONG », à passer à TRK ; déclaration à l'Autorité et autorisation pour les numéros de téléphone ; contrat de sous-traitance ; registre des traitements ; durée de conservation à fixer et à appliquer.

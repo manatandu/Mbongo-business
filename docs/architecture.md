@@ -214,7 +214,7 @@ Le kit de design « logiciel de gestion » fourni pour le projet, appliqué au b
 | stock non inventorié | exercice terminé sans inventaire validé | à traiter |
 | taux de clôture manquant | exercice terminé, comptes en dollars, pas de taux du 31 décembre | à traiter |
 
-Les seuils du SMT sont des paramètres en francs congolais (`src/donnees/parametres.ts`) : 240 M CDF (négoce), 160 M CDF (artisanat), 120 M CDF (services), valeurs 2026 tirées du cours de la BCC, à revoir chaque année. Le logiciel alerte ; le passage au Système normal se fait chez l'expert-comptable partenaire.
+Les seuils du SMT sont des paramètres en francs congolais (`src/donnees/parametres.ts`) : 238 M CDF (négoce), 158 M CDF (artisanat), 119 M CDF (services), valeurs 2026 tirées du cours de la BCC d'août 2026 (100 FCFA = 397,30 FC), arrondies au million inférieur, à revoir chaque année. Le logiciel alerte ; le passage au Système normal se fait chez l'expert-comptable partenaire.
 
 ## 12. Poids
 
@@ -250,7 +250,21 @@ Pas de serveur pour la soutenance. Si des commerçants de Kinshasa utilisent Mbo
 - règles de sécurité dans la base (RLS) : l'assistant lit, il n'écrit jamais dans les saisies du commerçant ;
 - envoi des saisies quand le réseau revient. La file d'envoi existe déjà dans la base locale, et comme les données sont en ajout seulement, il n'y a pas de conflit à arbitrer.
 
-Points à régler avant : coût (offre gratuite mise en pause après une semaine sans activité, environ 1 Go de photos), SMS de connexion vers la RDC, données personnelles (Code du numérique, ordonnance-loi n° 23/010 du 13 mars 2023 : consentement, hébergement hors RDC, durée de conservation).
+Points à régler avant : coût (offre gratuite mise en pause après une semaine sans activité, environ 1 Go de photos), SMS de connexion vers la RDC, données personnelles (ci-dessous).
+
+### 14.1 Données personnelles : limites connues avant un pilote
+
+Texte de référence : Code du numérique (ordonnance-loi n° 23/010 du 13 mars 2023). Rien de ce qui suit n'est réglé ; tant que ce n'est pas fait, le serveur ne reçoit que des données fictives.
+
+- **Hébergement hors RDC.** Le projet Supabase « mbongo » est en région eu-central-1 (Allemagne). Art. 201 : « Les données personnelles sont stockées et/ou hébergées en République Démocratique du Congo », sauf transfert vers un État dont l'Autorité de protection des données constate le niveau de protection, avec son autorisation. Il faut, avant un pilote, cette autorisation ou un hébergement en RDC. L'hébergement n'est pas changé pour la soutenance.
+- **Rattachement du projet.** Le projet est rattaché à l'organisation Supabase « Orbit ONG », pas à TRK Consulting, qui est le responsable du traitement. À transférer à un compte de TRK.
+- **Déclaration à l'Autorité** (art. 186) avant tout traitement réel ; **autorisation** pour les numéros de téléphone (art. 187), base des rappels SMS.
+- **Contrat de sous-traitance** (art. 224 et 229) : clause dans le contrat d'abonnement (TRK traite les saisies du commerçant sur ses instructions) ; accord de traitement de Supabase, et plus tard du fournisseur de SMS, gardé au dossier.
+- **Registre des traitements** (art. 227 et 228) : traitement continu, donc registre à tenir : finalités, catégories de données, destinataires, durée, transfert hors RDC.
+- **Durée de conservation** (art. 193) : à fixer et à appliquer. Proposition : saisies comptables dix ans (AUDCIF, art. 24), puis effacement ; fiche client, SMS et suivi deux ans après la fin du dernier abonnement. Aucune purge automatique n'existe encore.
+- **Accès au tableau de bord Supabase** : il montre toutes les tables, saisies comprises. Réservé à l'administrateur technique, nommément ; la console, elle, ne montre pas les saisies.
+
+Déjà fait : les noms et adresses des clients et fournisseurs du commerçant ne partent pas (`src/donnees/envoi.ts` les remplace par un identifiant « tiers-… » salé, le sel ne quitte pas le téléphone) ; les photos ne partent pas ; preuve de l'accord aux SMS (date, forme) et mention STOP dans chaque rappel (migration `20261102_consentement_sms.sql`) ; section « Vos données » sur la page Mbongo Business. Reste possible : un nom de client tapé par le commerçant dans le libellé libre d'une opération part tel quel ; la formation doit le dire.
 
 ## 15. Conventions comptables (D1 à D10)
 

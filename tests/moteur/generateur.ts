@@ -100,6 +100,8 @@ export function construire(g: Graine, cloturable = false): DossierExercice {
       case 'depense': {
         const k = compteParIndice(c.compte);
         const o = { nature: c.nature, montant: c.montant, devise: k.devise, taux: tauxSi(k, c.taux) };
+        // Un emprunt en dollars est refusé (v1) : à voir avec l'expert-comptable.
+        if (o.nature === 'emprunt_recu' && k.devise === 'USD') break;
         if (capital + effetCapital(o) < 0) break;
         capital += effetCapital(o);
         nouvelle({ date, type: c.k, compte: k.id, ...o });

@@ -249,7 +249,17 @@ function Notes({ e }: { e: EtatsSMT }) {
 function MentionStock() {
   const { entreprise } = useDossier();
   const texte = useLiveQuery(() => mentionMethodeStock(db, entreprise.id), [entreprise.id]);
-  return texte ? <p className="aide">{texte}</p> : null;
+  return (
+    <>
+      {/* AUDCIF, art. 10 et 33 : les règles et méthodes retenues figurent dans les notes annexes. */}
+      <p className="aide">
+        Règles appliquées : Système minimal de trésorerie (AUDCIF, art. 13 et 21, Titre X). Recettes et dépenses à leur date de paiement ; créances, dettes et stock
+        ajoutés à la clôture. Amortissement linéaire sans prorata temporis. Comptes et factures en dollars au taux de clôture, sans prendre de gain non encaissé (art.
+        54). Créance déclarée perdue sortie du bilan à sa date.
+      </p>
+      {texte && <p className="aide">{texte}</p>}
+    </>
+  );
 }
 
 export function Etats() {

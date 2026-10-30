@@ -125,7 +125,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       'bureau-etats',
       async () => {
         await bur.getByRole('tab', { name: 'États SMT' }).click();
-        await bur.waitForSelector('text=Arrêté par');
+        await bur.waitForSelector('text=Arrêté des états');
         const [fichier] = await Promise.all([bur.waitForEvent('download'), bur.click('text=Exporter en Excel')]);
         await fichier.saveAs(path.join(SORTIE, fichier.suggestedFilename()));
       },
@@ -133,7 +133,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
     );
     await etape(bur, 'bureau-expert-conditions', async () => {
       await bur.selectOption('header select', 'expert');
-      await bur.locator('text=Arrêté par').scrollIntoViewIfNeeded();
+      await bur.locator('text=Arrêté des états').scrollIntoViewIfNeeded();
     });
 
     // 3. La fin de l'année : inventaire, nouvelle année, arrêté.
@@ -156,6 +156,8 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       await tel.waitForSelector('text=Stock compté');
     });
     await etape(tel, 'nouvelle-annee', async () => {
+      // Les trois autres éléments de l'inventaire (Titre X) : une case chacun.
+      for (const c of await tel.$$('.fin-annee input[type="checkbox"]')) await c.check();
       await tap(`Commencer ${annee}`);
       await tel.waitForSelector(`text=L'année ${annee} est commencée`);
     });
@@ -170,6 +172,11 @@ const PAUSE = process.env.LENT ? 1800 : 400;
         await bur.click('td:has-text("Alimentation Maman Nsimba")');
         await bur.selectOption('select[aria-label="Exercice"]', String(passee));
         await bur.getByRole('tab', { name: 'États SMT' }).click();
+        // Demandés une fois à l'expert-comptable partenaire, puis gardés (données fictives).
+        if (await bur.getByLabel("Nom de l'expert-comptable").count()) {
+          await bur.getByLabel("Nom de l'expert-comptable").fill('Expert fictif de démonstration');
+          await bur.getByLabel("N° d'inscription ONEC").fill('ONEC-0000 (fictif)');
+        }
         await bur.click(`text=Arrêter les états ${passee}`);
         await bur.waitForSelector('text=/Arrêtés le/');
       },

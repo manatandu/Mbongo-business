@@ -2,11 +2,11 @@
  * Contrôles automatiques des saisies, pour l'assistant et, en version simple, pour le commerçant.
  * Ils signalent ; ils ne corrigent jamais (loi n° 15/002, art. 43.1).
  */
-import { estAnnuleeAu, preparer, type Contexte } from './contexte';
+import { compte, estAnnuleeAu, preparer, type Contexte } from './contexte';
 import { ajouterJours, jourSemaine, moisDe, moisEntre } from './dates';
 import { calculerSoldes, soldesQuotidiens } from './tresorerie';
 import { chiffreAffairesDepuisContexte, evaluerSeuil, type SeuilsSMT } from './seuils';
-import { encoursA, prescription, situationDepuisContexte } from './tiers';
+import { delaiAns, encoursA, prescription, situationDepuisContexte } from './tiers';
 import { verifierDossier } from './validation';
 import type { DateISO, Devise, DossierExercice, Montant, Operation } from './types';
 
@@ -23,6 +23,8 @@ export type CodeAnomalie =
   | 'seuil_smt_approche'
   | 'seuil_smt_depasse'
   | 'mois_sans_saisie'
+  | 'especes_10000'
+  | 'salaire_impot_en_caisse'
   | 'stock_non_inventorie'
   | 'taux_cloture_manquant';
 
@@ -43,6 +45,8 @@ export interface ParametresControle {
   ageCreanceMax?: number;
   /** Seuils du SMT en francs congolais (AUDCIF, art. 13). Sans eux, le seuil n'est pas contrôlé. */
   seuilsSMT?: SeuilsSMT | null;
+  /** Équivalent en francs de 10 000 USD, pour les paiements en espèces (loi n° 22/068, art. 23). Sans lui, seul le dollar est contrôlé. */
+  seuilEspecesCDF?: Montant;
 }
 
 const pluriel = (n: number, mot: string): string => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -134,35 +138,55 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
     });
   }
 
-  // Créances sur des particuliers : un an pour agir (Code civil, livre III, art. 653).
+  // Délai pour réclamer en justice : un an contre un particulier (CC, art. 653), deux ans pour une vente de
+  // marchandises à un commerçant (AUDCG, art. 301), cinq ans pour des services (art. 16). Alerte 90 jours avant.
   const enCours = situationDepuisContexte(ctx, 'creance', ref).filter((s) => s.encours > 0);
-  const delai = (s: (typeof enCours)[number]) => prescription(s.ligne);
-  const bientot = enCours.filter((s) => {
-    const d = delai(s);
-    return d !== null && ref < d && ref >= ajouterJours(d, -90);
-  });
+  const delai = (s: (typeof enCours)[number]) => prescription(s.ligne, dossier.entreprise.secteur);
+  const duree = (s: (typeof enCours)[number]) => pluriel(delaiAns(s.ligne, dossier.entreprise.secteur), 'an');
+  const bientot = enCours.filter((s) => ref < delai(s) && ref >= ajouterJours(delai(s), -90));
   if (bientot.length) {
     anomalies.push({
       code: 'creance_prescription',
       niveau: 'a_traiter',
-      message: `${pluriel(bientot.length, 'créance')} sur des particuliers à réclamer avant la fin du délai d'un an : ${bientot
-        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)}, jusqu'au ${delai(s)})`)
+      message: `${pluriel(bientot.length, 'créance')} à réclamer avant la fin du délai : ${bientot
+        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)}, ${duree(s)}, jusqu'au ${delai(s)})`)
         .join(' ; ')}. Faire signer une reconnaissance de dette, ou agir avant.`,
       references: bientot.map((s) => s.ligne.id),
     });
   }
-  const passees = enCours.filter((s) => {
-    const d = delai(s);
-    return d !== null && ref >= d;
-  });
+  const passees = enCours.filter((s) => ref >= delai(s));
   if (passees.length) {
     anomalies.push({
       code: 'creance_prescrite',
       niveau: 'a_revoir',
-      message: `${pluriel(passees.length, 'créance')} sur des particuliers de plus d'un an : ${passees
-        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)})`)
-        .join(' ; ')}. Le délai pour les réclamer en justice est passé, sauf reconnaissance de dette signée ou action déjà engagée.`,
+      message: `${pluriel(passees.length, 'créance')} au-delà du délai pour la réclamer : ${passees
+        .map((s) => `${s.ligne.nom} (${lisible(s.encours, s.ligne.devise)}, ${duree(s)})`)
+        .join(' ; ')}. Le délai pour agir en justice est passé, sauf reconnaissance de dette signée ou action déjà engagée.`,
       references: passees.map((s) => s.ligne.id),
+    });
+  }
+
+  // Loi n° 22/068 (blanchiment), art. 23 : une opération de 10 000 USD ou plus ne se paie pas en espèces, sauf
+  // dérogation de la Banque centrale. Article suivant : salaires et impôts par virement, voie bancaire ou postale ou
+  // chèque, quel que soit le montant. Mbongo ne connaît les espèces que par la caisse ; le mobile money n'est pas visé.
+  const annuleesIds = new Set(ops.flatMap((o) => (o.annule ? [o.annule] : [])));
+  const enCaisse = ops.filter((o) => !o.annule && !annuleesIds.has(o.id) && o.type !== 'transfert' && compte(ctx, o.compte)?.type === 'caisse');
+  const grosses = enCaisse.filter((o) => (o.devise === 'USD' ? o.montant >= 1_000_000 : p.seuilEspecesCDF !== undefined && o.montant >= p.seuilEspecesCDF));
+  if (grosses.length) {
+    anomalies.push({
+      code: 'especes_10000',
+      niveau: 'a_traiter',
+      message: `${pluriel(grosses.length, 'opération')} de 10 000 USD ou plus en espèces : la loi n° 22/068 (art. 23) demande la banque, sauf dérogation. Voir l'expert-comptable.`,
+      references: grosses.map((o) => o.id),
+    });
+  }
+  const salairesImpots = enCaisse.filter((o) => o.type === 'depense' && (o.nature === 'salaires' || o.nature === 'impots_taxes'));
+  if (salairesImpots.length) {
+    anomalies.push({
+      code: 'salaire_impot_en_caisse',
+      niveau: 'a_revoir',
+      message: `${pluriel(salairesImpots.length, 'salaire ou impôt')} payé${salairesImpots.length > 1 ? 's' : ''} en espèces : la loi n° 22/068 demande le virement, la banque ou le chèque, quel que soit le montant.`,
+      references: salairesImpots.map((o) => o.id),
     });
   }
 

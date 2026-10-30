@@ -14,8 +14,8 @@ begin
   insert into public.invitations_admin values ('admin.essai@exemple.invalid');
   insert into auth.users (id, email) values (ua, 'a.essai@exemple.invalid'), (ub, 'b.essai@exemple.invalid'), (ux, 'admin.essai@exemple.invalid');
 
-  insert into public.clients (nom, telephone, secteur, sms_accepte) values ('Boutique A (essai)', '+243810000001', 'negoce', true) returning id into ca;
-  insert into public.clients (nom, telephone, secteur, sms_accepte, langue) values ('Atelier B (essai)', '+243810000002', 'artisanat', true, 'ln') returning id into cb;
+  insert into public.clients (nom, telephone, secteur, sms_accepte, sms_consentement_forme) values ('Boutique A (essai)', '+243810000001', 'negoce', true, 'ecrit') returning id into ca;
+  insert into public.clients (nom, telephone, secteur, sms_accepte, sms_consentement_forme, langue) values ('Atelier B (essai)', '+243810000002', 'artisanat', true, 'whatsapp', 'ln') returning id into cb;
   insert into public.membres values (ua, ca, 'commercant'), (ub, cb, 'commercant');
   insert into public.saisies (id, client_id, type, contenu, saisi_le, auteur) values
     (gen_random_uuid(), ca, 'operation', '{"montant": 85000}', now(), ua),

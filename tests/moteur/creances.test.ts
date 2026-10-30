@@ -9,7 +9,9 @@ describe('délai pour réclamer une créance', () => {
   it("compte un an pour un particulier, et rien pour un commerçant", () => {
     expect(prescription(creance({}))).toBe('2027-01-15');
     expect(prescription(creance({ client: 'particulier' }))).toBe('2027-01-15');
-    expect(prescription(creance({ client: 'commercant' }))).toBeNull();
+    // Entre commerçants : deux ans pour une vente de marchandises (AUDCG, art. 301), cinq ans pour des services (art. 16).
+    expect(prescription(creance({ client: 'commercant' }))).toBe('2028-01-15');
+    expect(prescription(creance({ client: 'commercant' }), 'services')).toBe('2031-01-15');
     expect(prescription(creance({ date: '2028-02-29' }))).toBe('2029-02-28');
   });
 

@@ -75,7 +75,8 @@ export function Equipe({ moi }: { moi: string }) {
             <button className="btn btn-principal">Ajouter</button>
           </form>
           <p className="m-0 text-text-dim text-[13px]">
-            Assistant : voit les clients, abonnements, paiements et SMS, et note le suivi. Administrateur : tout, plus l'équipe. Aucun des deux ne voit la comptabilité des clients.
+            Assistant : voit les clients, abonnements, paiements et SMS, et note le suivi. Administrateur : tout, plus l'équipe. La console ne montre à aucun des deux les saisies comptables des
+            clients ; le tableau de bord du serveur Supabase, où elles sont rangées, est réservé à l'administrateur technique.
           </p>
         </Carte>
         {message && <Message ton={message.ton}>{message.texte}</Message>}

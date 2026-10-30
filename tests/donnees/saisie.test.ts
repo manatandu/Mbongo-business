@@ -190,3 +190,27 @@ describe("code d'accès", () => {
     await expect(definirCode(db, '12a4')).rejects.toThrow(/quatre chiffres/);
   });
 });
+
+describe('créance perdue (AUDCIF, art. 43 et 46)', () => {
+  it("sort l'encours du bilan, garde la facture, et refuse une seconde déclaration", async () => {
+    const { BaseMbongo } = await import('../../src/donnees/base');
+    const { creerEntreprise } = await import('../../src/donnees/entreprise');
+    const { chargerDossier } = await import('../../src/donnees/dossier');
+    const { declarerCreancePerdue, enregistrerFacture } = await import('../../src/donnees/saisie');
+    const { calculerEtats } = await import('../../src/moteur');
+    const db = new BaseMbongo(`perdue-${Math.random()}`);
+    const r = await creerEntreprise(db, {
+      nom: 'Boutique (fictif)', activite: '', secteur: 'negoce', commune: '', nif: '', responsable: '', telephone: '', annee: 2026,
+      comptes: [{ type: 'caisse', libelle: 'Caisse', devise: 'CDF', solde: 0 }], stockInitial: 0, tauxOuverture: null,
+    });
+    const f = await enregistrerFacture(db, r.exerciceId, 'creance', { date: '2026-02-01', facture: 'V-9', nom: 'Client parti (fictif)', nature: 'ventes', montant: 200_000, devise: 'CDF', taux: null });
+    await declarerCreancePerdue(db, r.exerciceId, f, '2026-10-01');
+    const { dossier } = await chargerDossier(db, r.exerciceId);
+    expect(dossier.creances).toHaveLength(1);
+    expect(dossier.creances[0]!.perdueLe).toBe('2026-10-01');
+    const e = calculerEtats(dossier, { auDate: '2026-12-31' });
+    expect(e.bilan.actif.creances).toBe(0);
+    expect(e.bilan.equilibre).toBe(true);
+    await expect(declarerCreancePerdue(db, r.exerciceId, f, '2026-11-01')).rejects.toThrow('déjà déclarée perdue');
+  });
+});

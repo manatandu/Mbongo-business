@@ -98,3 +98,20 @@ describe('seuils du SMT', () => {
     expect(codes(a).filter((c) => c.startsWith('seuil'))).toEqual([]);
   });
 });
+
+describe('blanchiment (loi n° 22/068)', () => {
+  it('signale 10 000 USD ou plus en espèces et les salaires ou impôts payés en caisse', () => {
+    const d = dossierDeBase({
+      operations: [
+        op({ date: '2026-02-01', type: 'recette', nature: 'ventes', montant: 30_000_000 }),
+        op({ date: '2026-02-02', type: 'depense', nature: 'salaires', montant: 300_000 }),
+      ],
+    });
+    const a = controler(d, '2026-02-28', { seuilEspecesCDF: 22_600_000 });
+    expect(a.find((x) => x.code === 'especes_10000')?.niveau).toBe('a_traiter');
+    expect(a.find((x) => x.code === 'salaire_impot_en_caisse')?.references).toHaveLength(1);
+    // Payé par la banque : rien à signaler.
+    const banque = dossierDeBase({ operations: [op({ date: '2026-02-02', type: 'depense', compte: 'banque', nature: 'salaires', montant: 300_000 })] });
+    expect(controler(banque, '2026-02-28').find((x) => x.code === 'salaire_impot_en_caisse')).toBeUndefined();
+  });
+});

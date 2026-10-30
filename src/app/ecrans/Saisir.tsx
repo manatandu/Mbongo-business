@@ -8,6 +8,7 @@ import { Link, useLocation, useParams } from 'wouter';
 import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeClient, type TypeOperation } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
 import { ajouterPhoto, enregistrerFacture, enregistrerOperation, enregistrerTaux, ErreurSaisie } from '../../donnees/saisie';
+import { numeroLisible } from '../../donnees/dossier';
 import { enregistrerMouvement, sortiePossible } from '../../donnees/stock';
 import { lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs } from '../composants';
@@ -225,7 +226,8 @@ export function Saisir() {
       );
       if (photo) await ajouterPhoto(db, entreprise.id, id, photo);
       await lierStock(id);
-      annoncer(t('saisir.ok', { compte: compte.libelle }));
+      // Numéro d'ordre de la saisie, à écrire sur le reçu papier (AUDCIF, art. 17.3 : pièces portant la référence de l'enregistrement).
+      annoncer(t('saisir.ok', { compte: compte.libelle, numero: numeroLisible(exercice.annee, chargement.dossier.operations.length + 1) }));
       aller(`/journal/${compte.id}/${date.slice(0, 7)}`);
     } catch (x) {
       setErreurs(x instanceof ErreurSaisie ? x.messages : [(x as Error).message]);

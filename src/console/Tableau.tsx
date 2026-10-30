@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Carte, Fenetre, Message, Pastille } from '../bureau/ui';
 import { aujourdhuiLocal, fmt, fmtDate } from '../ui/format';
-import { afficherTelephone, etatAbonnement, LIBELLE_FORMULE, TARIFS } from './abonnement';
+import { afficherTelephone, etatAbonnement, LIBELLE_FORMULE, tarifMensuel } from './abonnement';
 import { EtatAbo } from './Console';
 import { useAdmin } from './role';
 import { sb, useLecture, type ClientVue, type Paiement, type Sms } from './supabase';
@@ -29,7 +29,7 @@ export function TableauDeBord() {
     .filter((c) => ['bientot', 'echeance', 'retard'].includes(etatAbonnement(c.jours_restants)))
     .sort((a, b) => (a.jours_restants ?? 0) - (b.jours_restants ?? 0));
   const encaisse = (paiements.donnees ?? []).filter((p) => p.devise === 'CDF').reduce((s, p) => s + p.montant, 0);
-  const mensuel = actifs.filter((c) => (c.jours_restants ?? -1) >= 0).reduce((s, c) => s + (c.formule ? TARIFS[c.formule] : 0), 0);
+  const mensuel = actifs.filter((c) => (c.jours_restants ?? -1) >= 0).reduce((s, c) => s + tarifMensuel(c.formule), 0);
 
   return (
     <>

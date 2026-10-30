@@ -3,13 +3,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseMbongo } from '../../src/donnees/base';
 import { creerEntreprise } from '../../src/donnees/entreprise';
 import { chargerDossier } from '../../src/donnees/dossier';
-import { enAttente, envoyer, liaison, relier } from '../../src/donnees/envoi';
-import { enregistrerOperation } from '../../src/donnees/saisie';
+import { enAttente, envoyer, identifiantTiers, liaison, normaliserNom, relier } from '../../src/donnees/envoi';
+import { enregistrerFacture, enregistrerOperation, enregistrerReglement } from '../../src/donnees/saisie';
 
 let db: BaseMbongo;
 let ent: string;
 let exerciceId: string;
-let appels: { fonction: string; corps: { p_lignes?: { type: string }[]; p_code?: string } }[];
+let appels: { fonction: string; corps: { p_lignes?: { type: string; contenu: Record<string, unknown> }[]; p_code?: string } }[];
 let reseau: boolean;
 
 /** Serveur simulé : répond comme Supabase. */
@@ -86,5 +86,46 @@ describe('envoi des saisies à TRK', () => {
     reseau = true;
     await envoyer(db, ent, faux);
     expect(await enAttente(db, ent)).toBe(0);
+  });
+
+  it("n'envoie ni le nom ni l'adresse des clients et fournisseurs du commerçant", async () => {
+    await relier(db, ent, 'KX7P29QD', faux);
+    const { comptes } = await chargerDossier(db, exerciceId);
+    const f = { date: '2026-03-02', facture: 'F12', nature: 'ventes', montant: 20_000, devise: 'CDF', taux: null } as const;
+    const creance = await enregistrerFacture(db, exerciceId, 'creance', { ...f, nom: 'Mama Nzingá', client: 'particulier', adresse: '12, av. Kasa-Vubu, Kalamu' });
+    await enregistrerFacture(db, exerciceId, 'creance', { ...f, facture: 'F13', nom: ' mama  NZINGA ', client: 'particulier' });
+    await enregistrerFacture(db, exerciceId, 'dette', { ...f, facture: 'A7', nature: 'achats_marchandises', nom: 'Dépôt Lukusa' });
+    await enregistrerReglement(db, exerciceId, 'creance', creance, { date: '2026-03-05', compte: comptes[0]!.id, montant: 5_000 });
+    await envoyer(db, ent, faux);
+
+    const lignes = appels.at(-1)!.corps.p_lignes!;
+    const texte = JSON.stringify(lignes);
+    for (const fuite of ['Nzing', 'NZING', 'Kasa-Vubu', 'Kalamu', 'Lukusa', 'adresse']) expect(texte).not.toContain(fuite);
+
+    const tiers = lignes.filter((l) => l.type === 'tiers').map((l) => l.contenu);
+    expect(tiers).toHaveLength(3);
+    for (const t of tiers) expect(t.nom).toMatch(/^tiers-[0-9a-f]{12}$/);
+    // Même client écrit autrement : même identifiant. Autre fournisseur : autre identifiant.
+    expect(tiers[0]!.nom).toBe(tiers[1]!.nom);
+    expect(tiers[2]!.nom).not.toBe(tiers[0]!.nom);
+    // Le reste de la ligne part intact.
+    expect(tiers[0]).toMatchObject({ id: creance, facture: 'F12', montant: 20_000, client: 'particulier', genre: 'creance' });
+
+    // L'encaissement reprend l'identifiant dans son libellé, à la place du nom.
+    const reglement = lignes.find((l) => l.type === 'operation' && l.contenu.reglementDe)!.contenu;
+    expect(reglement.libelle).toBe(`Encaissement facture F12, ${tiers[0]!.nom}`);
+
+    // Sur le téléphone, rien ne change.
+    expect((await db.tiers.get(creance))?.nom).toBe('Mama Nzingá');
+    expect((await db.tiers.get(creance))?.adresse).toBe('12, av. Kasa-Vubu, Kalamu');
+  });
+
+  it("l'identifiant est stable, salé et non réversible", async () => {
+    expect(normaliserNom('  Mama   Nzingá ')).toBe('mama nzinga');
+    const a = await identifiantTiers('sel-1', 'Mama Nzinga');
+    expect(a).toBe(await identifiantTiers('sel-1', 'MAMA NZINGA'));
+    expect(a).not.toBe(await identifiantTiers('sel-2', 'Mama Nzinga'));
+    expect(a).not.toContain('nzinga');
+    expect(await identifiantTiers('sel-1', '   ')).toBe('');
   });
 });

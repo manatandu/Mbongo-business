@@ -12,7 +12,7 @@ Petites entités assujetties au SMT, sauf option pour le Système normal, si le 
 | Artisanat et assimilés | 40 millions FCFA ou l'équivalent |
 | Services | 30 millions FCFA ou l'équivalent |
 
-Le logiciel ne manie pas le FCFA. Il garde les seuils en francs congolais, paramètres revus chaque année (`src/donnees/parametres.ts`, valeurs 2026 : 240 M CDF pour le négoce, 160 M CDF pour l'artisanat, 120 M CDF pour les services), et alerte quand les ventes cumulées s'en approchent (80 %) ou le dépassent.
+Le logiciel ne manie pas le FCFA. Il garde les seuils en francs congolais, paramètres revus chaque année (`src/donnees/parametres.ts`, valeurs 2026 : 238 M CDF pour le négoce, 158 M CDF pour l'artisanat, 119 M CDF pour les services, au cours BCC d'août 2026 (100 FCFA = 397,30 FC) arrondi au million inférieur), et alerte quand les ventes cumulées s'en approchent (80 %) ou le dépassent.
 
 ## 2. Tenue (Titre X, ch. 1)
 

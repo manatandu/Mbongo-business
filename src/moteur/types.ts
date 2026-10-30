@@ -81,6 +81,11 @@ export interface PieceTiers {
   client?: TypeClient;
   /** Créance : adresse du client, exigée pour une injonction de payer (AUPSRVE, art. 4). */
   adresse?: string;
+  /**
+   * Créance déclarée perdue à cette date (client disparu, délai passé) : son encours tombe à zéro et la baisse passe
+   * dans la variation des créances (AUDCIF, art. 43 et 46 : l'amoindrissement de valeur est constaté).
+   */
+  perdueLe?: DateISO;
 }
 
 export interface SortieImmobilisation {

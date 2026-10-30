@@ -6,6 +6,7 @@ import { journalMensuel } from '../../moteur';
 import { moisEntre } from '../../moteur/dates';
 import { useLangue } from '../../i18n';
 import { ajouterPhoto, annulerOperation, ErreurSaisie } from '../../donnees/saisie';
+import { numeroLisible } from '../../donnees/dossier';
 import { fmtDate, fmtMontant } from '../../ui/format';
 import { Erreurs, Pastille } from '../composants';
 import { compresserPhoto } from '../photo';
@@ -114,6 +115,7 @@ export function Journal() {
                 </span>
                 <span className="meta">
                   <span>{fmtDate(l.date)}</span>
+                  {chargement.numeros[l.operation] && <span>N° {numeroLisible(chargement.exercice.annee, chargement.numeros[l.operation]!)}</span>}
                   <span>
                     {t('journal.solde')} {fmtMontant(l.solde, d)}
                   </span>

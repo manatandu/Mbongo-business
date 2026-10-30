@@ -11,6 +11,7 @@ export const sb = createClient('https://vloavruyppvmbqlfldad.supabase.co', 'sb_p
 
 export type Secteur = 'negoce' | 'artisanat' | 'services';
 export type StatutClient = 'prospect' | 'actif' | 'suspendu' | 'resilie';
+export type FormeConsentement = 'oral' | 'ecrit' | 'whatsapp';
 
 export interface Client {
   id: string;
@@ -22,6 +23,9 @@ export interface Client {
   secteur: Secteur;
   langue: 'fr' | 'ln';
   sms_accepte: boolean;
+  /** Preuve de l'accord aux SMS (Code du numérique, art. 196) : date et forme, remplies quand la case est cochée. */
+  sms_consentement_le: DateISO | null;
+  sms_consentement_forme: FormeConsentement | null;
   statut: StatutClient;
   note: string;
   cree_le: string;
@@ -66,7 +70,7 @@ export interface Suivi {
   note: string;
 }
 
-/** Téléphone relié par le code client. L'équipe voit qu'il envoie, jamais ce qu'il envoie. */
+/** Téléphone relié par le code client. La console montre qu'il envoie, pas ce qu'il envoie. */
 export interface Appareil {
   id: string;
   client_id: string;

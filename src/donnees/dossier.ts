@@ -2,7 +2,7 @@
  * Construit le dossier d'un exercice, tel que le moteur l'attend, à partir de la base locale.
  * Les lignes d'exercices précédents (factures reportées, matériel ancien) sont reprises ici.
  */
-import { calculerEtats, type DossierExercice, type Etats, type Immobilisation, type Operation, type PieceTiers } from '../moteur';
+import { calculerEtats, type DateISO, type DossierExercice, type Etats, type Immobilisation, type Operation, type PieceTiers } from '../moteur';
 import type { BaseMbongo } from './base';
 import type { ContexteFiscal } from './echeancier';
 import { regimeConfirme, type RegimeConfirme } from './fiscal-expert';
@@ -20,7 +20,15 @@ export interface Chargement {
   naturesAnterieures: string[];
   /** Régimes d'imposition confirmés par l'expert pour l'année et la précédente (src/donnees/fiscal-expert.ts). */
   regimesConfirmes: RegimeConfirme[];
+  /**
+   * Numéro d'ordre de chaque opération dans l'exercice, dans l'ordre où elle a été saisie (AUDCIF, art. 17.5 et 67 :
+   * enregistrements identifiés et numérotés). Le commerçant l'écrit sur le reçu papier.
+   */
+  numeros: Record<string, number>;
 }
+
+/** Numéro d'ordre lisible : année sur deux chiffres, puis le rang sur quatre (26-0042). */
+export const numeroLisible = (annee: number, n: number): string => `${String(annee % 100).padStart(2, '0')}-${String(n).padStart(4, '0')}`;
 
 /** Ce que la fiscalité doit savoir de l'historique, tiré du chargement. */
 export const contexteFiscal = (c: Chargement): ContexteFiscal => ({ anterieurs: c.caAnterieurs, naturesAnterieures: c.naturesAnterieures, confirmes: c.regimesConfirmes });
@@ -48,8 +56,9 @@ function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
   return o;
 }
 
-function versPiece(l: LigneTiers, regleAvant: number): PieceTiers {
+function versPiece(l: LigneTiers, regleAvant: number, perdueLe?: DateISO): PieceTiers {
   const p: PieceTiers = { id: l.id, date: l.date, facture: l.facture, nom: l.nom, nature: l.nature, montant: l.montant, devise: l.devise, taux: l.taux };
+  if (perdueLe) p.perdueLe = perdueLe;
   if (regleAvant > 0) p.regleAvant = regleAvant;
   if (l.client) p.client = l.client;
   if (l.adresse) p.adresse = l.adresse;
@@ -94,13 +103,16 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   }
   // Une facture corrigée sort du dossier avec sa ligne d'annulation.
   const annulees = new Set(lignesTiers.flatMap((l) => (l.annule ? [l.annule] : [])));
+  // Créances déclarées perdues, avec la date de la déclaration (jusqu'à la clôture de l'exercice).
+  const perdues = new Map(lignesTiers.flatMap((l) => (l.perte && l.date <= fin ? [[l.perte, l.date] as const] : [])));
   const tiers = (genre: 'creance' | 'dette'): PieceTiers[] =>
     lignesTiers
-      .filter((l) => l.genre === genre && l.date <= fin && !l.annule && !annulees.has(l.id))
+      .filter((l) => l.genre === genre && l.date <= fin && !l.annule && !l.perte && !annulees.has(l.id))
       .flatMap((l) => {
         const avant = l.date < debut ? (regleAvant.get(l.id) ?? 0) : 0;
-        if (l.date < debut && l.montant - avant <= 0) return [];
-        return [versPiece(l, avant)];
+        const perdueLe = perdues.get(l.id);
+        if (l.date < debut && (l.montant - avant <= 0 || (perdueLe && perdueLe < debut))) return [];
+        return [versPiece(l, avant, perdueLe)];
       })
       .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
@@ -149,13 +161,18 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     }));
   }
   // Les trois années précédentes, si elles ont été tenues dans Mbongo.
-  const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !annulees.has(l.id));
+  const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !l.perte && !annulees.has(l.id));
   const caAnterieurs = exercicesTenus
     .filter((e) => e.annee < exercice.annee && e.annee >= exercice.annee - 3)
     .map((e) => ({ annee: e.annee, ca: chiffreAffairesRealise(e.annee, lignesOps, facturesValides) }));
   const naturesAnterieures = [...new Set(lignesOps.filter((o) => o.date.startsWith(`${exercice.annee - 1}-`)).map((o) => o.nature))];
   const regimesConfirmes = (await Promise.all([regimeConfirme(db, id, exercice.annee), regimeConfirme(db, id, exercice.annee - 1)])).filter((r): r is RegimeConfirme => r !== null);
-  return { entreprise, exercice, comptes, dossier, caAnterieurs, naturesAnterieures, regimesConfirmes };
+  const numeros: Record<string, number> = {};
+  lignesOps
+    .filter((o) => o.date >= debut && o.date <= fin)
+    .sort((a, b) => (a.creeLe < b.creeLe ? -1 : a.creeLe > b.creeLe ? 1 : a.id < b.id ? -1 : 1))
+    .forEach((o, i) => (numeros[o.id] = i + 1));
+  return { entreprise, exercice, comptes, dossier, caAnterieurs, naturesAnterieures, regimesConfirmes, numeros };
 }
 
 /** États de l'exercice précédent, pour la colonne N-1 du bilan et du compte de résultat (AUDCIF, art. 34). Null la première année. */

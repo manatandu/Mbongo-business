@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { situationTiers, type Devise, type GenreTiers, type SituationTiers } from '../../moteur';
 import { useLangue } from '../../i18n';
-import { annulerFacture, enregistrerReglement, ErreurSaisie } from '../../donnees/saisie';
+import { annulerFacture, declarerCreancePerdue, enregistrerReglement, ErreurSaisie } from '../../donnees/saisie';
 import { fmtDate, fmtMontant, lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs, Montant, Pastille } from '../composants';
 import { db, useDossier } from '../session';
@@ -99,6 +99,18 @@ export function Tiers() {
     }
   }
 
+  // Le client ne paiera plus : l'encours sort du bilan, la perte entre dans le résultat (AUDCIF, art. 43 et 46).
+  async function perdue(s: SituationTiers) {
+    if (!window.confirm(t('tiers.confirmerPerdue', { nom: s.ligne.nom }))) return;
+    try {
+      await declarerCreancePerdue(db, exercice.id, s.ligne.id, dateRef);
+      setErreurs([]);
+      annoncer(t('tiers.okPerdue'));
+    } catch (x) {
+      setErreurs(x instanceof ErreurSaisie ? x.messages : [(x as Error).message]);
+    }
+  }
+
   // Message prêt à envoyer : le commerçant choisit le contact dans WhatsApp.
   const lienRappel = (s: SituationTiers) =>
     'https://wa.me/?text=' +
@@ -167,6 +179,12 @@ export function Tiers() {
                   {t('tiers.corriger')}
                 </button>
               )}
+              {/* Après six mois sans paiement complet, le commerçant peut déclarer la créance perdue. */}
+              {modifiable && genre === 'creance' && s.ageJours > 180 && ouverte !== s.ligne.id && (
+                <button className="bouton danger petit" onClick={() => void perdue(s)}>
+                  {t('tiers.perdue')}
+                </button>
+              )}
             </div>
             {ouverte === s.ligne.id && <Reglement s={s} genre={genre} fermer={() => setOuverte(null)} />}
           </div>
@@ -189,7 +207,7 @@ export function Tiers() {
                 <Montant valeur={s.ligne.montant} devise={s.ligne.devise} />
                 <div className="meta">
                   <span>{s.ligne.facture || t('tiers.sansNumero')}</span>
-                  <Pastille ton="ok">{t('tiers.reglees')}</Pastille>
+                  {s.ligne.perdueLe ? <Pastille ton="bad">{t('tiers.perdueLe', { date: fmtDate(s.ligne.perdueLe) })}</Pastille> : <Pastille ton="ok">{t('tiers.reglees')}</Pastille>}
                 </div>
               </div>
             ))}

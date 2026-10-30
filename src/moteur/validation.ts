@@ -171,6 +171,15 @@ export function valider(d: DossierExercice): string[] {
     if (total < 0) err.push(`${genre === 'creance' ? 'Créance' : 'Dette'} ${ligne} : annulation d'un règlement absent.`);
   }
 
+  // Emprunt en dollars : refusé en v1. La caisse en dollars est réévaluée à la clôture, l'emprunt ne l'est pas :
+  // l'écart fabriquerait un gain ou une perte de change sans contrepartie (AUDCIF, art. 54 et 57). À voir avec l'expert.
+  for (const op of d.operations) {
+    if (op.nature === 'emprunt_recu' && !op.annule && comptes.get(op.compte)?.devise === 'USD') {
+      err.push("Un emprunt en dollars se voit avec l'expert-comptable : notez-le sur un compte en francs, au taux du jour.");
+      break;
+    }
+  }
+
   // Emprunt : le capital restant dû ne descend jamais sous zéro (D2).
   // Valorisé en francs historiques : un emprunt en dollars n'est pas réévalué en v1.
   let capital = d.empruntOuverture;

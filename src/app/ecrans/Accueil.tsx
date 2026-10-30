@@ -24,6 +24,8 @@ const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   sans_piece: { cle: 'alerte.sans_piece', ecran: '/journal' },
   creance_prescription: { cle: 'alerte.creance_prescription', ecran: '/clients' },
   creance_prescrite: { cle: 'alerte.creance_prescrite', ecran: '/clients' },
+  especes_10000: { cle: 'alerte.especes_10000', ecran: '/journal' },
+  salaire_impot_en_caisse: { cle: 'alerte.salaire_impot_en_caisse', ecran: '/journal' },
 };
 
 /** Le solde se compte jusqu'à sa valeur : à l'ouverture, puis à chaque changement. Rien sous « mouvement réduit ». */
@@ -71,6 +73,11 @@ export function Accueil() {
 
   const totalFC = vue.soldes.reduce((s, x) => s + (x.compte.devise === 'CDF' ? x.natif : taux ? centimesEnFrancs(x.natif, taux) : x.fcHistorique), 0);
   const compte = useCompte(totalFC);
+  // Premier salaire noté depuis moins d'un mois, et aucun l'an passé : rappel d'affiliation (AM n° 146, art. 4 et 8).
+  const premiereDate = dossier.operations.filter((o) => o.nature === 'salaires' && !o.annule).map((o) => o.date).sort()[0];
+  const premierSalarie = Boolean(
+    premiereDate && !chargement.naturesAnterieures.includes('salaires') && (Date.parse(aujourdhui) - Date.parse(premiereDate)) / 86_400_000 <= 30,
+  );
   const nomMois = mois(Number(dateRef.slice(5, 7)));
 
   return (
@@ -108,8 +115,14 @@ export function Accueil() {
 
       {aujourdhui > chargement.exercice.fin && <FinAnnee />}
 
-      {(vue.anomalies.length > 0 || prochaine) && (
+      {(vue.anomalies.length > 0 || prochaine || premierSalarie) && (
         <div>
+          {premierSalarie && (
+            <Link href="/echeances" className="alerte a_revoir">
+              <span className="point" aria-hidden="true" />
+              <span>{t('alerte.premierSalarie')}</span>
+            </Link>
+          )}
           {vue.anomalies.map((a) => {
             const alerte = ALERTES[a.code];
             return alerte ? (

@@ -6,13 +6,28 @@
 import { ajouterJours, ecartJours } from '../moteur/dates';
 import type { DateISO } from '../moteur/types';
 
-export type Formule = 'essentiel' | 'suivi' | 'expert';
+/**
+ * Formules vendues par TRK Consulting. Les missions de l'expert-comptable partenaire n'en font pas partie :
+ * il les facture et les encaisse lui-même (loi n° 15/002, art. 50 : honoraires « exclusifs de toute autre
+ * rémunération, même indirecte, d'un tiers »). La base refuse toute nouvelle formule « expert »
+ * (supabase/migrations/20261101_sans_formule_expert.sql).
+ */
+export type FormuleTRK = 'essentiel' | 'suivi';
+/** Formule lue dans la base : « expert » ne reste que sur d'anciennes lignes. */
+export type Formule = FormuleTRK | 'expert';
 
-/** Tarifs 2026 en francs congolais (page Mbongo Business). La formule avec l'expert est sur devis. */
-export const TARIFS: Record<Formule, number> = { essentiel: 25_000, suivi: 50_000, expert: 0 };
+export const FORMULES: readonly FormuleTRK[] = ['essentiel', 'suivi'];
+
+/** Tarifs 2026 en francs congolais (page Mbongo Business). */
+export const TARIFS: Record<FormuleTRK, number> = { essentiel: 25_000, suivi: 50_000 };
 export const MISE_EN_PLACE = 30_000;
 
-export const LIBELLE_FORMULE: Record<Formule, string> = { essentiel: 'Essentiel', suivi: 'Suivi', expert: "Avec l'expert-comptable" };
+export const LIBELLE_FORMULE: Record<Formule, string> = { essentiel: 'Essentiel', suivi: 'Suivi', expert: 'Ancienne formule (plus vendue)' };
+
+export const estFormuleTRK = (f: Formule | null | undefined): f is FormuleTRK => f === 'essentiel' || f === 'suivi';
+
+/** Tarif mensuel d'une formule de TRK ; 0 pour une ancienne formule ou aucune. */
+export const tarifMensuel = (f: Formule | null | undefined): number => (estFormuleTRK(f) ? TARIFS[f] : 0);
 
 /** Fin d'un abonnement de `mois` mois qui commence le `debut` : la veille du même jour, `mois` mois plus tard. */
 export function finAbonnement(debut: DateISO, mois: number): DateISO {

@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { afficherTelephone, debutRenouvellement, etatAbonnement, finAbonnement, normaliserTelephone } from '../../src/console/abonnement';
+import {
+  afficherTelephone,
+  debutRenouvellement,
+  estFormuleTRK,
+  etatAbonnement,
+  finAbonnement,
+  FORMULES,
+  LIBELLE_FORMULE,
+  normaliserTelephone,
+  TARIFS,
+  tarifMensuel,
+} from '../../src/console/abonnement';
 
 describe('abonnements de la console', () => {
   it('un mois finit la veille du même jour, le mois suivant', () => {
@@ -35,5 +46,17 @@ describe('abonnements de la console', () => {
     expect(normaliserTelephone('00243983510725')).toBe('+243983510725');
     expect(normaliserTelephone('12')).toBeNull();
     expect(afficherTelephone('+243983510725')).toBe('+243 983 510 725');
+  });
+
+  it("ne vend que les formules de TRK : l'expert-comptable facture lui-même (loi n° 15/002, art. 50)", () => {
+    expect(FORMULES).toEqual(['essentiel', 'suivi']);
+    expect(Object.keys(TARIFS)).toEqual(['essentiel', 'suivi']);
+    expect(FORMULES.map((f) => LIBELLE_FORMULE[f]).join(' ')).not.toMatch(/expert/i);
+    // Une ancienne ligne « expert » se lit encore, sans tarif.
+    expect(estFormuleTRK('expert')).toBe(false);
+    expect(tarifMensuel('expert')).toBe(0);
+    expect(LIBELLE_FORMULE.expert).toBe('Ancienne formule (plus vendue)');
+    expect(tarifMensuel('suivi')).toBe(50_000);
+    expect(tarifMensuel(null)).toBe(0);
   });
 });

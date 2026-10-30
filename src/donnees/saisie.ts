@@ -5,6 +5,7 @@
  */
 import {
   encaisser,
+  situationTiers,
   NATURES_IMMOBILISATION,
   regler,
   valider,
@@ -143,6 +144,32 @@ export async function enregistrerReglement(
 }
 
 /**
+ * Déclare perdue une créance que le client ne paiera plus (client disparu, délai pour agir passé) : son encours
+ * tombe à zéro à cette date, la baisse passe dans la variation des créances (AUDCIF, art. 43 et 46). Ajout seulement :
+ * la facture reste, une ligne « perte » la suit. Un paiement reçu plus tard se note comme une autre recette.
+ */
+export async function declarerCreancePerdue(db: BaseMbongo, exerciceId: string, ligneId: string, date: DateISO): Promise<string> {
+  const { dossier, entreprise, exercice } = await chargerDossier(db, exerciceId);
+  if (exercice.statut === 'arrete' || exercice.statut === 'clos') {
+    throw new ErreurSaisie([`Les états ${exercice.annee} sont arrêtés par l'expert-comptable : plus de saisie sur cet exercice.`]);
+  }
+  if (date < exercice.debut || date > exercice.fin) throw new ErreurSaisie(["Date hors de l'exercice."]);
+  const situation = situationTiers(dossier, 'creance', date).find((x) => x.ligne.id === ligneId);
+  if (!situation) throw new ErreurSaisie(['Créance introuvable.']);
+  if (situation.ligne.perdueLe) throw new ErreurSaisie(['Cette créance est déjà déclarée perdue.']);
+  if (situation.encours <= 0) throw new ErreurSaisie(['Cette créance est déjà réglée.']);
+  const ligne = await db.tiers.get(ligneId);
+  if (!ligne) throw new ErreurSaisie(['Créance introuvable.']);
+  const trace: Trace = { entrepriseId: entreprise.id, auteur: await identifiantAppareil(db), creeLe: new Date().toISOString(), envoi: 'local' };
+  const id = nouvelId();
+  await db.transaction('rw', [db.tiers, db.fileEnvoi], async () => {
+    await db.tiers.add({ ...ligne, ...trace, id, date, perte: ligneId });
+    await db.fileEnvoi.add({ table: 'tiers', ligne: id, creeLe: trace.creeLe, tentatives: 0 });
+  });
+  return id;
+}
+
+/**
  * Une saisie annulée emporte ses mouvements de stock : chaque mouvement lié reçoit son inverse (correction).
  * Une vente annulée fait revenir la marchandise au coût moyen du moment.
  */
@@ -189,7 +216,9 @@ export async function annulerFacture(db: BaseMbongo, exerciceId: string, ligneId
   }
   const ligne = await db.tiers.get(ligneId);
   if (!ligne || ligne.annule) throw new ErreurSaisie(['Facture introuvable.']);
-  if ((await db.tiers.where('entrepriseId').equals(entreprise.id).toArray()).some((l) => l.annule === ligneId)) throw new ErreurSaisie(['Cette facture est déjà retirée.']);
+  const lignes = await db.tiers.where('entrepriseId').equals(entreprise.id).toArray();
+  if (lignes.some((l) => l.annule === ligneId)) throw new ErreurSaisie(['Cette facture est déjà retirée.']);
+  if (lignes.some((l) => l.perte === ligneId)) throw new ErreurSaisie(['Cette créance est déclarée perdue : elle ne se retire plus.']);
   if (ligne.date < exercice.debut) throw new ErreurSaisie(["Cette facture vient de l'année passée : elle ne peut plus être retirée."]);
   const paye = dossier.operations.filter((o) => o.reglementDe?.ligne === ligneId).reduce((x, o) => x + (o.annule ? -o.montant : o.montant), 0);
   if (paye > 0) throw new ErreurSaisie(["Un paiement est déjà noté sur cette facture. Annulez-le d'abord dans le journal."]);

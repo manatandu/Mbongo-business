@@ -198,9 +198,9 @@ section { padding-block: clamp(56px, 9vw, 104px); }
 .etapes .n { grid-row: span 2; font-size: 2rem; line-height: 1; font-weight: 800; font-stretch: 122%; color: var(--or-texte); }
 .etapes p { color: var(--muted); }
 
-/* Formules : trois colonnes réglées, la formule Suivi en bleu nuit */
+/* Formules : deux colonnes réglées, la formule Suivi en bleu nuit */
 .formules { display: grid; gap: 18px; }
-@media (min-width: 900px) { .formules { grid-template-columns: repeat(3, 1fr); gap: 0; align-items: stretch; } }
+@media (min-width: 900px) { .formules { grid-template-columns: repeat(2, 1fr); gap: 0; align-items: stretch; } }
 .formule { padding: 22px 0 26px; border-top: 2px solid var(--nuit); display: grid; gap: 14px; grid-template-rows: auto auto 1fr auto; }
 @media (min-width: 900px) { .formule { padding-inline: 24px; } .formule:first-child { padding-left: 0; } .formule:last-child { padding-right: 0; } }
 .formule .prix { color: var(--muted); }
@@ -218,6 +218,18 @@ section { padding-block: clamp(56px, 9vw, 104px); }
 .formule.avant li::before { border-color: var(--or); }
 .tarifs-note { margin-top: 22px; font-size: .92rem; color: var(--muted); }
 .formules-intro strong { color: var(--fg); white-space: nowrap; }
+/* L'expert-comptable partenaire : à part des formules de TRK, sans prix ni devis */
+.partenaire { margin-top: 30px; padding: 18px 20px; border-left: 4px solid var(--or); background: var(--papier); display: grid; gap: 8px; max-width: 72ch; }
+.partenaire h3 { color: var(--nuit); }
+.partenaire p { color: var(--muted); }
+
+/* Vos données */
+.donnees { margin: 0; border-top: 2px solid var(--nuit); }
+.donnees div { display: grid; gap: 4px; padding: 14px 0; border-bottom: 1px solid var(--regle); }
+@media (min-width: 640px) { .donnees div { grid-template-columns: 9.5rem 1fr; gap: 16px; } }
+.donnees dt { font-weight: 700; color: var(--nuit); }
+.donnees dd { margin: 0; color: var(--muted); max-width: 62ch; }
+.donnees dd a { color: var(--nuit); font-weight: 700; }
 
 /* Questions */
 .questions { border-top: 2px solid var(--nuit); }
@@ -311,6 +323,7 @@ footer a:hover { color: #fff; }
           <a href="#public">Pour qui</a>
           <a href="#formules">Formules</a>
           <a href="#questions">Questions</a>
+          <a href="#donnees">Vos données</a>
           <a href="https://mbongo-business.web.app/">Ouvrir l'application</a>
           <a href="../">TRK Consulting</a>
         </nav>
@@ -371,7 +384,7 @@ footer a:hover { color: #fff; }
         <article class="fonction">
           <span class="icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
           <h3>Pièces justificatives</h3>
-          <p>La facture photographiée reste attachée à l'opération. Les opérations sans pièce sont signalées.</p>
+          <p>La facture photographiée reste attachée à l'opération ; la pièce papier reste l'original. Les opérations sans pièce sont signalées.</p>
         </article>
         <article class="fonction">
           <span class="icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></span>
@@ -381,7 +394,7 @@ footer a:hover { color: #fff; }
         <article class="fonction">
           <span class="icone"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v5M15 4v5"/></svg></span>
           <h3>Échéancier</h3>
-          <p>Rappels des échéances fiscales et sociales applicables, dont l'IRPP des micro et petites entreprises.</p>
+          <p>Rappels des dates des obligations fiscales et sociales, dont l'IRPP des micro et petites entreprises, sans montant ni déclaration.</p>
         </article>
       </div>
     </div>
@@ -446,9 +459,9 @@ footer a:hover { color: #fff; }
         <p>Boutiques, dépôts, ateliers et prestataires dont le chiffre d'affaires annuel reste sous le seuil de leur secteur.</p>
       </div>
       <div class="seuils">
-        <div class="seuil"><span class="secteur">Négoce</span><span class="montant">60 M<small>FCFA</small></span><span class="equiv">soit environ 240 M CDF</span><p>Alimentations, dépôts, boutiques, quincailleries.</p></div>
-        <div class="seuil"><span class="secteur">Artisanat</span><span class="montant">40 M<small>FCFA</small></span><span class="equiv">soit environ 160 M CDF</span><p>Couture, menuiserie, soudure, boulangerie.</p></div>
-        <div class="seuil"><span class="secteur">Services</span><span class="montant">30 M<small>FCFA</small></span><span class="equiv">soit environ 120 M CDF</span><p>Coiffure, transport, réparation, restauration.</p></div>
+        <div class="seuil"><span class="secteur">Négoce</span><span class="montant">60 M<small>FCFA</small></span><span class="equiv">soit environ 238 M CDF</span><p>Alimentations, dépôts, boutiques, quincailleries.</p></div>
+        <div class="seuil"><span class="secteur">Artisanat</span><span class="montant">40 M<small>FCFA</small></span><span class="equiv">soit environ 158 M CDF</span><p>Couture, menuiserie, soudure, boulangerie.</p></div>
+        <div class="seuil"><span class="secteur">Services</span><span class="montant">30 M<small>FCFA</small></span><span class="equiv">soit environ 119 M CDF</span><p>Coiffure, transport, réparation, restauration.</p></div>
       </div>
       <p class="note-public">Seuils de chiffre d'affaires annuel hors taxes fixés par l'AUDCIF révisé (art. 13), en francs CFA. Le logiciel les applique en francs congolais (équivalents 2026, revus chaque année) et signale leur approche ; le passage au Système normal se fait avec l'expert-comptable partenaire.</p>
     </div>
@@ -460,10 +473,10 @@ footer a:hover { color: #fff; }
         <h2>De l'installation à la clôture</h2>
       </div>
       <ol class="etapes">
-        <li><span class="n">1</span><h3>Installation</h3><p>Sur le téléphone du commerçant, depuis le navigateur, avec les soldes d'ouverture.</p></li>
+        <li><span class="n">1</span><h3>Installation</h3><p>Sur le téléphone du commerçant, depuis le navigateur. Le commerçant saisit lui-même ses soldes d'ouverture.</p></li>
         <li><span class="n">2</span><h3>Formation</h3><p>Prise en main sur le lieu d'activité, en français ou en lingala.</p></li>
-        <li><span class="n">3</span><h3>Suivi</h3><p>Contrôle mensuel des saisies et des pièces par TRK Consulting.</p></li>
-        <li><span class="n">4</span><h3>Clôture</h3><p>Inventaire, taux du dollar au 31 décembre, arrêté par l'expert-comptable.</p></li>
+        <li><span class="n">3</span><h3>Suivi</h3><p>Chaque mois, TRK Consulting contrôle les pièces et les saisies et signale les points à revoir.</p></li>
+        <li><span class="n">4</span><h3>Clôture</h3><p>Inventaire fait par le commerçant, taux du dollar au 31 décembre, arrêté par l'expert-comptable.</p></li>
       </ol>
     </div>
   </section>
@@ -472,7 +485,7 @@ footer a:hover { color: #fff; }
     <div class="cadre">
       <div class="tete formules-intro">
         <h2>Formules d'accompagnement</h2>
-        <p>Proposées par TRK Consulting. Le logiciel est inclus dans chaque formule. La mise en place est facturée une fois : <strong>30 000 CDF</strong> (installation, reprise des soldes d'ouverture, formation initiale).</p>
+        <p>Proposées par TRK Consulting. Le logiciel est inclus dans chaque formule. La mise en place est facturée une fois : <strong>30 000 CDF</strong> (installation, formation initiale, aide au commerçant pour saisir ses soldes d'ouverture).</p>
       </div>
       <div class="formules">
         <article class="formule">
@@ -495,18 +508,12 @@ footer a:hover { color: #fff; }
           </ul>
           <a class="bouton bouton-or" href="#contact">Demander un rendez-vous</a>
         </article>
-        <article class="formule">
-          <h3>Avec l'expert-comptable</h3>
-          <p class="prix"><b>Sur devis</b>établi par l'expert-comptable partenaire</p>
-          <ul>
-            <li>Arrêté et, le cas échéant, certification des états</li>
-            <li>Assistance et déclarations fiscales</li>
-          </ul>
-          <p class="note">Missions réalisées par l'expert-comptable partenaire, inscrit à l'Ordre national.</p>
-          <a class="bouton bouton-trait" href="#contact">Demander un devis</a>
-        </article>
       </div>
       <p class="tarifs-note">Tarifs 2026, en francs congolais.</p>
+      <aside class="partenaire" aria-labelledby="partenaire-titre">
+        <h3 id="partenaire-titre">Pour l'arrêté des états et le fiscal</h3>
+        <p>L'expert-comptable partenaire, inscrit à l'Ordre national des experts-comptables, travaille avec ses propres conditions. Il arrête les états et s'occupe du fiscal, et il facture lui-même. Ces missions ne font pas partie des formules de TRK Consulting : TRK vous met en relation.</p>
+      </aside>
     </div>
   </section>
 
@@ -519,10 +526,29 @@ footer a:hover { color: #fff; }
         <details class="q"><summary>Une connexion internet est-elle nécessaire ?</summary><p>Seulement pour la première ouverture. Ensuite, l'application s'ouvre et enregistre sans réseau.</p></details>
         <details class="q"><summary>Quel téléphone faut-il ?</summary><p>Un téléphone Android avec Chrome, ou un iPhone avec Safari. L'application s'installe sur l'écran d'accueil depuis le navigateur, sans passer par un magasin d'applications, et pèse environ 200 Ko.</p></details>
         <details class="q"><summary>TRK Consulting tient-il la comptabilité à ma place ?</summary><p>Non. Le commerçant saisit lui-même ses opérations ; TRK Consulting le forme et contrôle ses saisies. La tenue déléguée relève de l'expert-comptable partenaire.</p></details>
-        <details class="q"><summary>Où sont conservées les données ?</summary><p>Sur le téléphone du commerçant. Une copie de sauvegarde peut être téléchargée à tout moment depuis les réglages.</p></details>
-        <details class="q"><summary>Je tiens déjà un cahier de caisse.</summary><p>Les totaux des mois passés sont reportés lors de la mise en place, puis la saisie se poursuit dans l'application.</p></details>
+        <details class="q"><summary>Où sont conservées les données ?</summary><p>Sur le téléphone du commerçant. Si le téléphone est relié à TRK Consulting par le code client, les saisies sont aussi envoyées au serveur de TRK quand il y a du réseau. Les noms et adresses des clients du commerçant ne sont jamais envoyés, ni les photos. Une copie de sauvegarde peut être téléchargée à tout moment depuis les réglages ; elle contient les clients du commerçant : ne la partagez pas. Détail dans « Vos données », ci-dessous.</p></details>
+        <details class="q"><summary>Je tiens déjà un cahier de caisse.</summary><p>Lors de la mise en place, vous reportez vous-même les totaux des mois passés, avec l'aide de TRK Consulting, puis la saisie se poursuit dans l'application.</p></details>
         <details class="q"><summary>Je vends aussi en dollars.</summary><p>Un compte en dollars est tenu à part, avec le taux du jour sur chaque opération. Les états sont présentés en francs congolais.</p></details>
       </div>
+    </div>
+  </section>
+
+  <section id="donnees" style="padding-top:0">
+    <div class="cadre registre-page">
+      <div class="tete">
+        <h2>Vos données</h2>
+        <p>Ce que deviennent les informations que vous saisissez dans Mbongo Business.</p>
+      </div>
+      <dl class="donnees">
+        <div><dt>Qui en répond</dt><dd>TRK Consulting, Kinshasa.</dd></div>
+        <div><dt>Sur le téléphone</dt><dd>Tout ce que vous saisissez reste sur votre téléphone : opérations, clients, fournisseurs, photos des pièces.</dd></div>
+        <div><dt>Ce qui est envoyé</dt><dd>Rien, tant que votre téléphone n'est pas relié par le code client. Une fois relié : vos opérations (dates, montants, comptes), vos ventes et achats à crédit et la fiche de votre entreprise. Les noms et adresses de vos clients et fournisseurs sont remplacés par un code ; les photos ne partent pas. N'écrivez pas le nom d'un client dans le libellé d'une opération. TRK garde aussi votre fiche d'abonné : nom, responsable, téléphone, commune.</dd></div>
+        <div><dt>Où</dt><dd>Sur un serveur loué par TRK Consulting à la société Supabase, en Allemagne, hors de la RDC.</dd></div>
+        <div><dt>Pourquoi</dt><dd>Pour contrôler vos pièces et vos saisies, pour que l'expert-comptable partenaire arrête vos états, pour gérer votre abonnement et pour les rappels SMS, si vous les acceptez. TRK ne vend ni ne prête ces données.</dd></div>
+        <div><dt>Combien de temps</dt><dd>Vos saisies : dix ans, la durée que la loi fixe pour les livres comptables (AUDCIF, art. 24), puis elles sont effacées. Votre fiche, vos SMS et le suivi : deux ans après la fin de votre dernier abonnement.</dd></div>
+        <div><dt>Effacement</dt><dd>Demandez-le à TRK sur WhatsApp. TRK délie votre téléphone, qui n'envoie plus rien, et efface dans les 30 jours votre fiche, vos SMS et le suivi. Vos saisies et les paiements de vos abonnements restent gardés jusqu'au bout de la durée légale. Pour ne plus recevoir de SMS, répondez STOP.</dd></div>
+        <div><dt>Contact</dt><dd><a href="https://wa.me/243983510725">+243 983 510 725</a> (WhatsApp)</dd></div>
+      </dl>
     </div>
   </section>
 
@@ -558,6 +584,7 @@ footer a:hover { color: #fff; }
         <li><a href="https://mbongo-business.web.app/">Application</a></li>
         <li><a href="https://mbongo-business.web.app/bureau.html">Bureau</a></li>
         <li><a href="#formules">Formules</a></li>
+        <li><a href="#donnees">Vos données</a></li>
       </ul>
     </div>
     <div>

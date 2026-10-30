@@ -7,7 +7,7 @@ import { compte, preparer, signe, type Contexte } from './contexte';
 import { ecartJours } from './dates';
 import { estMontant, estTaux, versFC } from './montants';
 import { verifierDossier } from './validation';
-import type { DateISO, DossierExercice, GenreTiers, Montant, Operation, PieceTiers } from './types';
+import type { DateISO, DossierExercice, GenreTiers, Montant, Operation, PieceTiers, SecteurSMT } from './types';
 
 export const lignesTiers = (d: DossierExercice, genre: GenreTiers): PieceTiers[] =>
   genre === 'creance' ? d.creances : d.dettes;
@@ -24,31 +24,40 @@ export function regleA(ctx: Contexte, genre: GenreTiers, ligne: PieceTiers, date
 
 /** Reste dû à une date. Une facture postérieure à la date n'existe pas encore. */
 export function encoursA(ctx: Contexte, genre: GenreTiers, ligne: PieceTiers, date: DateISO): Montant {
-  if (ligne.date > date) return 0;
+  if (ligne.date > date || (ligne.perdueLe && ligne.perdueLe <= date)) return 0;
   return ligne.montant - regleA(ctx, genre, ligne, date);
 }
 
 /** Reste dû au premier jour de l'exercice. */
 export function encoursOuverture(ctx: Contexte, ligne: PieceTiers): Montant {
+  if (ligne.perdueLe && ligne.perdueLe < ctx.dossier.exercice.debut) return 0;
   return ligne.date < ctx.dossier.exercice.debut ? ligne.montant - (ligne.regleAvant ?? 0) : 0;
 }
 
-/** Valeur en francs d'un encours. Sans taux de valorisation, la facture garde son propre taux. */
-export function valeurTiersFC(montant: Montant, ligne: PieceTiers, taux: number | null): Montant {
-  return versFC(montant, ligne.devise, taux ?? ligne.taux);
+/**
+ * Valeur en francs d'un encours. Sans taux de valorisation, la facture garde son propre taux.
+ * Avec un taux (clôture, ouverture) et le genre, prudence de l'AUDCIF, art. 54 : « Les gains latents n'interviennent
+ * pas dans la formation du résultat ». Une créance en dollars vaut la plus petite des deux valeurs (taux de la facture,
+ * taux de clôture), une dette la plus grande : une perte probable est prise, un gain latent ne l'est pas.
+ */
+export function valeurTiersFC(montant: Montant, ligne: PieceTiers, taux: number | null, genre?: GenreTiers): Montant {
+  const courant = versFC(montant, ligne.devise, taux ?? ligne.taux);
+  if (!genre || taux === null || ligne.devise !== 'USD' || ligne.taux === null) return courant;
+  const historique = versFC(montant, 'USD', ligne.taux);
+  return genre === 'creance' ? Math.min(courant, historique) : Math.max(courant, historique);
 }
 
 export function totalOuvertureFC(ctx: Contexte, genre: GenreTiers): Montant {
   let total = 0;
   for (const l of lignesTiers(ctx.dossier, genre)) {
-    total += valeurTiersFC(encoursOuverture(ctx, l), l, ctx.dossier.tauxOuverture);
+    total += valeurTiersFC(encoursOuverture(ctx, l), l, ctx.dossier.tauxOuverture, genre);
   }
   return total;
 }
 
 export function totalFC(ctx: Contexte, genre: GenreTiers, date: DateISO, tauxValorisation: number | null): Montant {
   let total = 0;
-  for (const l of lignesTiers(ctx.dossier, genre)) total += valeurTiersFC(encoursA(ctx, genre, l, date), l, tauxValorisation);
+  for (const l of lignesTiers(ctx.dossier, genre)) total += valeurTiersFC(encoursA(ctx, genre, l, date), l, tauxValorisation, genre);
   return total;
 }
 
@@ -67,8 +76,8 @@ export function note3ParTiers(ctx: Contexte, genre: GenreTiers, date: DateISO, t
   for (const l of lignesTiers(ctx.dossier, genre)) {
     const cle = l.nom.trim().toLowerCase();
     const ligne = parNom.get(cle) ?? { nom: l.nom.trim(), cloture: 0, ouverture: 0, variation: null };
-    ligne.cloture += valeurTiersFC(encoursA(ctx, genre, l, date), l, tauxValorisation);
-    ligne.ouverture += valeurTiersFC(encoursOuverture(ctx, l), l, ctx.dossier.tauxOuverture);
+    ligne.cloture += valeurTiersFC(encoursA(ctx, genre, l, date), l, tauxValorisation, genre);
+    ligne.ouverture += valeurTiersFC(encoursOuverture(ctx, l), l, ctx.dossier.tauxOuverture, genre);
     parNom.set(cle, ligne);
   }
   return [...parNom.values()]
@@ -104,15 +113,21 @@ export function situationDepuisContexte(ctx: Contexte, genre: GenreTiers, date: 
 }
 
 /**
- * Date à partir de laquelle la créance sur un particulier ne se réclame plus en justice : un an après la vente
- * (Code civil, livre III, art. 653). Une reconnaissance de dette ou une citation interrompt ce délai (art. 638 et 640).
- * Null pour un client commerçant : cinq ans (AUDCG, art. 16), hors de portée d'une petite boutique.
+ * Date à partir de laquelle la créance ne se réclame plus en justice.
+ * - Client particulier : un an après la vente (Code civil, livre III, art. 653). Une reconnaissance de dette ou une
+ *   citation interrompt ce délai (art. 638 et 640).
+ * - Client commerçant, vente de marchandises : deux ans (AUDCG, art. 301 ; art. 234 : ventes entre commerçants).
+ * - Client commerçant, services : cinq ans (AUDCG, art. 16), les services n'étant pas une vente commerciale (art. 235 b).
+ * Le délai part de la vente : le jour où le vendeur peut agir (AUDCG, art. 17).
  */
-export function prescription(l: PieceTiers): DateISO | null {
-  if (l.client === 'commercant') return null;
+export function prescription(l: PieceTiers, secteur: SecteurSMT = 'negoce'): DateISO {
+  const ans = l.client !== 'commercant' ? 1 : secteur === 'services' ? 5 : 2;
   const [a, m, j] = l.date.split('-');
-  return `${Number(a) + 1}-${m}-${m === '02' && j === '29' ? '28' : j}`;
+  return `${Number(a) + ans}-${m}-${m === '02' && j === '29' ? '28' : j}`;
 }
+
+/** Durée du délai, pour l'afficher. */
+export const delaiAns = (l: PieceTiers, secteur: SecteurSMT = 'negoce'): 1 | 2 | 5 => (l.client !== 'commercant' ? 1 : secteur === 'services' ? 5 : 2);
 
 export interface DossierCreance {
   ligne: PieceTiers;
@@ -121,7 +136,7 @@ export interface DossierCreance {
   regle: Montant;
   reste: Montant;
   ageJours: number;
-  prescription: DateISO | null;
+  prescription: DateISO;
 }
 
 /** Tout ce qu'il faut pour réclamer une créance : la facture, les paiements, le reste dû, le délai. */
@@ -134,7 +149,7 @@ export function dossierCreance(dossier: DossierExercice, ligneId: string, date: 
     .filter((op) => op.date <= date && op.reglementDe?.genre === 'creance' && op.reglementDe.ligne === ligneId)
     .map((op) => ({ date: op.date, compte: compte(ctx, op.compte).libelle, montant: signe(op) * op.montant }));
   const regle = regleA(ctx, 'creance', ligne, date);
-  return { ligne, paiements, regle, reste: ligne.montant - regle, ageJours: ecartJours(ligne.date, date), prescription: prescription(ligne) };
+  return { ligne, paiements, regle, reste: ligne.montant - regle, ageJours: ecartJours(ligne.date, date), prescription: prescription(ligne, dossier.entreprise.secteur) };
 }
 
 export interface ParametresReglement {
