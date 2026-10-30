@@ -1,5 +1,5 @@
-/** Échéances fiscales et sociales des douze prochains mois. Des rappels : Mbongo ne calcule ni ne déclare. */
-import { useMemo } from 'react';
+/** Échéances fiscales et sociales. Des rappels : Mbongo ne calcule ni ne déclare. Les deux mois qui viennent d'abord. */
+import { useMemo, useState } from 'react';
 import { echeances, profilEcheancier, type Echeance } from '../../donnees/echeancier';
 import { useLangue, type Cle } from '../../i18n';
 import { fmtDate } from '../../ui/format';
@@ -21,15 +21,30 @@ export function LigneEcheance({ e }: { e: Echeance }) {
   );
 }
 
+/** Une ligne par date : « Retenue sur loyer · ONEM » plutôt que deux lignes le même jour. */
+function parDate(liste: Echeance[]): { date: string; cles: Echeance['cle'][] }[] {
+  const groupes: { date: string; cles: Echeance['cle'][] }[] = [];
+  for (const e of liste) {
+    const dernier = groupes[groupes.length - 1];
+    if (dernier?.date === e.date) dernier.cles.push(e.cle);
+    else groupes.push({ date: e.date, cles: [e.cle] });
+  }
+  return groupes;
+}
+
 export function Echeances() {
   const { t } = useLangue();
-  const liste = useEcheances(365);
+  const [annee, setAnnee] = useState(false);
+  const liste = useEcheances(annee ? 365 : 60);
   return (
     <>
       <p className="aide">{t('echeances.aide')}</p>
       <div className="liste">
-        {liste.map((e) => (
-          <LigneEcheance key={`${e.date}-${e.cle}`} e={e} />
+        {parDate(liste).map((g) => (
+          <div className="ligne" key={g.date}>
+            <div className="l">{g.cles.map((c) => t(`echeance.${c}` as Cle)).join(' · ')}</div>
+            <b className="num">{fmtDate(g.date)}</b>
+          </div>
         ))}
         {liste.length === 0 && (
           <div className="ligne">
@@ -37,6 +52,11 @@ export function Echeances() {
           </div>
         )}
       </div>
+      {!annee && (
+        <button className="bouton discret" onClick={() => setAnnee(true)}>
+          {t('echeances.annee')}
+        </button>
+      )}
     </>
   );
 }

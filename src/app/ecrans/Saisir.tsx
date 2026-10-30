@@ -473,11 +473,15 @@ export function Saisir() {
           <span>{t('saisir.papier')}</span>
         </label>
       )}
+      {/* Report d'un total du cahier : utile au démarrage seulement, rangé à part. */}
       {!credit && type !== 'transfert' && (nature === 'ventes' || nature === 'achats_marchandises') && (
-        <label className="case">
-          <input type="checkbox" checked={reprise} onChange={(e) => setReprise(e.target.checked)} />
-          <span>{t('saisir.reprise')}</span>
-        </label>
+        <details className="replie" open={reprise || undefined}>
+          <summary>{t('saisir.options')}</summary>
+          <label className="case">
+            <input type="checkbox" checked={reprise} onChange={(e) => setReprise(e.target.checked)} />
+            <span>{t('saisir.reprise')}</span>
+          </label>
+        </details>
       )}
 
       <Erreurs messages={erreurs} />

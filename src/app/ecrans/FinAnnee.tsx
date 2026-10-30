@@ -1,11 +1,9 @@
 /**
- * Fin d'année, sur l'accueil : l'inventaire extra-comptable des quatre éléments du Titre X (créances et dettes,
- * stock, matériel acheté ou vendu, emprunt), puis l'année suivante. Mbongo fait les listes ; le commerçant confirme
- * chacune d'un toucher, la date est gardée et le récapitulatif s'imprime comme pièce justificative.
+ * Fin d'année, sur l'accueil : l'inventaire extra-comptable du Titre X (stock compté, puis créances et dettes,
+ * matériel, emprunt vérifiés d'une seule case datée), puis l'année suivante.
  */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useMemo, useState } from 'react';
-import { calculerEtats } from '../../moteur';
+import { useState } from 'react';
 import { ecrireReglage, lireReglage } from '../../donnees/reglages';
 import { Link } from 'wouter';
 import { ouvrirExerciceSuivant, tauxClotureDemande } from '../../donnees/exercice';
@@ -27,29 +25,15 @@ export function FinAnnee() {
   const [occupe, setOccupe] = useState(false);
   const stockFait = exercice.stockFinal !== null;
 
-  // Les trois autres éléments de l'inventaire, à la clôture.
+  // Les trois autres éléments de l'inventaire (Titre X) : une seule case, datée.
   const cle = `inventaireQuatre:${exercice.id}`;
   const enBase = useLiveQuery(() => lireReglage<Record<string, string>>(db, cle, {}), [cle]);
-  // Copie locale : la case suit le doigt tout de suite, et deux appuis rapides ne s'écrasent pas.
+  // Copie locale : la case suit le doigt tout de suite.
   const [local, setLocal] = useState<Record<string, string> | null>(null);
   const confirmes = local ?? enBase ?? {};
-  const elements = useMemo(() => {
-    const d = chargement.dossier;
-    const e = calculerEtats(d, { auDate: exercice.fin });
-    const ouvertes = (l: { perdueLe?: string }) => !l.perdueLe;
-    const achetes = d.immobilisations.filter((i) => i.date >= exercice.debut && i.date <= exercice.fin);
-    const sortis = d.immobilisations.filter((i) => i.sortie && i.sortie.date >= exercice.debut && i.sortie.date <= exercice.fin);
-    return [
-      { cle: 'tiers', texte: t('fin.inv.tiers', { creances: fmtMontant(e.bilan.actif.creances, 'CDF'), dettes: fmtMontant(e.bilan.passif.dettes, 'CDF'), n: d.creances.filter(ouvertes).length + d.dettes.length }) },
-      { cle: 'materiel', texte: t('fin.inv.materiel', { achetes: achetes.length, sortis: sortis.length }) },
-      { cle: 'emprunt', texte: t('fin.inv.emprunt', { reste: fmtMontant(e.bilan.passif.emprunt, 'CDF') }) },
-    ];
-  }, [chargement.dossier, exercice, t]);
-  const tousConfirmes = elements.every((x) => confirmes[x.cle]);
-  const confirmer = (k: string, oui: boolean) => {
-    const n = { ...confirmes };
-    if (oui) n[k] = aujourdhui;
-    else delete n[k];
+  const verifie = Boolean(confirmes.verifie);
+  const confirmer = (oui: boolean) => {
+    const n: Record<string, string> = oui ? { verifie: aujourdhui } : {};
     setLocal(n);
     void ecrireReglage(db, cle, n);
   };
@@ -78,13 +62,10 @@ export function FinAnnee() {
           {t('fin.stockFaire')}
         </Link>
       )}
-      {elements.map((x) => (
-        <label className="case" key={x.cle}>
-          <input type="checkbox" checked={Boolean(confirmes[x.cle])} onChange={(e) => confirmer(x.cle, e.target.checked)} />
-          <span>{x.texte}</span>
-        </label>
-      ))}
-      <p className="aide">{t('fin.inv.aide')}</p>
+      <label className="case">
+        <input type="checkbox" checked={verifie} onChange={(e) => confirmer(e.target.checked)} />
+        <span>{t('fin.inv.verifie')}</span>
+      </label>
       {demandeTaux && (
         <label className="champ">
           {t('fin.dollar')}
@@ -92,7 +73,7 @@ export function FinAnnee() {
         </label>
       )}
       <Erreurs messages={erreurs} />
-      <button className="bouton" disabled={!stockFait || !tousConfirmes || occupe} onClick={() => void commencer()}>
+      <button className="bouton" disabled={!stockFait || !verifie || occupe} onClick={() => void commencer()}>
         {t('fin.commencer', { suivante })}
       </button>
     </section>

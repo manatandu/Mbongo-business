@@ -36,31 +36,6 @@ export function cumulAmortissements(i: Immobilisation, montant: Montant, annee: 
   return cumul;
 }
 
-export interface AnneeAmortissement {
-  annee: number;
-  dotation: Montant;
-  cumul: Montant;
-  valeurNette: Montant;
-}
-
-/**
- * Tableau d'amortissement d'un bien, année par année (Titre X, ch. 1 : « mode linéaire sans prorata temporis »).
- * S'arrête à l'année de la sortie si le bien est sorti avant la fin de sa durée.
- */
-export function tableauAmortissement(i: Immobilisation, montant: Montant): AnneeAmortissement[] {
-  if (!estAmortissable(i)) return [];
-  const debut = anneeDe(i.date);
-  const fin = Math.min(debut + i.duree - 1, i.sortie ? anneeDe(i.sortie.date) : Infinity);
-  const lignes: AnneeAmortissement[] = [];
-  let cumul = 0;
-  for (let a = debut; a <= fin; a++) {
-    const dotation = dotationAnnuelle(i, montant, a);
-    cumul += dotation;
-    lignes.push({ annee: a, dotation, cumul, valeurNette: montant - cumul });
-  }
-  return lignes;
-}
-
 export interface LigneRegistre {
   immobilisation: Immobilisation;
   montant: Montant;

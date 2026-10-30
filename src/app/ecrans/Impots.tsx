@@ -163,35 +163,6 @@ export function Impots() {
       </p>
       {/* Loi n° 23/053, art. 113 : on monte tout de suite, on ne redescend qu'après deux exercices sous la limite. */}
       {s.maintenu && <p className="aide">{t('impots.maintenu', { annee })}</p>}
-      {s.sansHistorique && <p className="aide">{t('impots.sansHistorique', { annee })}</p>}
-
-      {s.historique.length > 1 && (
-        <div className="registre">
-          {s.historique.map((h) => (
-            <div key={h.annee}>
-              <span className="n">{h.enCours ? t('impots.anneeEnCours', { annee: h.annee }) : h.annee}</span>
-              <span className="v num">{fmt(h.ca)}</span>
-              <span />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <h2 className="titre-section">{t('impots.seuils')}</h2>
-      <div className="barres">
-        {s.seuils.map((x) => (
-          <div className="barre" key={x.cle}>
-            <span>{t(`impots.seuil.${x.cle}` as Cle)}</span>
-            <span className="piste">
-              <span
-                className="rempli"
-                style={{ display: 'block', width: `${Math.min(100, x.part * 100)}%`, background: x.cle === 'micro' ? undefined : x.part >= 1 ? 'var(--out)' : x.part >= 0.8 ? 'var(--or)' : undefined }}
-              />
-            </span>
-            <span className="num">{fmt(x.montant)}</span>
-          </div>
-        ))}
-      </div>
       {/* Passer 25 M CDF change seulement le régime. La TVA (OL n° 10/001, art. 14) et 300 M CDF demandent l'expert. */}
       {s.tva === 'depasse' && <p className="erreur">{t('impots.tvaDepasse')}</p>}
       {s.tva === 'gardee' && <p className="erreur">{t('impots.tvaGardee', { annee: s.tvaAnnee ?? '' })}</p>}
@@ -199,7 +170,7 @@ export function Impots() {
 
       <h2 className="titre-section">{t('impots.echeances')}</h2>
       <div className="liste">
-        {s.echeances.slice(0, 3).map((e) => (
+        {s.echeances.slice(0, 2).map((e) => (
           <LigneEcheance key={`${e.date}-${e.cle}`} e={e} />
         ))}
         {s.echeances.length === 0 && <p className="aide">{t('impots.aucuneEcheance')}</p>}
@@ -225,32 +196,67 @@ export function Impots() {
         {t('impots.noter')}
       </Link>
 
-      <h2 className="titre-section">{t('impots.parMois')}</h2>
-      <div className="tableau">
-        <table>
-          <thead>
-            <tr>
-              <th>{t('impots.mois')}</th>
-              <th className="d">CDF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {s.parMois.map((m) => (
-              <tr key={m.mois}>
-                <td>{mois(Number(m.mois.slice(5, 7)))}</td>
-                <td className="d num">{fmt(m.ca)}</td>
-              </tr>
+      {/* Le détail sert surtout à l'expert-comptable : replié, et déplié à l'impression. */}
+      <details className="replie">
+        <summary>{t('impots.detail')}</summary>
+        <div className="replie-contenu">
+          {s.sansHistorique && <p className="aide">{t('impots.sansHistorique', { annee })}</p>}
+          {s.historique.length > 1 && (
+            <div className="registre">
+              {s.historique.map((h) => (
+                <div key={h.annee}>
+                  <span className="n">{h.enCours ? t('impots.anneeEnCours', { annee: h.annee }) : h.annee}</span>
+                  <span className="v num">{fmt(h.ca)}</span>
+                  <span />
+                </div>
+              ))}
+            </div>
+          )}
+
+          <h3 className="titre-section">{t('impots.seuils')}</h3>
+          <div className="barres">
+            {s.seuils.map((x) => (
+              <div className="barre" key={x.cle}>
+                <span>{t(`impots.seuil.${x.cle}` as Cle)}</span>
+                <span className="piste">
+                  <span
+                    className="rempli"
+                    style={{ display: 'block', width: `${Math.min(100, x.part * 100)}%`, background: x.cle === 'micro' ? undefined : x.part >= 1 ? 'var(--out)' : x.part >= 0.8 ? 'var(--or)' : undefined }}
+                  />
+                </span>
+                <span className="num">{fmt(x.montant)}</span>
+              </div>
             ))}
-            <tr className="total">
-              <td>{t('impots.total')}</td>
-              <td className="d num">{fmt(s.ca)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <button className="bouton discret pas-imprime" onClick={() => window.print()}>
-        {t('impots.imprimer')}
-      </button>
+          </div>
+
+          <h3 className="titre-section">{t('impots.parMois')}</h3>
+          <div className="tableau">
+            <table>
+              <thead>
+                <tr>
+                  <th>{t('impots.mois')}</th>
+                  <th className="d">CDF</th>
+                </tr>
+              </thead>
+              <tbody>
+                {s.parMois.map((m) => (
+                  <tr key={m.mois}>
+                    <td>{mois(Number(m.mois.slice(5, 7)))}</td>
+                    <td className="d num">{fmt(m.ca)}</td>
+                  </tr>
+                ))}
+                <tr className="total">
+                  <td>{t('impots.total')}</td>
+                  <td className="d num">{fmt(s.ca)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button className="bouton discret pas-imprime" onClick={() => window.print()}>
+            {t('impots.imprimer')}
+          </button>
+        </div>
+      </details>
 
       <Estimation regime={s.regime} ca={s.ca} />
 

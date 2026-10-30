@@ -10,7 +10,7 @@ export { valider, verifierDossier, ErreurDossier } from './validation';
 export { valoriser, LIBELLE_METHODE, type MethodeValorisation, type MouvementStock, type EtatArticle, type SortieValorisee } from './valorisation';
 export { soldesTresorerie, journalMensuel, ligneBilan, type SoldeCompte, type JournalTresorerie, type LigneJournal } from './tresorerie';
 export { situationTiers, encaisser, regler, prescription, delaiAns, dossierCreance, type SituationTiers, type ParametresReglement, type DossierCreance, type LigneNote3 } from './tiers';
-export { dotationAnnuelle, cumulAmortissements, estAmortissable, tableauAmortissement, type AnneeAmortissement } from './immobilisations';
+export { dotationAnnuelle, cumulAmortissements, estAmortissable } from './immobilisations';
 export { calculerEtats, type Etats, type CompteDeResultat, type Bilan, type Notes, type LigneNote1 } from './etats';
 export { controler, type Anomalie, type CodeAnomalie, type NiveauAnomalie, type ParametresControle } from './controles';
 export { PART_ALERTE_SEUIL, evaluerSeuil, chiffreAffairesEstime, type NiveauSeuil, type SeuilsSMT } from './seuils';

@@ -17,6 +17,7 @@ export function DossierCreance() {
   const { t } = useLangue();
   const { id } = useParams<{ id: string }>();
   const [signeLe, setSigneLe] = useState(dateRef);
+  const [signer, setSigner] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const x = useMemo(() => {
     try {
@@ -136,7 +137,12 @@ export function DossierCreance() {
 
       <div className="pas-imprime">
         {l.reconnueLe && <p>{t('dossier.reconnueLe', { date: fmtDate(l.reconnueLe), fin: fmtDate(x.prescription) })}</p>}
-        {modifiable && (
+        {modifiable && !signer && (
+          <button className="bouton discret" onClick={() => setSigner(true)}>
+            {t('dossier.aSigne')}
+          </button>
+        )}
+        {modifiable && signer && (
           <>
             <label className="champ">
               {t('dossier.signeLe')}

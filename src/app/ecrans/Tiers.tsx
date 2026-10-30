@@ -121,6 +121,8 @@ export function Tiers() {
   const [, aller] = useLocation();
   const genre: GenreTiers = params.genre === 'dettes' ? 'dette' : 'creance';
   const [ouverte, setOuverte] = useState<string | null>(null);
+  // Deux boutons à la vue ; le reste derrière « … » pour ne pas charger la liste.
+  const [autres, setAutres] = useState<string | null>(null);
 
   const situation = useMemo(() => situationTiers(chargement.dossier, genre, dateRef), [chargement.dossier, genre, dateRef]);
   const enCours = situation.filter((s) => s.encours > 0).sort((a, b) => (a.ligne.date < b.ligne.date ? -1 : 1));
@@ -165,22 +167,27 @@ export function Tiers() {
                 </button>
               )}
               {genre === 'creance' && ouverte !== s.ligne.id && (
-                <Link href={`/creance/${s.ligne.id}`} className="bouton discret petit">
-                  {t('tiers.dossier')}
-                </Link>
-              )}
-              {genre === 'creance' && ouverte !== s.ligne.id && (
                 <a href={lienRappel(s)} target="_blank" rel="noopener noreferrer" className="bouton discret petit">
                   {t('tiers.whatsapp')}
                 </a>
               )}
-              {modifiable && s.regle === 0 && s.ligne.date >= exercice.debut && ouverte !== s.ligne.id && (
+              {ouverte !== s.ligne.id && autres !== s.ligne.id && (genre === 'creance' || (modifiable && s.regle === 0 && s.ligne.date >= exercice.debut)) && (
+                <button className="bouton discret petit" aria-label={t('tiers.autres')} onClick={() => setAutres(s.ligne.id)}>
+                  …
+                </button>
+              )}
+              {genre === 'creance' && ouverte !== s.ligne.id && autres === s.ligne.id && (
+                <Link href={`/creance/${s.ligne.id}`} className="bouton discret petit">
+                  {t('tiers.dossier')}
+                </Link>
+              )}
+              {modifiable && s.regle === 0 && s.ligne.date >= exercice.debut && ouverte !== s.ligne.id && autres === s.ligne.id && (
                 <button className="bouton discret petit" onClick={() => void corriger(s)}>
                   {t('tiers.corriger')}
                 </button>
               )}
               {/* Après six mois sans paiement complet, le commerçant peut déclarer la créance perdue. */}
-              {modifiable && genre === 'creance' && s.ageJours > 180 && ouverte !== s.ligne.id && (
+              {modifiable && genre === 'creance' && s.ageJours > 180 && ouverte !== s.ligne.id && autres === s.ligne.id && (
                 <button className="bouton danger petit" onClick={() => void perdue(s)}>
                   {t('tiers.perdue')}
                 </button>

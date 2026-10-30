@@ -1,6 +1,6 @@
 /** Registre du matériel, du mobilier et des cautions (note 1), avec sortie du registre. */
 import { useMemo, useState } from 'react';
-import { calculerEtats, tableauAmortissement, type LigneNote1 } from '../../moteur';
+import { calculerEtats, type LigneNote1 } from '../../moteur';
 import { useLangue } from '../../i18n';
 import { ErreurSaisie, sortirImmobilisation } from '../../donnees/saisie';
 import { fmtDate, fmtMontant, lireMontant, lireTaux } from '../../ui/format';
@@ -87,39 +87,10 @@ function Sortie({ ligne, fermer }: { ligne: LigneNote1; fermer: () => void }) {
   );
 }
 
-/** Tableau d'amortissement du bien, en lecture seule (Titre X, ch. 1). */
-function TableauBien({ ligne }: { ligne: LigneNote1 }) {
-  const { chargement } = useDossier();
-  const { t } = useLangue();
-  const bien = chargement.dossier.immobilisations.find((i) => i.id === ligne.id);
-  if (!bien) return null;
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>{t('materiel.annee')}</th>
-          <th className="d">{t('materiel.dotation')}</th>
-          <th className="d">{t('materiel.reste')}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {tableauAmortissement(bien, ligne.montant).map((a) => (
-          <tr key={a.annee}>
-            <td>{a.annee}</td>
-            <td className="d num">{fmtMontant(a.dotation, 'CDF')}</td>
-            <td className="d num">{fmtMontant(a.valeurNette, 'CDF')}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
 export function Materiel() {
   const { chargement, dateRef } = useDossier();
   const { t } = useLangue();
   const [ouverte, setOuverte] = useState<string | null>(null);
-  const [tableau, setTableau] = useState<string | null>(null);
   const note1 = useMemo(() => calculerEtats(chargement.dossier, { auDate: dateRef }).notes.note1, [chargement.dossier, dateRef]);
 
   return (
@@ -151,12 +122,6 @@ export function Materiel() {
                 )
               )}
             </div>
-            {l.categorie !== 'caution' && (
-              <button className="bouton discret petit" aria-expanded={tableau === l.id} onClick={() => setTableau(tableau === l.id ? null : l.id)}>
-                {t('materiel.tableau')}
-              </button>
-            )}
-            {tableau === l.id && <TableauBien ligne={l} />}
             {ouverte === l.id && <Sortie ligne={l} fermer={() => setOuverte(null)} />}
           </div>
         ))}

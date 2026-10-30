@@ -117,11 +117,6 @@ export async function ajouterCompte(db: BaseMbongo, entrepriseId: string, exerci
 }
 
 /** Retire de l'appareil une entreprise et toutes ses données. Réservé aux données de démonstration. */
-/** N° RCCM ajouté ou corrigé après la création ; vide pour l'effacer. */
-export async function enregistrerRccm(db: BaseMbongo, entrepriseId: string, rccm: string): Promise<void> {
-  await db.entreprises.update(entrepriseId, { rccm: rccm.trim() || undefined });
-}
-
 export async function retirerEntreprise(db: BaseMbongo, entrepriseId: string): Promise<void> {
   const e = await db.entreprises.get(entrepriseId);
   if (!e) return;
