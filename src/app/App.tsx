@@ -58,6 +58,8 @@ function Coque() {
   const [chemin] = useLocation();
   const titre = TITRES.find(([p]) => chemin.startsWith(p))?.[1] ?? 'fenetre.accueil';
   const accueil = titre === 'fenetre.accueil';
+  // Pages ouvertes depuis « Plus » ou depuis une créance : une flèche ramène d'où l'on vient.
+  const retour = chemin.startsWith('/creance') ? '/clients' : ENTREES.some((e) => chemin.startsWith(e.href)) || chemin.startsWith('/achats') ? '/plus' : null;
   // Chaque écran s'ouvre en haut, pas à la hauteur où l'on avait laissé le précédent.
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -94,7 +96,14 @@ function Coque() {
         <section className="fenetre" key={titre}>
           {/* Sur l'accueil, la caisse tient lieu de titre. */}
           <h1 className={accueil ? 'fenetre-titre visuellement-cache' : 'fenetre-titre'}>
-            {t(titre)}
+            <span>
+              {retour && (
+                <Link href={retour} className="retour" aria-label={t('commun.retour')}>
+                  ‹
+                </Link>
+              )}
+              {t(titre)}
+            </span>
             <small>{t('fenetre.exercice', { annee: chargement.exercice.annee })}</small>
           </h1>
           <div className="fenetre-corps">

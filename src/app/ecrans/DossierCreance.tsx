@@ -4,7 +4,7 @@
  * Ce sont les éléments qu'exige une injonction de payer (AUPSRVE, art. 4). Le commerçant ou son avocat la dépose.
  */
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'wouter';
+import { useParams } from 'wouter';
 import { dossierCreance } from '../../moteur';
 import { ErreurSaisie, noterReconnaissance } from '../../donnees/saisie';
 import { useLangue } from '../../i18n';
@@ -46,14 +46,9 @@ export function DossierCreance() {
 
   return (
     <>
-      <div className="duo pas-imprime">
-        <Link href="/clients" className="bouton discret">
-          ← {t('commun.retour')}
-        </Link>
-        <button className="bouton" onClick={() => window.print()}>
-          {t('dossier.imprimer')}
-        </button>
-      </div>
+      <button className="bouton discret pas-imprime" onClick={() => window.print()}>
+        {t('dossier.imprimer')}
+      </button>
 
       <div className="doc">
         <h2>{t('dossier.titre')}</h2>

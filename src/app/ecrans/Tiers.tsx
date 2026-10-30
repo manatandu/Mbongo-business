@@ -160,7 +160,6 @@ export function Tiers() {
               <span>{s.ligne.facture || t('tiers.sansNumero')}</span>
               <Pastille ton={s.ageJours > 30 ? 'bad' : s.ageJours > 14 ? 'warn' : 'info'}>{t('tiers.jours', { n: s.ageJours })}</Pastille>
               {s.regle > 0 && <span>{t('tiers.reste', { reste: fmtMontant(s.encours, s.ligne.devise), total: fmtMontant(s.ligne.montant, s.ligne.devise) })}</span>}
-              {genre === 'creance' && <Pastille ton="info">{t(s.ligne.client === 'commercant' ? 'client.court.commercant' : 'client.court.particulier')}</Pastille>}
               {ouverte !== s.ligne.id && (
                 <button className="bouton petit" onClick={() => setOuverte(s.ligne.id)}>
                   {t(genre === 'creance' ? 'tiers.encaisser' : 'tiers.payer')}

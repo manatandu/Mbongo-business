@@ -89,7 +89,7 @@ export function Accueil() {
           <span>{fmtDate(dateRef)}</span>
         </div>
         {/* Plus le nombre est long, plus il se serre : il tient toujours sur une ligne. */}
-        <Link href="/journal" className="big num" style={{ fontSize: `min(64px, calc((100vw - 56px) / ${(0.58 * fmt(totalFC).length + 0.9).toFixed(2)}))` }} aria-label={fmtMontant(totalFC, 'CDF')}>
+        <Link href="/journal" className="big num" style={{ fontSize: `min(44px, calc((100vw - 48px) / ${(0.58 * fmt(totalFC).length + 0.9).toFixed(2)}))` }} aria-label={fmtMontant(totalFC, 'CDF')}>
           {fmt(compte)}
           <small>CDF</small>
         </Link>
@@ -123,7 +123,7 @@ export function Accueil() {
               <span>{t('alerte.premierSalarie')}</span>
             </Link>
           )}
-          {vue.anomalies.map((a) => {
+          {vue.anomalies.slice(0, prochaine || premierSalarie ? 1 : 2).map((a) => {
             const alerte = ALERTES[a.code];
             return alerte ? (
               <Link key={a.code} href={alerte.ecran} className={`alerte ${a.niveau}`}>
@@ -132,7 +132,7 @@ export function Accueil() {
               </Link>
             ) : null;
           })}
-          {prochaine && (
+          {prochaine && !premierSalarie && (
             <Link href="/echeances" className="alerte information">
               <span className="point" aria-hidden="true" />
               <span>
