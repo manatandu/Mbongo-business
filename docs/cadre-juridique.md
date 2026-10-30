@@ -28,3 +28,16 @@ Fondement : loi n° 15/002 du 12 février 2015 portant création et organisation
 | produit des tableaux de bord de gestion | bascule au Système normal au-delà des seuils SMT |
 
 Règle d'interface : le bureau n'a aucun moyen d'écrire dans les saisies du commerçant. L'assistant signale ce qui cloche ; le commerçant corrige depuis son téléphone. Seul l'expert-comptable partenaire arrête les états.
+
+
+## Estimation de l'impôt (décision d'octobre 2026)
+
+Texte lu : loi n° 15/002, art. 43 : sont réservés à l'expert-comptable inscrit « 6. donner les avis se rapportant à toutes les matières fiscales ; 7. assister les contribuables dans l'accomplissement de leurs obligations fiscales ; 8. s'assurer que la déclaration fiscale des tiers est correctement établie ». Art. 71 (rédaction 2018) : le non-inscrit qui effectue l'une de ces missions est puni de 3 mois à 5 ans d'emprisonnement et d'une amende ; pour une personne morale, 10 000 000 à 50 000 000 FC.
+
+Le risque tient surtout au point 7, rédigé largement. L'estimation est gardée parce que :
+1. c'est le commerçant qui l'ouvre et la fait, sur ses propres chiffres, avec les taux écrits dans la loi ;
+2. elle est marquée « estimation, pas une déclaration » et renvoie à l'expert partenaire ;
+3. elle ne choisit pas de régime et ne cherche pas à réduire l'impôt (point 6) ;
+4. l'équipe de TRK ne commente pas le montant avec le client : règle à écrire dans la convention et dans la formation des assistants.
+
+Aucun texte lu ne tranche le cas d'un logiciel : à faire valider par écrit par l'expert partenaire ou l'encadreur avant un pilote.
