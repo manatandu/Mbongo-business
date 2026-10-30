@@ -218,6 +218,12 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
 .liste-comptes li:first-child { border-top: 0; }
 .encart-form { display: flex; flex-direction: column; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
 
+/* Taux du dollar du jour, sur l'accueil */
+.ligne-taux { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--ombre-plate); text-align: left; font-size: 15px; }
+.ligne-taux small { color: var(--muted); }
+.ligne-taux .lien { color: var(--accent); font-weight: 600; font-size: 14px; }
+.ligne-taux.ouvert { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+
 /* Libellés tout prêts sous la nature « Autres » */
 .puces { display: flex; flex-wrap: wrap; gap: 6px; }
 .puces button { border: 1px solid var(--accent-bord); background: var(--accent-soft); color: var(--accent-fort); border-radius: 999px; padding: 6px 12px; font-size: 14px; min-height: 36px; }
@@ -277,3 +283,8 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
   .tableau { border: 0; overflow: visible; box-shadow: none; }
   th, tr.total td, tr.resultat td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Fin de journée : une caisse par bloc, en colonne. */
+.comptage { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; }
+.comptage + .comptage { border-top: 1px solid var(--line); }
+.comptage p { margin: 0; }

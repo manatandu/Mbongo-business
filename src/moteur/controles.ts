@@ -188,9 +188,11 @@ export function controler(dossier: DossierExercice, auDate: DateISO, p: Parametr
     }
   }
 
-  // Mois écoulés sans aucune saisie
+  // Mois écoulés sans aucune saisie, comptés depuis le premier mois saisi : un commerçant qui commence en juin
+  // n'est pas alerté le premier jour pour janvier à mai (la reprise du cahier reste possible).
   const moisAvecSaisie = new Set(ops.map((o) => moisDe(o.date)));
-  const moisVides = moisEntre(moisDe(debut), moisDe(ref)).filter((m) => m < moisDe(ref) && !moisAvecSaisie.has(m));
+  const premier = [...moisAvecSaisie].sort()[0];
+  const moisVides = premier ? moisEntre(premier, moisDe(ref)).filter((m) => m < moisDe(ref) && !moisAvecSaisie.has(m)) : [];
   if (moisVides.length) {
     anomalies.push({
       code: 'mois_sans_saisie',

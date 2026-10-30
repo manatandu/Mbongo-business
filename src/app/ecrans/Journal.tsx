@@ -12,7 +12,7 @@ import { compresserPhoto } from '../photo';
 import { db, useDossier } from '../session';
 
 export function Journal() {
-  const { chargement, dateRef, annoncer, entreprise } = useDossier();
+  const { chargement, dateRef, annoncer, entreprise, aujourdhui } = useDossier();
   const { t, mois: nomMois } = useLangue();
   const params = useParams<{ compte?: string; mois?: string }>();
   const [, aller] = useLocation();
@@ -35,6 +35,8 @@ export function Journal() {
   };
 
   async function annuler(id: string) {
+    // Année finie mais pas encore commencée la suivante : l'annulation tomberait le 31 décembre, pas aujourd'hui.
+    if (aujourdhui > exercice.fin) return setErreurs([t('fin.saisir', { annee: exercice.annee, suivante: exercice.annee + 1 })]);
     if (!window.confirm(t('journal.confirmerAnnulation'))) return;
     try {
       await annulerOperation(db, exercice.id, id, dateRef);

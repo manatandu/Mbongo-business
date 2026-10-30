@@ -67,7 +67,8 @@ export interface LigneCompte extends CompteTresorerie {
 
 export type LigneOperation = Operation & Trace;
 
-export type LigneTiers = PieceTiers & Trace & { genre: GenreTiers };
+/** `annule` : identifiant de la facture que cette ligne retire (erreur de saisie). Les deux lignes restent en base. */
+export type LigneTiers = PieceTiers & Trace & { genre: GenreTiers; annule?: string };
 
 export type LigneImmobilisation = Omit<Immobilisation, 'sortie'> & Trace;
 

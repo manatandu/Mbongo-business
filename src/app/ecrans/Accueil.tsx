@@ -1,20 +1,22 @@
 /** Accueil du commerçant : combien j'ai, noter une entrée ou une sortie, ce qui demande mon attention. */
 import { useMemo } from 'react';
 import { Link } from 'wouter';
-import { calculerEtats, centimesEnFrancs, controler, soldesTresorerie, versFC, type CodeAnomalie, type Nature, type Operation } from '../../moteur';
+import { calculerEtats, centimesEnFrancs, controler, soldesTresorerie, type CodeAnomalie } from '../../moteur';
 import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
 import { useLangue, type Cle } from '../../i18n';
 import { fmt, fmtDate, fmtMontant } from '../../ui/format';
 import { useDossier } from '../session';
 import { useEcheances } from './Echeances';
 import { FinAnnee } from './FinAnnee';
+import { TauxDuJour } from './TauxDuJour';
+import { ACTIVITE, useJourneeFaite, valeur } from './FinJournee';
 
 /** Alertes montrées au commerçant, et l'écran où il peut agir. */
 const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   solde_negatif: { cle: 'alerte.solde_negatif', ecran: '/journal' },
   creance_ancienne: { cle: 'alerte.creance_ancienne', ecran: '/clients' },
   stock_non_inventorie: { cle: 'alerte.stock_non_inventorie', ecran: '/stock' },
-  seuil_smt_depasse: { cle: 'alerte.seuil', ecran: '/etats' },
+  seuil_smt_depasse: { cle: 'alerte.seuilDepasse', ecran: '/etats' },
   seuil_smt_approche: { cle: 'alerte.seuil', ecran: '/etats' },
   decouvert_bancaire: { cle: 'alerte.decouvert_bancaire', ecran: '/journal' },
   jours_sans_vente: { cle: 'alerte.jours_sans_vente', ecran: '/saisir/recette' },
@@ -24,13 +26,10 @@ const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   creance_prescrite: { cle: 'alerte.creance_prescrite', ecran: '/clients' },
 };
 
-/** « Entré » et « sorti » : l'activité seule, sans les apports, prélèvements, prêts ni matériel. */
-const ACTIVITE: ReadonlySet<Nature> = new Set<Nature>(['ventes', 'autres_recettes', 'achats_marchandises', 'achats_fournitures', 'loyers', 'salaires', 'impots_taxes', 'interets', 'autres_depenses']);
-
-const valeur = (o: Operation): number => (o.annule ? -1 : 1) * versFC(o.montant, o.devise, o.taux);
 
 export function Accueil() {
-  const { chargement, dateRef, taux, aujourdhui } = useDossier();
+  const { chargement, dateRef, taux, aujourdhui, entreprise } = useDossier();
+  const journee = useJourneeFaite(entreprise.id);
   const prochaine = useEcheances(30)[0];
   const { t, mois } = useLangue();
   const { dossier } = chargement;
@@ -70,6 +69,8 @@ export function Accueil() {
         </Link>
       </div>
 
+      <TauxDuJour />
+
       {vue.anomalies.map((a) => {
         const alerte = ALERTES[a.code];
         return alerte ? (
@@ -107,6 +108,12 @@ export function Accueil() {
           <div className="v">{fmt(vue.etats.bilan.passif.dettes)}</div>
         </Link>
       </div>
+
+      {aujourdhui <= chargement.exercice.fin && (
+        <Link href="/journee" className="bouton discret">
+          {journee === aujourdhui ? t('journee.faite') : t('journee.bouton')}
+        </Link>
+      )}
     </>
   );
 }

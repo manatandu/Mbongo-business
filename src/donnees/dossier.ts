@@ -75,9 +75,11 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     if (o.date >= debut || !o.reglementDe) continue;
     regleAvant.set(o.reglementDe.ligne, (regleAvant.get(o.reglementDe.ligne) ?? 0) + (o.annule ? -o.montant : o.montant));
   }
+  // Une facture corrigée sort du dossier avec sa ligne d'annulation.
+  const annulees = new Set(lignesTiers.flatMap((l) => (l.annule ? [l.annule] : [])));
   const tiers = (genre: 'creance' | 'dette'): PieceTiers[] =>
     lignesTiers
-      .filter((l) => l.genre === genre && l.date <= fin)
+      .filter((l) => l.genre === genre && l.date <= fin && !l.annule && !annulees.has(l.id))
       .flatMap((l) => {
         const avant = l.date < debut ? (regleAvant.get(l.id) ?? 0) : 0;
         if (l.date < debut && l.montant - avant <= 0) return [];

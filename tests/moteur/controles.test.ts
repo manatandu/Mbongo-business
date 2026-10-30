@@ -58,6 +58,12 @@ describe('autres contrôles', () => {
     expect(controler(d, '2026-05-15').find((x) => x.code === 'mois_sans_saisie')?.references).toEqual(['2026-02', '2026-03']);
   });
 
+  it('compte les mois vides depuis la première saisie', () => {
+    const d = dossierDeBase({ operations: [op({ date: '2026-06-10', type: 'recette', nature: 'ventes', montant: 1 })] });
+    expect(controler(d, '2026-06-20').find((x) => x.code === 'mois_sans_saisie')).toBeUndefined();
+    expect(controler(d, '2026-08-05').find((x) => x.code === 'mois_sans_saisie')?.references).toEqual(['2026-07']);
+  });
+
   it("signale à la clôture l'inventaire et le taux manquants", () => {
     const d = dossierDeBase({
       stockFinal: null,

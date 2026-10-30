@@ -11,13 +11,21 @@ const gras = (value: string): Cell => ({ value, fontWeight: 'bold' });
 const nombre = (value: Montant, fontWeight?: 'bold'): Cell => ({ value, type: Number, format: FORMAT, ...(fontWeight ? { fontWeight } : {}) });
 const jj = (d: string) => `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}`;
 
-function entete(e: Etats, titre: string): SheetData {
+/** Statut des états et marque des données de démonstration, en tête de chaque feuille. */
+export interface Mentions {
+  arreteLe?: string | null;
+  fictif?: boolean;
+}
+
+function entete(e: Etats, m: Mentions, titre: string): SheetData {
   return [
     [{ value: titre, fontWeight: 'bold', fontSize: 14 }],
+    ...(m.fictif ? [[gras('Données fictives de démonstration')]] : []),
     ['Entité', e.entreprise.nom],
     ["N° d'identification", e.entreprise.nif || 'néant'],
     ['Exercice clos le', `31/12/${e.exercice.annee}`],
     ['Situation', e.provisoire ? `provisoire au ${jj(e.auDate)}` : 'définitive'],
+    ['Statut', m.arreteLe ? `Arrêtés le ${jj(m.arreteLe)} par l'expert-comptable` : 'Non arrêtés'],
     [],
   ];
 }
@@ -31,10 +39,10 @@ export interface FeuilleEtats {
 const MODE = { especes: 'Espèces', autre: 'Autre mode', credit: 'À crédit' } as const;
 
 /** Livre des recettes et des dépenses, registre des achats : ajoutés au classeur quand le dossier est fourni. */
-function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
+function feuillesLivres(e: Etats, d: DossierExercice, m: Mentions): FeuilleEtats[] {
   const l = livreRecettesDepenses(d, d.exercice.debut, e.auDate);
   const livre: SheetData = [
-    ...entete(e, 'Livre des recettes et des dépenses'),
+    ...entete(e, m, 'Livre des recettes et des dépenses'),
     [gras('Date'), gras('Origine ou destination'), gras('Compte'), gras('Mode'), gras('Recette (CDF)'), gras('Dépense (CDF)')],
     ...l.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.compte, MODE[x.mode], x.sens === 'ressource' ? nombre(x.montantFC) : '', x.sens === 'emploi' ? nombre(x.montantFC) : '']),
     [],
@@ -44,7 +52,7 @@ function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
   ];
   const r = registreAchats(d);
   const achats: SheetData = [
-    ...entete(e, `Registre des achats ${r.annee}`),
+    ...entete(e, m, `Registre des achats ${r.annee}`),
     [gras('Date'), gras('Détail'), gras('Mode de règlement'), gras('Référence de la pièce'), gras('Montant (CDF)')],
     ...r.lignes.map((x): Cell[] => [jj(x.date), x.libelle, x.mode === 'credit' ? MODE.credit : `${MODE[x.mode]} (${x.compte})`, x.reference || (x.reprise ? 'repris du cahier' : ''), nombre(x.montantFC)]),
     [],
@@ -59,7 +67,7 @@ function feuillesLivres(e: Etats, d: DossierExercice): FeuilleEtats[] {
 }
 
 /** Les feuilles du classeur, prêtes à écrire : états SMT, plus le livre et le registre des achats si le dossier est fourni. */
-export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: string, precedent: Etats | null = null): FeuilleEtats[] {
+export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: string, precedent: Etats | null = null, m: Mentions = {}): FeuilleEtats[] {
   const r = e.compteDeResultat;
   const b = e.bilan;
   const n = e.notes;
@@ -72,7 +80,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: stri
   ];
 
   const resultat: SheetData = [
-    ...entete(e, 'Compte de résultat SMT'),
+    ...entete(e, m, 'Compte de résultat SMT'),
     [gras('Rubriques'), gras('Note'), gras(`Exercice ${e.exercice.annee}`), gras(`Exercice ${e.exercice.annee - 1}`)],
     ligne('Recettes sur ventes ou prestations de services', '4', r.recettesVentes, precedent?.compteDeResultat.recettesVentes),
     ligne('Autres recettes sur activités', '4', r.autresRecettes, precedent?.compteDeResultat.autresRecettes),
@@ -93,7 +101,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: stri
   ];
 
   const bilan: SheetData = [
-    ...entete(e, `Bilan SMT au 31 décembre ${e.exercice.annee}`),
+    ...entete(e, m, `Bilan SMT au 31 décembre ${e.exercice.annee}`),
     [gras('Actif'), gras('Note'), gras(`Exercice ${e.exercice.annee}`), gras(`Exercice ${e.exercice.annee - 1}`)],
     ligne('Immobilisations (valeur nette)', '1', b.actif.immobilisations, precedent?.bilan.actif.immobilisations),
     ligne('Stocks', '2', b.actif.stocks, precedent?.bilan.actif.stocks),
@@ -111,7 +119,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: stri
   ];
 
   const notes: SheetData = [
-    ...entete(e, 'Notes annexes 1 à 3'),
+    ...entete(e, m, 'Notes annexes 1 à 3'),
     [gras('Note 1 · Matériel, mobilier et cautions')],
     [gras('Date'), gras('Désignation'), gras('Montant'), gras('Dotation'), gras('Valeur nette'), gras('Sortie'), gras('Prix de cession')],
     ...n.note1.lignes.map((l): Cell[] => [
@@ -139,7 +147,7 @@ export function classeurEtats(e: Etats, d?: DossierExercice, methodeStock?: stri
     [gras('Total des dettes'), nombre(n.note3.dettes.cloture, 'bold'), nombre(n.note3.dettes.ouverture, 'bold')],
   ];
 
-  const livres = d ? feuillesLivres(e, d) : [];
+  const livres = d ? feuillesLivres(e, d, m) : [];
   return [
     { sheet: 'Compte de résultat', data: resultat, columns: [{ width: 58 }, { width: 8 }, { width: 18 }, { width: 18 }] },
     { sheet: 'Bilan', data: bilan, columns: [{ width: 52 }, { width: 8 }, { width: 18 }, { width: 18 }] },
@@ -158,7 +166,7 @@ export function nomFichier(e: Etats): string {
 }
 
 /** Fabrique et télécharge le classeur dans le navigateur. */
-export async function telechargerExcel(e: Etats, d?: DossierExercice, methodeStock?: string, precedent: Etats | null = null): Promise<void> {
+export async function telechargerExcel(e: Etats, d?: DossierExercice, methodeStock?: string, precedent: Etats | null = null, m: Mentions = {}): Promise<void> {
   const { default: ecrire } = await import('write-excel-file/browser');
-  await ecrire(classeurEtats(e, d, methodeStock, precedent)).toFile(nomFichier(e));
+  await ecrire(classeurEtats(e, d, methodeStock, precedent, m)).toFile(nomFichier(e));
 }

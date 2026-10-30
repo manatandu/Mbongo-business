@@ -5,7 +5,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
-import { annulerArrete, arreterEtats, definirTauxCloture, limiteArrete, obstaclesArrete, resumeDossier } from '../donnees/bureau';
+import { annulerArrete, arreterEtats, definirTauxCloture, limiteArrete, obstaclesArrete, resumeDossier, rouvrirInventaire } from '../donnees/bureau';
 import { etatsPrecedents } from '../donnees/dossier';
 import { ErreurSaisie } from '../donnees/saisie';
 import { calculerEtats } from '../moteur';
@@ -130,10 +130,15 @@ export function Client() {
                     {o}
                   </Message>
                 ))}
-                <div>
+                <div className="flex flex-wrap gap-2">
                   <button className="btn btn-principal" disabled={obstacles.length > 0} onClick={() => void agir(() => arreterEtats(db, c, aujourdhui))}>
                     Arrêter les états {c.exercice.annee}
                   </button>
+                  {c.exercice.stockFinal !== null && (
+                    <button className="btn btn-neutre" onClick={() => window.confirm("Rouvrir l'inventaire ? Le commerçant pourra le corriger puis le valider à nouveau.") && void agir(() => rouvrirInventaire(db, c.exercice.id))}>
+                      Rouvrir l'inventaire
+                    </button>
+                  )}
                 </div>
               </>
             )}
@@ -155,7 +160,7 @@ export function Client() {
             <button className="btn btn-neutre" onClick={() => window.print()}>
               Imprimer ou enregistrer en PDF
             </button>
-            <button className="btn btn-neutre" onClick={() => void agir(async () => telechargerExcel(vue.etats, c.dossier, await mentionMethodeStock(db, c.entreprise.id), precedent ?? null))}>
+            <button className="btn btn-neutre" onClick={() => void agir(async () => telechargerExcel(vue.etats, c.dossier, await mentionMethodeStock(db, c.entreprise.id), precedent ?? null, { arreteLe: arrete ? (c.exercice.arreteLe ?? null) : null, fictif: Boolean(c.entreprise.demo) }))}>
               Exporter en Excel
             </button>
           </div>

@@ -9,7 +9,9 @@ import { nouvelId } from './ids';
 import { ErreurSaisie } from './saisie';
 
 /** Vrai si le prix du dollar au 31 décembre doit être donné pour commencer l'année suivante. */
-export const tauxClotureDemande = (c: Chargement): boolean => c.exercice.tauxCloture === null && c.comptes.some((x) => x.devise === 'USD');
+/** Le taux du 31 décembre est demandé dès qu'il y a des dollars : un compte, une créance ou une dette en USD. */
+export const tauxClotureDemande = (c: Chargement): boolean =>
+  c.exercice.tauxCloture === null && (c.comptes.some((x) => x.devise === 'USD') || [...c.dossier.creances, ...c.dossier.dettes].some((l) => l.devise === 'USD'));
 
 /** Ce qui manque pour commencer l'année suivante. Vide : on peut y aller. */
 export function obstaclesAnneeSuivante(c: Chargement, aujourdhui: DateISO): string[] {

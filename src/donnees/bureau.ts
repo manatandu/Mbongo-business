@@ -57,3 +57,17 @@ export async function arreterEtats(db: BaseMbongo, c: Chargement, aujourdhui: Da
 export async function annulerArrete(db: BaseMbongo, exerciceId: string): Promise<void> {
   await db.exercices.update(exerciceId, { statut: 'ouvert', arreteLe: null });
 }
+
+/**
+ * L'expert-comptable rouvre un inventaire validé (erreur de comptage, validation trop tôt).
+ * Impossible une fois les états arrêtés, ou si l'année suivante est déjà ouverte : son stock initial en dépend.
+ */
+export async function rouvrirInventaire(db: BaseMbongo, exerciceId: string): Promise<void> {
+  const ex = await db.exercices.get(exerciceId);
+  if (!ex) throw new ErreurSaisie(['Exercice introuvable.']);
+  if (ex.statut === 'arrete') throw new ErreurSaisie(["Les états sont arrêtés : annulez d'abord l'arrêté."]);
+  if (ex.stockFinal === null) return;
+  const suivant = await db.exercices.where('[entrepriseId+annee]').equals([ex.entrepriseId, ex.annee + 1]).first();
+  if (suivant) throw new ErreurSaisie([`L'année ${ex.annee + 1} est déjà commencée sur son stock : l'inventaire ne se rouvre plus.`]);
+  await db.exercices.update(exerciceId, { stockFinal: null, statut: 'ouvert' });
+}

@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseMbongo } from '../../src/donnees/base';
-import { arreterEtats, definirTauxCloture, obstaclesArrete } from '../../src/donnees/bureau';
+import { arreterEtats, definirTauxCloture, obstaclesArrete, rouvrirInventaire } from '../../src/donnees/bureau';
 import { chargerDemo } from '../../src/donnees/demo';
 import { chargerDossier } from '../../src/donnees/dossier';
 import { creerEntreprise, exerciceCourant } from '../../src/donnees/entreprise';
@@ -128,5 +128,35 @@ describe('vente à crédit', () => {
     await enregistrerFacture(db, exerciceId, 'creance', { date: '2026-05-02', facture: 'F-2', nom: 'Restaurant fictif', nature: 'ventes', montant: 90_000, devise: 'CDF', taux: null, client: 'commercant', adresse: 'Avenue fictive, Gombe' });
     const f = (await chargerDossier(db, exerciceId)).dossier.creances.find((x) => x.facture === 'F-2');
     expect(f).toMatchObject({ client: 'commercant', adresse: 'Avenue fictive, Gombe' });
+  });
+});
+
+describe('inventaire : quand le valider, comment le rouvrir', () => {
+  it('refuse une validation avant le 1er décembre, puis l’expert peut le rouvrir', async () => {
+    const db = new BaseMbongo(`test-${Math.random()}`);
+    const { exerciceId } = await creerEntreprise(db, {
+      nom: 'Boutique (fictif)', activite: '', secteur: 'negoce', commune: '', nif: '', responsable: '', telephone: '', annee: 2026,
+      comptes: [{ type: 'caisse', libelle: 'Caisse', devise: 'CDF', solde: 0 }], stockInitial: 0, tauxOuverture: null,
+    });
+    await enregistrerInventaire(db, exerciceId, [{ reference: 'S1', designation: 'Riz', quantite: 2, prixUnitaire: 1000, montant: 2000 }]);
+    await expect(validerInventaire(db, exerciceId, '2026-06-15')).rejects.toThrow('1er décembre');
+    expect(await validerInventaire(db, exerciceId, '2026-12-02')).toBe(2000);
+    await rouvrirInventaire(db, exerciceId);
+    const ex = await db.exercices.get(exerciceId);
+    expect(ex?.stockFinal).toBeNull();
+    expect(ex?.statut).toBe('ouvert');
+  });
+});
+
+describe('taux de clôture', () => {
+  it('est demandé pour une créance en dollars, même sans compte en dollars', async () => {
+    const db = new BaseMbongo(`test-${Math.random()}`);
+    const { exerciceId } = await creerEntreprise(db, {
+      nom: 'Boutique (fictif)', activite: '', secteur: 'negoce', commune: '', nif: '', responsable: '', telephone: '', annee: 2026,
+      comptes: [{ type: 'caisse', libelle: 'Caisse', devise: 'CDF', solde: 0 }], stockInitial: 0, tauxOuverture: null,
+    });
+    expect(tauxClotureDemande(await chargerDossier(db, exerciceId))).toBe(false);
+    await enregistrerFacture(db, exerciceId, 'creance', { date: '2026-05-02', facture: 'F1', nom: 'Client', nature: 'ventes', montant: 10_000, devise: 'USD', taux: 2850, client: 'commercant' });
+    expect(tauxClotureDemande(await chargerDossier(db, exerciceId))).toBe(true);
   });
 });

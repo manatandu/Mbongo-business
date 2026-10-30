@@ -38,7 +38,7 @@ export function Stock() {
 }
 
 function Inventaire() {
-  const { chargement, annoncer, entreprise } = useDossier();
+  const { chargement, annoncer, entreprise, aujourdhui } = useDossier();
   const { t } = useLangue();
   const { exercice } = chargement;
   const fiches = useLiveQuery(() => fichesStock(db, entreprise.id, exercice.fin), [entreprise.id, exercice.fin]);
@@ -98,8 +98,12 @@ function Inventaire() {
   async function valider() {
     if (!window.confirm(t('stock.confirmer'))) return;
     if (!(await garder())) return;
-    await validerInventaire(db, exercice.id);
-    annoncer(t('stock.ok'));
+    try {
+      await validerInventaire(db, exercice.id, aujourdhui);
+      annoncer(t('stock.ok'));
+    } catch (x) {
+      setErreurs(x instanceof ErreurSaisie ? x.messages : [(x as Error).message]);
+    }
   }
 
   return (

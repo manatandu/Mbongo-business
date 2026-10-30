@@ -8,6 +8,7 @@ import { BANQUES, creerEntreprise, type CompteACreer } from '../../donnees/entre
 import { lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs, Marque } from '../composants';
 import { db, useSession } from '../session';
+import { ReprendreCopie } from './Reglages';
 
 function ChoixLangue() {
   const { langue, changer } = useLangue();
@@ -52,6 +53,7 @@ export function Bienvenue() {
         <Link href="/creer" className="carte-choix">
           <strong>{t('bienvenue.creer')}</strong>
         </Link>
+        <ReprendreCopie classe="carte-choix" />
       </div>
     </div>
   );

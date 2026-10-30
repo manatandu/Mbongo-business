@@ -32,6 +32,13 @@ describe('lecture des montants tapés', () => {
     expect(lireTaux('2850')).toBe(2850);
     expect(lireTaux('2 843,65')).toBe(2843.65);
     expect(lireTaux('0')).toBeNull();
+    // Écriture courante à Kinshasa : le point ou la virgule sépare les milliers.
+    expect(lireTaux('2.850')).toBe(2850);
+    expect(lireTaux('2,850')).toBe(2850);
+    expect(lireTaux('2850,5')).toBe(2850.5);
+    // Faute de frappe : hors de 1 000 à 10 000, refusé.
+    expect(lireTaux('28.50')).toBeNull();
+    expect(lireTaux('285000')).toBeNull();
   });
 
   it("donne la date du jour en heure locale", () => {

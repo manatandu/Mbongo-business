@@ -3,11 +3,11 @@
  * Le formulaire vérifie l'évident ; le moteur vérifie le reste avant toute écriture.
  */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { NATURES_DETTE, NATURES_IMMOBILISATION, type CategorieImmobilisation, type Devise, type Nature, type TypeClient, type TypeOperation } from '../../moteur';
 import { useLangue, type Cle } from '../../i18n';
-import { ajouterPhoto, enregistrerFacture, enregistrerOperation, ErreurSaisie } from '../../donnees/saisie';
+import { ajouterPhoto, enregistrerFacture, enregistrerOperation, enregistrerTaux, ErreurSaisie } from '../../donnees/saisie';
 import { enregistrerMouvement, sortiePossible } from '../../donnees/stock';
 import { lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs } from '../composants';
@@ -131,11 +131,26 @@ export function Saisir() {
     }
   }
 
+  // Un seul enregistrement à la fois : deux appuis rapides ne créent pas deux ventes.
+  const verrou = useRef(false);
   async function enregistrer(e: FormEvent) {
     e.preventDefault();
+    if (verrou.current) return;
+    verrou.current = true;
+    setOccupe(true);
+    try {
+      await enregistrerSansGarde();
+    } finally {
+      verrou.current = false;
+      setOccupe(false);
+    }
+  }
+
+  async function enregistrerSansGarde() {
     const err: string[] = [];
     const m = lireMontant(montant, devise);
     if (!m || m <= 0) err.push(t('saisir.erreur.montant'));
+    if (date > aujourdhui) err.push(t('saisir.erreur.dateFuture'));
     if (type === 'transfert' && compteId === versId) err.push(t('saisir.erreur.comptes'));
     if (credit && !tiers.trim()) err.push(t('saisir.erreur.nom'));
     const tauxLu = tauxVisible ? lireTaux(tauxTexte) : null;
@@ -167,7 +182,8 @@ export function Saisir() {
     };
 
     const texte = libelle.trim() || (type === 'transfert' ? `${compte.libelle} → ${vers?.libelle ?? ''}` : t(`nature.${nature}` as Cle));
-    setOccupe(true);
+    // Un taux tapé qui change devient le taux du jour : la prochaine saisie en dollars le reprend.
+    if (tauxLu && tauxLu !== taux) await enregistrerTaux(db, date, tauxLu, 'commercant');
     try {
       if (credit) {
         const genre = type === 'recette' ? 'creance' : 'dette';
@@ -212,8 +228,6 @@ export function Saisir() {
       aller(`/journal/${compte.id}/${date.slice(0, 7)}`);
     } catch (x) {
       setErreurs(x instanceof ErreurSaisie ? x.messages : [(x as Error).message]);
-    } finally {
-      setOccupe(false);
     }
   }
 
@@ -251,7 +265,7 @@ export function Saisir() {
       <div className="deux-col">
         <label className="champ">
           {t('saisir.date')}
-          <input type="date" value={date} min={exercice.debut} max={exercice.fin} onChange={(e) => setDate(e.target.value)} />
+          <input type="date" value={date} min={exercice.debut} max={aujourdhui < exercice.fin ? aujourdhui : exercice.fin} onChange={(e) => setDate(e.target.value)} />
         </label>
         {credit ? (
           <label className="champ">
@@ -307,7 +321,12 @@ export function Saisir() {
         <div className="deux-col">
           <label className="champ">
             {t(type === 'recette' ? 'saisir.client' : 'saisir.fournisseur')}
-            <input value={tiers} onChange={(e) => setTiers(e.target.value)} autoComplete="off" aria-invalid={erreurs.includes(t('saisir.erreur.nom'))} />
+            <input value={tiers} onChange={(e) => setTiers(e.target.value)} autoComplete="off" list="noms-tiers" aria-invalid={erreurs.includes(t('saisir.erreur.nom'))} />
+            <datalist id="noms-tiers">
+              {[...new Set((type === 'recette' ? chargement.dossier.creances : chargement.dossier.dettes).map((l) => l.nom))].sort().map((n) => (
+                <option key={n} value={n} />
+              ))}
+            </datalist>
           </label>
           {type === 'recette' && (
             <>

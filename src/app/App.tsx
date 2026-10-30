@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, Route, Router, Switch, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { FournisseurLangue, useLangue, type Cle } from '../i18n';
-import { codeDefini, verifierCode } from '../donnees/reglages';
+import { codeDefini, definirCode, verifierCode } from '../donnees/reglages';
 import { Icone, Marque } from './composants';
 import { mettreAJour, useInstallation } from './installation';
 import { Accueil } from './ecrans/Accueil';
@@ -13,6 +13,7 @@ import { Livre, RegistreAchats } from './ecrans/Livres';
 import { DossierCreance } from './ecrans/DossierCreance';
 import { Echeances } from './ecrans/Echeances';
 import { Etats } from './ecrans/Etats';
+import { FinJournee } from './ecrans/FinJournee';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
 import { ENTREES, Plus } from './ecrans/Plus';
@@ -44,6 +45,7 @@ const TITRES: [string, Cle][] = [
   ['/livre', 'fenetre.livre'],
   ['/achats', 'fenetre.achats'],
   ['/echeances', 'fenetre.echeances'],
+  ['/journee', 'fenetre.journee'],
 ];
 
 function Coque() {
@@ -89,6 +91,7 @@ function Coque() {
               <Route path="/achats" component={RegistreAchats} />
               <Route path="/creance/:id" component={DossierCreance} />
               <Route path="/echeances" component={Echeances} />
+              <Route path="/journee" component={FinJournee} />
               <Route>
                 <Accueil />
               </Route>
@@ -132,11 +135,41 @@ function Verrou({ ouvrir }: { ouvrir: () => void }) {
       }
     }
   };
+  // Code oublié : taper le nom de l'entreprise retire le code. Discrétion, pas sécurité (voir definirCode).
+  const [oubli, setOubli] = useState(false);
+  const [nom, setNom] = useState('');
+  const [nomFaux, setNomFaux] = useState(false);
+  const retirer = async () => {
+    const simple = (x: string) => x.trim().toLowerCase().replace(/\s+/g, ' ');
+    const noms = (await db.entreprises.toArray()).map((e) => simple(e.nom));
+    if (!noms.includes(simple(nom))) return setNomFaux(true);
+    await definirCode(db, null);
+    ouvrir();
+  };
   return (
     <div className="verrou">
       <h1 style={{ fontFamily: 'var(--display)', fontSize: 21, margin: 0 }}>{t('verrou.titre')}</h1>
       <input type="password" inputMode="numeric" autoComplete="off" autoFocus aria-label={t('verrou.titre')} value={code} onChange={(e) => void saisir(e.target.value)} />
       {faux && <p className="erreur">{t('verrou.faux')}</p>}
+      {oubli ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void retirer();
+          }}
+        >
+          <label className="champ">
+            {t('verrou.nom')}
+            <input autoComplete="off" value={nom} onChange={(e) => (setNom(e.target.value), setNomFaux(false))} />
+          </label>
+          {nomFaux && <p className="erreur">{t('verrou.nomFaux')}</p>}
+          <button className="bouton">{t('verrou.retirer')}</button>
+        </form>
+      ) : (
+        <button className="lien-bouton" onClick={() => setOubli(true)}>
+          {t('verrou.oublie')}
+        </button>
+      )}
     </div>
   );
 }

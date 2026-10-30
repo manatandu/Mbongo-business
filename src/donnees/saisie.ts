@@ -8,6 +8,7 @@ import {
   NATURES_IMMOBILISATION,
   regler,
   valider,
+  valoriser,
   versFC,
   type CategorieImmobilisation,
   type DateISO,
@@ -141,9 +142,71 @@ export async function enregistrerReglement(
   return op.id;
 }
 
+/**
+ * Une saisie annulée emporte ses mouvements de stock : chaque mouvement lié reçoit son inverse (correction).
+ * Une vente annulée fait revenir la marchandise au coût moyen du moment.
+ */
+async function inverserStock(db: BaseMbongo, entrepriseId: string, origine: string, annulation: string, date: DateISO): Promise<void> {
+  const tous = await db.mouvementsStock.where('entrepriseId').equals(entrepriseId).toArray();
+  const lies = tous.filter((m) => m.origine === origine);
+  if (!lies.length) return;
+  const creeLe = new Date().toISOString();
+  await db.transaction('rw', [db.mouvementsStock, db.fileEnvoi], async () => {
+    for (const m of lies) {
+      const jour = date < m.date ? m.date : date;
+      const id = nouvelId();
+      let prixUnitaire: Montant | undefined;
+      if (m.sens === 'sortie') {
+        const etat = valoriser(tous.filter((x) => x.articleId === m.articleId), 'cump_entree', jour);
+        const dernier = tous.filter((x) => x.articleId === m.articleId && x.sens === 'entree').at(-1)?.prixUnitaire ?? 0;
+        prixUnitaire = Math.round(etat.coutUnitaire) || dernier;
+      }
+      await db.mouvementsStock.add({
+        id,
+        entrepriseId,
+        articleId: m.articleId,
+        date: jour,
+        sens: m.sens === 'entree' ? 'sortie' : 'entree',
+        quantite: m.quantite,
+        ...(prixUnitaire !== undefined ? { prixUnitaire } : {}),
+        motif: 'ajustement',
+        origine: annulation,
+        creeLe,
+      });
+      await db.fileEnvoi.add({ table: 'mouvementsStock', ligne: id, creeLe, tentatives: 0 });
+    }
+  });
+}
+
+/**
+ * Retire une vente ou un achat à crédit saisi par erreur. Une ligne d'annulation est ajoutée, l'originale reste.
+ * Refusé dès qu'un paiement a été enregistré sur la facture : il faut d'abord annuler ce paiement.
+ */
+export async function annulerFacture(db: BaseMbongo, exerciceId: string, ligneId: string): Promise<string> {
+  const { dossier, entreprise, exercice } = await chargerDossier(db, exerciceId);
+  if (exercice.statut === 'arrete' || exercice.statut === 'clos') {
+    throw new ErreurSaisie([`Les états ${exercice.annee} sont arrêtés par l'expert-comptable : plus de saisie sur cet exercice.`]);
+  }
+  const ligne = await db.tiers.get(ligneId);
+  if (!ligne || ligne.annule) throw new ErreurSaisie(['Facture introuvable.']);
+  if ((await db.tiers.where('entrepriseId').equals(entreprise.id).toArray()).some((l) => l.annule === ligneId)) throw new ErreurSaisie(['Cette facture est déjà retirée.']);
+  if (ligne.date < exercice.debut) throw new ErreurSaisie(["Cette facture vient de l'année passée : elle ne peut plus être retirée."]);
+  const paye = dossier.operations.filter((o) => o.reglementDe?.ligne === ligneId).reduce((x, o) => x + (o.annule ? -o.montant : o.montant), 0);
+  if (paye > 0) throw new ErreurSaisie(["Un paiement est déjà noté sur cette facture. Annulez-le d'abord dans le journal."]);
+
+  const trace: Trace = { entrepriseId: entreprise.id, auteur: await identifiantAppareil(db), creeLe: new Date().toISOString(), envoi: 'local' };
+  const id = nouvelId();
+  await db.transaction('rw', [db.tiers, db.fileEnvoi], async () => {
+    await db.tiers.add({ ...ligne, ...trace, id, annule: ligneId });
+    await db.fileEnvoi.add({ table: 'tiers', ligne: id, creeLe: trace.creeLe, tentatives: 0 });
+  });
+  await inverserStock(db, entreprise.id, ligneId, id, ligne.date);
+  return id;
+}
+
 /** Corrige une erreur : contre-passation à la date donnée (D5). L'opération d'origine reste. */
 export async function annulerOperation(db: BaseMbongo, exerciceId: string, operationId: string, date: DateISO): Promise<string> {
-  const { dossier } = await chargerDossier(db, exerciceId);
+  const { dossier, entreprise } = await chargerDossier(db, exerciceId);
   const cible = dossier.operations.find((o) => o.id === operationId);
   if (!cible) throw new ErreurSaisie(['Opération introuvable dans cet exercice.']);
   if (cible.annule) throw new ErreurSaisie(["C'est déjà une annulation."]);
@@ -151,6 +214,7 @@ export async function annulerOperation(db: BaseMbongo, exerciceId: string, opera
   const annulation: Operation = { ...cible, id: nouvelId(), date: date < cible.date ? cible.date : date, libelle: `Annulation : ${cible.libelle}`, annule: cible.id, piece: true };
   delete annulation.reprise;
   await verifierEtEcrire(db, exerciceId, { operations: [annulation] });
+  await inverserStock(db, entreprise.id, cible.id, annulation.id, annulation.date);
   return annulation.id;
 }
 
@@ -208,8 +272,13 @@ export async function enregistrerInventaire(db: BaseMbongo, exerciceId: string, 
   });
 }
 
-/** Le commerçant valide son inventaire : le total devient le stock final de l'exercice. */
-export async function validerInventaire(db: BaseMbongo, exerciceId: string): Promise<Montant> {
+/**
+ * Le commerçant valide son inventaire : le total devient le stock final de l'exercice.
+ * Pas avant le 1er décembre (`aujourdhui`, quand on le donne) : c'est l'inventaire de fin d'exercice.
+ */
+export async function validerInventaire(db: BaseMbongo, exerciceId: string, aujourdhui?: DateISO): Promise<Montant> {
+  const ex = await db.exercices.get(exerciceId);
+  if (ex && aujourdhui && aujourdhui < `${ex.annee}-12-01`) throw new ErreurSaisie(["L'inventaire se valide à partir du 1er décembre. Gardez le brouillon en attendant."]);
   const lignes = await db.inventaires.where('exerciceId').equals(exerciceId).toArray();
   const total = lignes.reduce((s, l) => s + l.montant, 0);
   await db.exercices.update(exerciceId, { stockFinal: total, statut: 'inventaire' });

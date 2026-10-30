@@ -39,10 +39,19 @@ export function lireMontant(texte: string, devise: Devise): Montant | null {
   return Number(m[1]) * 100 + Number((m[2] ?? '').padEnd(2, '0'));
 }
 
-/** Lit un taux, avec virgule ou point. */
+/** Taux du dollar plausibles, en francs congolais pour 1 USD : au-delà, c'est une faute de frappe. */
+export const TAUX_MIN = 1_000;
+export const TAUX_MAX = 10_000;
+
+/**
+ * Lit un taux du dollar. « 2.850 » ou « 2,850 » s'écrivent ainsi à Kinshasa pour 2 850 : un séparateur suivi
+ * d'exactement trois chiffres est un séparateur de milliers. Sinon, virgule ou point décimal (« 2 843,65 »).
+ * Hors de 1 000 à 10 000 CDF pour 1 USD : null.
+ */
 export function lireTaux(texte: string): number | null {
-  const n = Number(texte.replace(/\s/g, '').replace(',', '.'));
-  return Number.isFinite(n) && n > 0 ? n : null;
+  const brut = texte.replace(/[\s\u00a0\u202f]/g, '');
+  const n = /^\d{1,2}[.,]\d{3}$/.test(brut) ? Number(brut.replace(/[.,]/, '')) : Number(brut.replace(',', '.'));
+  return Number.isFinite(n) && n >= TAUX_MIN && n <= TAUX_MAX ? n : null;
 }
 
 /** Date du jour sur le téléphone, en heure locale. */

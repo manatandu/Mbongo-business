@@ -3,13 +3,13 @@ import { useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { situationTiers, type Devise, type GenreTiers, type SituationTiers } from '../../moteur';
 import { useLangue } from '../../i18n';
-import { enregistrerReglement, ErreurSaisie } from '../../donnees/saisie';
+import { annulerFacture, enregistrerReglement, ErreurSaisie } from '../../donnees/saisie';
 import { fmtDate, fmtMontant, lireMontant, lireTaux } from '../../ui/format';
 import { Erreurs, Montant, Pastille } from '../composants';
 import { db, useDossier } from '../session';
 
 function Reglement({ s, genre, fermer }: { s: SituationTiers; genre: GenreTiers; fermer: () => void }) {
-  const { chargement, dateRef, taux, annoncer } = useDossier();
+  const { chargement, dateRef, taux, annoncer, aujourdhui } = useDossier();
   const { t } = useLangue();
   const comptes = chargement.comptes.filter((c) => c.devise === s.ligne.devise);
   const [montant, setMontant] = useState(s.ligne.devise === 'USD' ? (s.encours / 100).toFixed(2).replace('.', ',') : String(s.encours));
@@ -20,6 +20,11 @@ function Reglement({ s, genre, fermer }: { s: SituationTiers; genre: GenreTiers;
   if (!comptes.length) return <p className="erreur">{t('tiers.pasDeCompte', { devise: s.ligne.devise === 'USD' ? 'USD' : 'CDF' })}</p>;
 
   async function valider() {
+    // Année finie mais pas encore commencée la suivante : le paiement tomberait dans l'année passée.
+    if (aujourdhui > chargement.exercice.fin) {
+      setErreurs([t('fin.saisir', { annee: chargement.exercice.annee, suivante: chargement.exercice.annee + 1 })]);
+      return;
+    }
     const m = lireMontant(montant, s.ligne.devise);
     if (!m || m <= 0) {
       setErreurs([t('saisir.erreur.montant')]);
@@ -77,8 +82,29 @@ function Reglement({ s, genre, fermer }: { s: SituationTiers; genre: GenreTiers;
 }
 
 export function Tiers() {
-  const { chargement, dateRef } = useDossier();
+  const { chargement, dateRef, annoncer } = useDossier();
   const { t } = useLangue();
+  const [erreurs, setErreurs] = useState<string[]>([]);
+  const { exercice, entreprise } = chargement;
+  const modifiable = exercice.statut !== 'arrete' && exercice.statut !== 'clos';
+
+  async function corriger(s: SituationTiers) {
+    if (!window.confirm(t('tiers.confirmerCorriger'))) return;
+    try {
+      await annulerFacture(db, exercice.id, s.ligne.id);
+      setErreurs([]);
+      annoncer(t('tiers.okCorrige'));
+    } catch (x) {
+      setErreurs(x instanceof ErreurSaisie ? x.messages : [(x as Error).message]);
+    }
+  }
+
+  // Message prêt à envoyer : le commerçant choisit le contact dans WhatsApp.
+  const lienRappel = (s: SituationTiers) =>
+    'https://wa.me/?text=' +
+    encodeURIComponent(
+      t('tiers.messageRappel', { nom: s.ligne.nom, entreprise: entreprise.nom, reste: fmtMontant(s.encours, s.ligne.devise), facture: s.ligne.facture || t('tiers.sansNumero'), date: fmtDate(s.ligne.date) }),
+    );
   const params = useParams<{ genre?: string }>();
   const [, aller] = useLocation();
   const genre: GenreTiers = params.genre === 'dettes' ? 'dette' : 'creance';
@@ -107,6 +133,7 @@ export function Tiers() {
       <Link href={genre === 'creance' ? '/saisir/vente-credit' : '/saisir/achat-credit'} className="bouton discret">
         {t(genre === 'creance' ? 'tiers.nouvelleVente' : 'tiers.nouvelAchat')}
       </Link>
+      <Erreurs messages={erreurs} />
       <div className="liste">
         {enCours.map((s) => (
           <div className="ligne" key={s.ligne.id}>
@@ -129,6 +156,16 @@ export function Tiers() {
                 <Link href={`/creance/${s.ligne.id}`} className="bouton discret petit">
                   {t('tiers.dossier')}
                 </Link>
+              )}
+              {genre === 'creance' && ouverte !== s.ligne.id && (
+                <a href={lienRappel(s)} target="_blank" rel="noopener noreferrer" className="bouton discret petit">
+                  {t('tiers.whatsapp')}
+                </a>
+              )}
+              {modifiable && s.regle === 0 && s.ligne.date >= exercice.debut && ouverte !== s.ligne.id && (
+                <button className="bouton discret petit" onClick={() => void corriger(s)}>
+                  {t('tiers.corriger')}
+                </button>
               )}
             </div>
             {ouverte === s.ligne.id && <Reglement s={s} genre={genre} fermer={() => setOuverte(null)} />}

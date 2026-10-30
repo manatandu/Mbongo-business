@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseMbongo } from '../../src/donnees/base';
 import { creerEntreprise } from '../../src/donnees/entreprise';
 import { chargerDossier } from '../../src/donnees/dossier';
-import { enregistrerInventaire, validerInventaire } from '../../src/donnees/saisie';
+import { annulerFacture, annulerOperation, enregistrerFacture, enregistrerInventaire, enregistrerOperation, enregistrerReglement, validerInventaire } from '../../src/donnees/saisie';
 import { calculerEtats } from '../../src/moteur';
 import { creerArticle, definirMethodeStock, enregistrerMouvement, fichesStock, methodeStock } from '../../src/donnees/stock';
 
@@ -66,5 +66,37 @@ describe('fiches de stock', () => {
     expect(e.bilan.actif.stocks).toBe(275_000);
     expect(e.notes.note2.lignes.filter((l) => l.travauxEnCours).map((l) => l.designation)).toEqual(['Robe de mariée en couture']);
     expect(e.bilan.equilibre).toBe(true);
+  });
+});
+
+describe('annulation et stock', () => {
+  it('une vente annulée remet la marchandise en stock', async () => {
+    const riz = await creerArticle(db, ent, { designation: 'Riz', unite: 'sac', quantite: 10, prixUnitaire: 30_000, date: '2026-01-01' });
+    const { comptes } = await chargerDossier(db, exerciceId);
+    const op = await enregistrerOperation(db, exerciceId, { date: '2026-02-01', type: 'recette', compte: comptes[0]!.id, nature: 'ventes', libelle: 'Vente', montant: 140_000, devise: 'CDF', taux: null, piece: true });
+    await enregistrerMouvement(db, ent, { articleId: riz, date: '2026-02-01', sens: 'sortie', quantite: 4, motif: 'vente', origine: op });
+    expect((await fichesStock(db, ent, '2026-12-31')).fiches[0]!.etat.quantite).toBe(6);
+    await annulerOperation(db, exerciceId, op, '2026-02-02');
+    const fiche = (await fichesStock(db, ent, '2026-12-31')).fiches[0]!.etat;
+    expect(fiche.quantite).toBe(10);
+    expect(fiche.valeur).toBe(300_000);
+  });
+
+  it('un achat à crédit retiré sort sa marchandise du stock et disparaît des dettes', async () => {
+    const huile = await creerArticle(db, ent, { designation: 'Huile', unite: 'bidon', quantite: 0, prixUnitaire: 0, date: '2026-01-01' });
+    const f = await enregistrerFacture(db, exerciceId, 'dette', { date: '2026-03-01', facture: 'A-1', nom: 'Grossiste (fictif)', nature: 'achats_marchandises', montant: 150_000, devise: 'CDF', taux: null });
+    await enregistrerMouvement(db, ent, { articleId: huile, date: '2026-03-01', sens: 'entree', quantite: 10, prixUnitaire: 15_000, motif: 'achat', origine: f });
+    await annulerFacture(db, exerciceId, f);
+    expect((await chargerDossier(db, exerciceId)).dossier.dettes).toHaveLength(0);
+    expect((await fichesStock(db, ent, '2026-12-31')).fiches[0]!.etat.quantite).toBe(0);
+    await expect(annulerFacture(db, exerciceId, f)).rejects.toThrow('déjà retirée');
+  });
+
+  it("refuse de retirer une facture déjà payée en partie", async () => {
+    const { comptes } = await chargerDossier(db, exerciceId);
+    await enregistrerOperation(db, exerciceId, { date: '2026-01-02', type: 'recette', compte: comptes[0]!.id, nature: 'apport', libelle: 'Apport', montant: 500_000, devise: 'CDF', taux: null, piece: true });
+    const f = await enregistrerFacture(db, exerciceId, 'dette', { date: '2026-03-01', facture: 'A-2', nom: 'Grossiste (fictif)', nature: 'achats_marchandises', montant: 150_000, devise: 'CDF', taux: null });
+    await enregistrerReglement(db, exerciceId, 'dette', f, { date: '2026-03-05', compte: comptes[0]!.id, montant: 50_000 });
+    await expect(annulerFacture(db, exerciceId, f)).rejects.toThrow('paiement');
   });
 });

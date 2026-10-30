@@ -15,6 +15,13 @@ describe('export Excel des états', () => {
     expect(v).toContain(21_961_500);
   });
 
+  it('porte le statut des états, et la mention fictive pour la démonstration', () => {
+    expect(valeurs(0)).toContain('Non arrêtés');
+    const arretes = classeurEtats(e, undefined, undefined, null, { arreteLe: '2027-03-15', fictif: true })[1]!.data.flat().map((c) => (c && typeof c === 'object' && 'value' in c ? c.value : c));
+    expect(arretes).toContain("Arrêtés le 15/03/2027 par l'expert-comptable");
+    expect(arretes).toContain('Données fictives de démonstration');
+  });
+
   it('contient un bilan équilibré', () => {
     expect(valeurs(1).filter((x) => x === 31_003_500)).toHaveLength(2);
   });

@@ -81,6 +81,7 @@ Point à faire passer : le cycle comptable complet du SMT, du cahier de caisse �
 ## Partie 4, si le temps le permet (1 min)
 
 - **Stock** (Plus, Stock) : une fiche « Riz 25 kg », un achat, une vente depuis la saisie ; le stock baisse seul, au coût moyen (CUMP). « Facultatif : sans fiche, l'inventaire de fin d'année suffit. »
+- **Fin de journée** (bouton en bas de l'accueil) : ce qui est entré et sorti aujourd'hui, puis « J'ai compté » dans la caisse. « S'il manque de l'argent, l'appli le dit. Le commerçant décide de noter l'écart ou de chercher l'oubli. Rien n'est verrouillé. »
 - **Console de TRK** (trkconsole.web.app) : clients, abonnements, rappels SMS à 10 jours, 3 jours et à l'échéance. « Chaque client ne voit que ses données : c'est écrit dans la base, et testé. »
 
 ---
@@ -91,7 +92,7 @@ Point à faire passer : le cycle comptable complet du SMT, du cahier de caisse �
 Non. Le commerçant saisit lui-même (il tient sa propre comptabilité). TRK Consulting forme et contrôle, elle n'écrit pas. L'arrêté, le conseil et le fiscal passent par un expert-comptable inscrit à l'ONEC, partenaire par convention (loi n° 15/002, art. 43 et 71). Aucun texte ne présente TRK comme un cabinet d'expertise comptable (art. 42).
 
 **Comment savez-vous que les calculs sont justes ?**
-Le moteur de calcul est séparé de l'écran et couvert par 193 tests. L'un d'eux tire au hasard des milliers d'exercices complets et vérifie à chaque fois que le bilan s'équilibre au franc près. On ne montre pas qu'il s'équilibre sur un exemple : on montre qu'il ne peut pas être déséquilibré.
+Le moteur de calcul est séparé de l'écran et couvert par plus de 200 tests. L'un d'eux tire au hasard des milliers d'exercices complets et vérifie à chaque fois que le bilan s'équilibre au franc près. On ne montre pas qu'il s'équilibre sur un exemple : on montre qu'il ne peut pas être déséquilibré.
 
 **Avez-vous vérifié le SMT sur le texte ?**
 Oui, sur le Titre X de l'AUDCIF révisé : journal de trésorerie par caisse et par banque (note 4), journaux de suivi des créances et des dettes, inventaire extra-comptable des stocks et des travaux en cours, bilan et compte de résultat avec la colonne N-1, notes 1 à 3, arrêté dans les quatre mois (art. 23).
@@ -110,6 +111,12 @@ La liste reprend les colonnes du journal de trésorerie de l'OHADA. Le reste va 
 
 **Les dollars ?**
 Un compte par devise : la caisse en dollars se tient en dollars, comme dans le tiroir. Chaque opération garde le taux du jour. À la clôture, un seul taux, celui du 31 décembre. L'écart est un gain ou une perte de change. Convention à faire valider par l'expert partenaire.
+
+**Et si le commerçant se trompe ?**
+Rien ne s'efface. Une opération fausse s'annule par une contre-passation, et le stock suit. Une vente ou un achat à crédit sans paiement se retire par « Corriger », puis se saisit à nouveau. Les deux lignes restent : c'est la piste d'audit.
+
+**Et s'il perd son téléphone ?**
+Réglages, « Garder une copie de mes données » : un fichier à mettre sur WhatsApp ou Google Drive. Sur le nouveau téléphone, « Reprendre une copie » dès le premier écran. L'appli dit depuis combien de jours la dernière copie a été faite.
 
 **Pourquoi pas un cahier ou Excel ?**
 Le cahier ne calcule rien et Excel ne connaît pas le SMT. Mbongo produit directement les états du SMT, marche hors ligne sur un téléphone d'entrée de gamme, Android ou iPhone, et parle lingala.
@@ -134,6 +141,9 @@ Les pages sont statiques, servies par Firebase. Un essai de charge (k6, 60 utili
 - Le lingala est une traduction de travail, à faire relire.
 - Les conventions comptables D1 à D10 (cessions, emprunts, dollars, tontines) sont des choix à faire valider par l'expert-comptable partenaire.
 - Les seuils en francs congolais sont des équivalents à revoir chaque année.
+- Au bureau, le rôle d'expert-comptable se choisit sur l'ordinateur, sans mot de passe. Il faudra un vrai compte en ligne, comme pour la console, avant un pilote.
+- Le code à quatre chiffres du téléphone protège d'un regard curieux, pas d'un vol : on le retire en tapant le nom de l'entreprise.
+- La copie de sauvegarde ne contient pas les photos des pièces.
 
 ---
 
