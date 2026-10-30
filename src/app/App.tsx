@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Link, Route, Router, Switch, useLocation } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import { FournisseurLangue, useLangue, type Cle } from '../i18n';
+import { envoyer } from '../donnees/envoi';
 import { codeDefini, definirCode, verifierCode } from '../donnees/reglages';
 import { Icone, Marque } from './composants';
 import { mettreAJour, useInstallation } from './installation';
@@ -57,6 +58,22 @@ function Coque() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [chemin]);
+  // Envoi à TRK, si le téléphone est relié : à l'ouverture, au retour du réseau, puis toutes les cinq minutes.
+  // Une erreur se tait ici : Réglages montre ce qui reste à envoyer.
+  useEffect(() => {
+    const tenter = () => {
+      if (navigator.onLine && document.visibilityState === 'visible') void envoyer(db, entreprise.id).catch(() => undefined);
+    };
+    tenter();
+    window.addEventListener('online', tenter);
+    document.addEventListener('visibilitychange', tenter);
+    const minuterie = window.setInterval(tenter, 5 * 60_000);
+    return () => {
+      window.removeEventListener('online', tenter);
+      document.removeEventListener('visibilitychange', tenter);
+      window.clearInterval(minuterie);
+    };
+  }, [entreprise.id]);
   return (
     // Sur téléphone, la coque s'efface (display: contents) ; sur ordinateur, elle pose le menu à gauche.
     <div className="coque">

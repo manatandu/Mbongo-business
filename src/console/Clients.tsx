@@ -16,7 +16,7 @@ import {
 } from './abonnement';
 import { EtatAbo } from './Console';
 import { useAdmin } from './role';
-import { sb, useLecture, type Abonnement, type Client, type ClientVue, type Paiement, type Sms, type Suivi } from './supabase';
+import { sb, useLecture, type Abonnement, type Appareil, type Client, type ClientVue, type Paiement, type Sms, type Suivi } from './supabase';
 
 const SECTEUR = { negoce: 'Négoce', artisanat: 'Artisanat', services: 'Services' } as const;
 const STATUT = { prospect: 'Prospect', actif: 'Actif', suspendu: 'Suspendu', resilie: 'Résilié' } as const;
@@ -366,6 +366,52 @@ function NouveauSuivi({ client, apres }: { client: string; apres: () => void }) 
 
 type OngletFiche = 'abonnements' | 'paiements' | 'suivi' | 'sms' | 'fiche';
 
+/** Code client à donner au commerçant, et téléphones qui envoient leurs saisies. */
+function Liaison({ client }: { client: string }) {
+  const code = useLecture<{ code: string }>(() => sb.from('clients').select('code').eq('id', client).single(), [client]);
+  const tels = useLecture<Appareil[]>(() => sb.from('appareils').select('*').eq('client_id', client).eq('actif', true).order('lie_le'), [client]);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const c = code.donnees?.code;
+
+  async function rpc(nom: string, args: Record<string, string>, question: string) {
+    if (!window.confirm(question)) return;
+    const { error } = await sb.rpc(nom, args);
+    setErreur(error ? error.message : null);
+    code.relire();
+    tels.relire();
+  }
+
+  return (
+    <Carte titre="Téléphone du commerçant">
+      <div className="flex flex-col gap-2 text-[14px]">
+        <div className="flex flex-wrap items-center gap-3">
+          <span>
+            <span className="text-text-dim">Code client </span>
+            <b className="font-mono text-[16px] tracking-wider">{c ? `${c.slice(0, 4)}-${c.slice(4)}` : '…'}</b>
+          </span>
+          <button className="btn btn-neutre" onClick={() => void rpc('nouveau_code_client', { p_client: client }, "Donner un nouveau code ? L'ancien ne pourra plus relier de téléphone. Les téléphones déjà reliés continuent d'envoyer.")}>
+            Nouveau code
+          </button>
+        </div>
+        <p className="text-text-dim">À taper une fois dans Mbongo : Réglages, TRK Consulting. Les saisies partent ensuite seules quand il y a du réseau.</p>
+        {(tels.donnees ?? []).map((a) => (
+          <div key={a.id} className="flex flex-wrap items-center gap-3">
+            <Pastille ton="ok">relié</Pastille>
+            <span>
+              {a.nom || 'Téléphone'} · depuis le {fmtDate(a.lie_le.slice(0, 10))} · {a.dernier_envoi ? `dernier envoi le ${fmtDate(a.dernier_envoi.slice(0, 10))}` : 'aucun envoi'} · {a.saisies_recues} lignes reçues
+            </span>
+            <button className="btn btn-neutre" onClick={() => void rpc('delier_appareil', { p_appareil: a.id }, 'Délier ce téléphone ? Il n’enverra plus rien.')}>
+              Délier
+            </button>
+          </div>
+        ))}
+        {tels.donnees?.length === 0 && <p className="text-text-dim">Aucun téléphone relié.</p>}
+        {erreur && <Message ton="danger">{erreur}</Message>}
+      </div>
+    </Carte>
+  );
+}
+
 export function FicheClient({ id }: { id: string }) {
   const admin = useAdmin();
   const [onglet, setOnglet] = useState<OngletFiche>('abonnements');
@@ -413,6 +459,8 @@ export function FicheClient({ id }: { id: string }) {
           </span>
           <span>{c.sms_accepte ? <Pastille ton="ok">SMS acceptés</Pastille> : <Pastille ton="neutre">SMS refusés</Pastille>}</span>
         </div>
+
+        <Liaison client={id} />
 
         <nav className="flex flex-wrap gap-1 border-b" style={{ borderColor: 'var(--border)' }}>
           {ongletBouton('abonnements', 'Abonnements')}

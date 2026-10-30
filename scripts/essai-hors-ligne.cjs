@@ -72,6 +72,7 @@ function verifier(condition, message) {
     if (captures) await page.screenshot({ path: `${captures}/hl-2-journal.png` });
 
     await page.goto(`${URL_APPLI}#/reglages`);
+    await page.click('summary:has-text("Autres réglages")').catch(() => undefined);
     const message = await page.waitForSelector('text=Marche sans internet.', { timeout: 10_000 }).then(() => true, () => false);
     verifier(message, 'Réglages : « Marche sans internet. »');
     if (captures) await page.screenshot({ path: `${captures}/hl-3-reglages.png`, fullPage: true });

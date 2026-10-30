@@ -27,6 +27,16 @@ L'offre gratuite met le projet en pause après une semaine sans activité. Le ra
 
 Onglet « Équipe » (administrateurs) : ajouter un membre avec un mot de passe provisoire, changer son rôle, lui donner un nouveau mot de passe, le retirer. Les comptes sont créés directement en base (`creer_membre_equipe`), sans e-mail. Essai : `supabase/tests/role_assistant.sql`.
 
+## Code client et envoi des saisies
+
+Chaque client a un code de huit caractères (ex. KX7P-29QD), visible sur sa fiche (« Téléphone du commerçant »). Le commerçant le tape une fois dans Mbongo, Réglages, TRK Consulting. Le serveur rend au téléphone un jeton secret et n'en garde que l'empreinte. Ensuite l'appli envoie seule, à l'ouverture, au retour du réseau et toutes les cinq minutes, ce qui n'est pas encore parti. Les photos ne partent pas.
+
+- Fonctions : `lier_appareil(code, nom)` et `envoyer_saisies(jeton, lignes)`, appelables sans compte (elles vérifient le code ou le jeton) ; `nouveau_code_client` et `delier_appareil`, pour l'équipe.
+- Les saisies comptables ne sont jamais modifiées ; les fiches (entreprise, exercice, compte, inventaire) sont remplacées par leur dernière version.
+- L'équipe voit les téléphones reliés, la date du dernier envoi et le nombre de lignes reçues. Elle ne lit pas les saisies.
+- Nouveau code : l'ancien ne relie plus de téléphone ; ceux déjà reliés continuent. Délier : le téléphone n'envoie plus.
+- Essai : `supabase/tests/code_client.sql`. Migration : `20261031_code_client.sql`.
+
 ## Rappels SMS
 
 Chaque jour à 8 h (Kinshasa), `prive.planifier_rappels()` prépare un rappel pour le dernier abonnement de chaque client actif qui a accepté les SMS : 10 jours avant la fin (fenêtre 4 à 10 jours), 3 jours avant (1 à 3), le jour même, puis une fois en retard (1 à 30 jours). Jamais deux fois le même rappel. Texte en français ou en lingala selon la fiche.
@@ -36,5 +46,5 @@ Mode test (`reglages_console.sms_mode = 'test'`) : les SMS sont préparés et vi
 ## Reste à faire
 
 - Envoi réel des SMS (fournisseur à choisir).
-- Envoi des saisies du téléphone vers `saisies` (connexion du commerçant, file d'envoi déjà prête dans l'appli).
+- Lecture des saisies reçues au bureau (pour l'instant, le bureau lit les données de l'ordinateur).
 - Données personnelles : consentement aux SMS déjà demandé sur la fiche ; registre, durée de conservation et hébergement hors RDC à documenter (Code du numérique, ordonnance-loi n° 23/010).

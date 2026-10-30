@@ -58,7 +58,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 
 - **Front** : React + TypeScript + Vite, deux pages (appli, bureau), application installable (PWA) pour Android d'entrée de gamme et iPhone (Safari, « Sur l'écran d'accueil »).
 - **Données** : IndexedDB (Dexie) dans le navigateur, en ajout seulement. Pas de serveur pour la soutenance.
-- **Serveur** : Supabase, projet « mbongo » (`supabase/migrations/`). Sert la console ; tables des saisies cloisonnées par client (RLS, essai `supabase/tests/cloisonnement.sql`). L'appli reste locale tant que l'envoi des saisies n'est pas branché. Voir `docs/architecture.md`, § 14, et `docs/console.md`.
+- **Serveur** : Supabase, projet « mbongo » (`supabase/migrations/`). Sert la console ; tables des saisies cloisonnées par client (RLS, essai `supabase/tests/cloisonnement.sql`). Le téléphone relié par son code client y envoie ses saisies ; sinon l'appli reste locale. Voir `docs/architecture.md`, § 14, et `docs/console.md`.
 - **Moteur de calcul SMT** : module TypeScript pur, sans dépendance à l'interface, couvert par des tests (Vitest, fast-check). C'est la pièce critique.
 - **Site de TRK Consulting** (qui détient les droits du logiciel) : pages statiques dans `sites/trk-consulting/`, dont la présentation du logiciel dans `sites/trk-consulting/mbongo-business/`. `sites/ancienne-adresse/` renvoie l'ancienne adresse de l'appli vers la nouvelle.
 - Montants stockés en **entiers** (francs congolais ; centimes de dollar pour l'USD). Jamais de flottants pour l'argent.
@@ -99,7 +99,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 3. Bureau et exports PDF / Excel : faits.
 4. Site de TRK Consulting, avec la page Mbongo Business : en ligne ; restent adresse et immatriculation (WhatsApp : +243 983 510 725 ; tarifs : mise en place 30 000 CDF, Essentiel 25 000 CDF/mois, Suivi 50 000 CDF/mois).
 5. Soutenance : préparée (`docs/soutenance.md`, `npm run scenario`) ; restent l'essai sur un vrai téléphone et les diapositives.
-6. Console TRK et serveur : faits (rappels SMS en mode test). Restent l'envoi réel des SMS et l'envoi des saisies du téléphone.
+6. Console TRK et serveur : faits (rappels SMS en mode test). Code client : le téléphone relié envoie ses saisies au serveur. Restent l'envoi réel des SMS et la lecture des saisies reçues au bureau.
 
 ## Références
 

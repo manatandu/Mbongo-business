@@ -66,6 +66,17 @@ export interface Suivi {
   note: string;
 }
 
+/** Téléphone relié par le code client. L'équipe voit qu'il envoie, jamais ce qu'il envoie. */
+export interface Appareil {
+  id: string;
+  client_id: string;
+  nom: string;
+  lie_le: string;
+  dernier_envoi: string | null;
+  saisies_recues: number;
+  actif: boolean;
+}
+
 export interface Sms {
   id: string;
   client_id: string;

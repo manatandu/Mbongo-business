@@ -116,7 +116,7 @@ Un compte par devise : la caisse en dollars se tient en dollars, comme dans le t
 Rien ne s'efface. Une opération fausse s'annule par une contre-passation, et le stock suit. Une vente ou un achat à crédit sans paiement se retire par « Corriger », puis se saisit à nouveau. Les deux lignes restent : c'est la piste d'audit.
 
 **Et s'il perd son téléphone ?**
-Réglages, « Garder une copie de mes données » : un fichier à mettre sur WhatsApp ou Google Drive. Sur le nouveau téléphone, « Reprendre une copie » dès le premier écran. L'appli dit depuis combien de jours la dernière copie a été faite.
+Réglages, « Faire une copie » : un fichier à mettre sur WhatsApp ou Google Drive. Sur le nouveau téléphone, « Reprendre une copie » dès le premier écran. L'appli dit depuis combien de jours la dernière copie a été faite.
 
 **Pourquoi pas un cahier ou Excel ?**
 Le cahier ne calcule rien et Excel ne connaît pas le SMT. Mbongo produit directement les états du SMT, marche hors ligne sur un téléphone d'entrée de gamme, Android ou iPhone, et parle lingala.
@@ -127,6 +127,9 @@ Oui. Après la première ouverture, l'appli ne télécharge plus rien. Essai aut
 **Où sont les données ? Qui les voit ?**
 Sur le téléphone du commerçant, qui peut en faire une copie. Le serveur de TRK ne contient pour l'instant que les clients et leurs abonnements. Sa base est déjà cloisonnée : un client ne voit que ses propres comptes, l'équipe de TRK ne voit jamais la comptabilité des clients, et personne ne peut modifier une saisie. C'est vérifié par des essais sur le serveur. Le respect du Code du numérique (ordonnance-loi n° 23/010) reste à documenter avant un pilote : consentement, conservation, hébergement hors RDC.
 
+**Quel lien entre le commerçant et la console ?**
+À la mise en place, l'assistant crée la fiche du client dans la console. Elle porte un code client de huit caractères. Le commerçant le tape une fois dans Mbongo (Réglages, TRK Consulting). Ensuite ses saisies partent seules quand il y a du réseau, rangées chez lui seulement. L'équipe voit que le téléphone envoie et quand, jamais ce qu'il envoie.
+
 **Comment TRK Consulting gagne-t-elle de l'argent ?**
 Par abonnement : mise en place 30 000 CDF, puis 25 000 CDF par mois (Essentiel) ou 50 000 CDF (Suivi). La console suit les abonnements et prépare les rappels SMS avant l'échéance.
 
@@ -136,7 +139,7 @@ Les pages sont statiques, servies par Firebase. Un essai de charge (k6, 60 utili
 ## Limites à reconnaître
 
 - Pas encore de pilote réel : rien n'a été testé par un vrai commerçant.
-- Les saisies ne remontent pas encore au serveur : le bureau ne voit que les données de l'ordinateur.
+- Les saisies remontent au serveur dès que le téléphone est relié par son code client, mais le bureau ne les lit pas encore : il ne voit que les données de l'ordinateur.
 - Les SMS sont en mode test tant qu'aucun fournisseur n'est branché.
 - Le lingala est une traduction de travail, à faire relire.
 - Les conventions comptables D1 à D10 (cessions, emprunts, dollars, tontines) sont des choix à faire valider par l'expert-comptable partenaire.
