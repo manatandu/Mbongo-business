@@ -30,7 +30,8 @@ describe('Mes impôts : informer sans calculer d’impôt', () => {
     const annulation = { ...erreur, id: 'op-annul', annule: erreur.id };
     const s = situationImpots(dossierDeBase({ operations: [...ventes, paye, erreur, annulation] }), '2026-03-31');
     expect(s.payes.map((p) => p.libelle)).toEqual(['IRPP 60 %']);
-    expect(Object.keys(s).sort()).toEqual(['ca', 'echeances', 'parMois', 'payes', 'regime', 'seuils']);
+    // Aucun montant d'impôt à payer, sous aucun nom.
+    expect(Object.keys(s).filter((k) => /impot|estim|aPayer|du$/i.test(k))).toEqual([]);
   });
 
   it('rappelle les échéances de l’IRPP qui correspondent au régime', () => {

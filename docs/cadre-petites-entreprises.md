@@ -109,14 +109,14 @@ La loi n° 23/053 du 30 novembre 2023 abroge l'impôt sur les bénéfices et pro
 - **Micro-entreprise** (CA au plus 25 M FC, art. 107) : forfait annuel égal à l'équivalent de 30 USD, payé au plus tard le 30 avril de l'année suivante (AM n° 015/CAB/MIN/FINANCES/2025 du 19 février 2025). Pas de minimum de 1 % (art. 122).
 - **Petite entreprise** (25 M à 300 M FC, art. 109) : 1 % du CA pour la vente, 2 % pour les services, selon l'activité principale (art. 127). Paiement en deux fois : 60 % avec la déclaration au plus tard le 31 janvier, 40 % au plus tard le 30 avril (LPF, art. 57 quater).
 - Hors régime et exemptés : marchands ambulants, cireurs, petits vendeurs à domicile dispensés de patente (art. 108 et 64.3).
-- **Changement de régime** : option pour le réel par écrit avant le 1er février, irrévocable trois ans (art. 110). Le surclassement est immédiat ; le déclassement exige deux exercices sous le seuil (art. 113).
+- **Changement de régime** : option pour le réel par écrit avant le 1er février, irrévocable trois ans (art. 110). Art. 113 (texte lu) : le régime inférieur ne s'applique « que lorsque [le] chiffre d'affaires est resté en dessous de cette limite pendant deux exercices consécutifs » ; le régime supérieur s'applique « immédiatement ». La loi ne dit pas si la descente vaut dès le second exercice ou au suivant : Mbongo attend deux exercices terminés (lecture prudente), l'expert confirme. Le seuil du SMT (AUDCIF, art. 13) n'a pas cette règle des deux exercices ; dans l'AUDCIF, elle ne vise que la dispense de comptes consolidés (art. 95).
 - **Obligation comptable** : tenir une comptabilité selon l'AUDCIF révisé (art. 139). Le SMT y répond. La déclaration indique le nom et la qualification du comptable (art. 141) : jamais la structure comme teneur de comptes.
 - **Facture normalisée** pour chaque transaction, « sous réserve des dispositions particulières applicables aux entreprises de petite taille » (LPF, art. 23, modifié par la LF 25/060). Mentions à fixer par voie réglementaire.
 - **Rappel d'impôt** possible sur l'exercice en cours et les quatre années précédentes (LPF, art. 43).
 
 ### 3.2 Hors périmètre
 
-La TVA (assujettissement à partir de 80 M FC, OL 10/001, art. 14), l'impôt sur les sociétés et l'option pour le régime réel relèvent de l'expert-comptable partenaire. Mbongo ne les traite pas.
+La TVA (assujettissement à partir de 80 M FC, OL 10/001, art. 14 ; après une baisse, « l'assujetti conserve sa qualité les deux années suivant celle de la constatation de la diminution »), l'impôt sur les sociétés et l'option pour le régime réel relèvent de l'expert-comptable partenaire. Mbongo ne les traite pas.
 
 ### 3.3 Retenues que le commerçant doit faire
 

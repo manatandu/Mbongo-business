@@ -14,7 +14,7 @@ import { LigneEcheance } from './Echeances';
 export function Impots() {
   const { chargement, aujourdhui, dateRef } = useDossier();
   const { t, mois } = useLangue();
-  const s = useMemo(() => situationImpots(chargement.dossier, aujourdhui), [chargement.dossier, aujourdhui]);
+  const s = useMemo(() => situationImpots(chargement.dossier, aujourdhui, chargement.caAnterieurs), [chargement.dossier, chargement.caAnterieurs, aujourdhui]);
   const annee = chargement.exercice.annee;
 
   return (
@@ -28,6 +28,21 @@ export function Impots() {
       <p>
         {t(`impots.regime.${s.regime}` as Cle)} <span className="aide">{t('impots.regimeAide')}</span>
       </p>
+      {/* Loi n° 23/053, art. 113 : on monte tout de suite, on ne redescend qu'après deux exercices sous la limite. */}
+      {s.maintenu && <p className="aide">{t('impots.maintenu', { annee })}</p>}
+      {s.sansHistorique && <p className="aide">{t('impots.sansHistorique', { annee })}</p>}
+
+      {s.historique.length > 1 && (
+        <div className="registre">
+          {s.historique.map((h) => (
+            <div key={h.annee}>
+              <span className="n">{h.enCours ? t('impots.anneeEnCours', { annee: h.annee }) : h.annee}</span>
+              <span className="v num">{fmt(h.ca)}</span>
+              <span />
+            </div>
+          ))}
+        </div>
+      )}
 
       <h2 className="titre-section">{t('impots.seuils')}</h2>
       <div className="barres">
@@ -44,12 +59,10 @@ export function Impots() {
           </div>
         ))}
       </div>
-      {/* Passer le seuil de la micro-entreprise change seulement le régime ; la TVA et 300 M CDF demandent l'expert. */}
-      {s.seuils.some((x) => x.cle !== 'micro' && x.part >= 1) ? (
-        <p className="erreur">{t('impots.seuilDepasse')}</p>
-      ) : (
-        s.seuils.some((x) => x.part >= 0.8 && x.part < 1) && <p className="aide">{t('impots.seuilProche')}</p>
-      )}
+      {/* Passer 25 M CDF change seulement le régime. La TVA (OL n° 10/001, art. 14) et 300 M CDF demandent l'expert. */}
+      {s.tva === 'depasse' && <p className="erreur">{t('impots.tvaDepasse')}</p>}
+      {s.tva === 'gardee' && <p className="erreur">{t('impots.tvaGardee', { annee: s.tvaAnnee ?? '' })}</p>}
+      {s.tva === 'non' && s.regime !== 'reel' && s.seuils.some((x) => x.cle !== 'micro' && x.part >= 0.8) && <p className="aide">{t('impots.seuilProche')}</p>}
 
       <h2 className="titre-section">{t('impots.echeances')}</h2>
       <div className="liste">

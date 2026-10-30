@@ -4,6 +4,7 @@
  */
 import { calculerEtats, type DossierExercice, type Etats, type Immobilisation, type Operation, type PieceTiers } from '../moteur';
 import type { BaseMbongo } from './base';
+import { chiffreAffairesRealise, type AnneeCA } from './regimes';
 import type { LigneCompte, LigneEntreprise, LigneExercice, LigneOperation, LigneTiers } from './types';
 
 export interface Chargement {
@@ -11,6 +12,8 @@ export interface Chargement {
   exercice: LigneExercice;
   comptes: LigneCompte[];
   dossier: DossierExercice;
+  /** Chiffre d'affaires réalisé des trois années précédentes tenues dans Mbongo (régime IRPP, art. 113 ; TVA, OL 10/001, art. 14). */
+  caAnterieurs: AnneeCA[];
 }
 
 function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
@@ -52,7 +55,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   const id = entreprise.id;
   const { debut, fin } = exercice;
 
-  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, pieces, precedent] = await Promise.all([
+  const [comptes, lignesOps, lignesTiers, immos, sorties, inventaire, pieces, precedent, exercicesTenus] = await Promise.all([
     db.comptes.where('entrepriseId').equals(id).sortBy('ordre'),
     db.operations.where('entrepriseId').equals(id).toArray(),
     db.tiers.where('entrepriseId').equals(id).toArray(),
@@ -61,6 +64,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     db.inventaires.where('exerciceId').equals(exerciceId).sortBy('ordre'),
     db.pieces.where('entrepriseId').equals(id).toArray(),
     db.exercices.where('entrepriseId').equals(id).filter((e) => e.annee === exercice.annee - 1).first(),
+    db.exercices.where('entrepriseId').equals(id).toArray(),
   ]);
 
   const avecPhoto = new Set(pieces.map((p) => p.operationId));
@@ -124,7 +128,12 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   if (inventaire.length) {
     dossier.lignesStock = inventaire.map((l) => ({ reference: l.reference, designation: l.designation, quantite: l.quantite, prixUnitaire: l.prixUnitaire, montant: l.montant, ...(l.travauxEnCours ? { travauxEnCours: true } : {}) }));
   }
-  return { entreprise, exercice, comptes, dossier };
+  // Les trois années précédentes, si elles ont été tenues dans Mbongo.
+  const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !annulees.has(l.id));
+  const caAnterieurs = exercicesTenus
+    .filter((e) => e.annee < exercice.annee && e.annee >= exercice.annee - 3)
+    .map((e) => ({ annee: e.annee, ca: chiffreAffairesRealise(e.annee, lignesOps, facturesValides) }));
+  return { entreprise, exercice, comptes, dossier, caAnterieurs };
 }
 
 /** États de l'exercice précédent, pour la colonne N-1 du bilan et du compte de résultat (AUDCIF, art. 34). Null la première année. */

@@ -5,7 +5,8 @@
  * Dates relevées dans les skills fiscaux et sociaux (docs/cadre-petites-entreprises.md, § 3.6), à revoir chaque année.
  */
 import { ajouterJours } from '../moteur/dates';
-import { chiffreAffairesEstime, type DateISO, type DossierExercice } from '../moteur';
+import type { DateISO, DossierExercice } from '../moteur';
+import { chiffreAffairesRealise, regimeFiscal, type AnneeCA } from './regimes';
 
 export type CleEcheance =
   | 'loyer'
@@ -32,19 +33,22 @@ export interface Echeance {
 export interface ProfilEcheancier {
   salaries: boolean;
   loyer: boolean;
-  /** IRPP (loi n° 23/053) : micro-entreprise au plus 25 M CDF de CA, petite entreprise au-delà. Rien d'autre : le SMT s'arrête avant 300 M CDF. */
+  /** IRPP (loi n° 23/053, art. 107, 109 et 113) : régime suivi d'année en année. Rien au-delà : le SMT s'arrête avant 300 M CDF. */
   regime: 'micro' | 'petite';
 }
 
-export const SEUIL_MICRO = 25_000_000;
+export { SEUIL_MICRO } from './regimes';
 
-export function profilEcheancier(dossier: DossierExercice, date: DateISO): ProfilEcheancier {
+/** `anterieurs` : chiffre d'affaires des années précédentes tenues dans Mbongo (Chargement.caAnterieurs). */
+export function profilEcheancier(dossier: DossierExercice, date: DateISO, anterieurs: AnneeCA[] = []): ProfilEcheancier {
   const natures = new Set(dossier.operations.map((o) => o.nature));
-  const ca = chiffreAffairesEstime(dossier, date > dossier.exercice.fin ? dossier.exercice.fin : date);
+  const ref = date > dossier.exercice.fin ? dossier.exercice.fin : date;
+  const ca = chiffreAffairesRealise(dossier.exercice.annee, dossier.operations, dossier.creances, ref);
+  const { regime } = regimeFiscal([...anterieurs, { annee: dossier.exercice.annee, ca, enCours: ref < dossier.exercice.fin }]);
   return {
     salaries: natures.has('salaires'),
     loyer: natures.has('loyers'),
-    regime: ca <= SEUIL_MICRO ? 'micro' : 'petite',
+    regime: regime === 'micro' ? 'micro' : 'petite',
   };
 }
 

@@ -1,30 +1,27 @@
 /**
  * « Mes impôts » : ce que la loi fiscale dit de l'entreprise, d'après ses propres saisies. Aucun montant d'impôt.
- * Périmètre : l'IRPP des micro et petites entreprises (loi n° 23/053, art. 105 à 127), entreprise individuelle.
+ * Périmètre : l'IRPP des micro et petites entreprises (loi n° 23/053, art. 105 à 128), entreprise individuelle.
  * Le calcul de l'impôt, la déclaration et le choix d'un régime sont des actes de l'expert-comptable partenaire
- * (loi n° 15/002, art. 43.6 à 43.8) : le logiciel informe, il ne décide rien. Voir docs/cadre-petites-entreprises.md, § 3.
+ * (loi n° 15/002, art. 43.6 à 43.8) : le logiciel informe, il ne décide rien. Règles de régime : regimes.ts.
  */
-import { chiffreAffairesEstime, type DateISO, type DossierExercice, type Montant } from '../moteur';
+import type { DateISO, DossierExercice, Montant } from '../moteur';
 import { moisEntre } from '../moteur/dates';
-import { echeances, profilEcheancier, SEUIL_MICRO, type Echeance } from './echeancier';
-
-/** Au-delà, l'entreprise sort du régime de la petite entreprise (loi n° 23/053, art. 109). */
-export const SEUIL_PETITE = 300_000_000;
-/** Assujettissement à la TVA (OL n° 10/001, art. 14) : hors du périmètre de Mbongo, à voir avec l'expert. */
-export const SEUIL_TVA = 80_000_000;
+import { echeances, profilEcheancier, type Echeance } from './echeancier';
+import { chiffreAffairesRealise, regimeFiscal, SEUIL_MICRO, SEUIL_PETITE, SEUIL_TVA, type AnneeCA, type RegimeFiscal } from './regimes';
 
 export type CleSeuil = 'micro' | 'tva' | 'petite';
 
 export interface SeuilFiscal {
   cle: CleSeuil;
   montant: Montant;
-  /** Part atteinte (0 à 1 et plus). */
+  /** Part atteinte par le chiffre de l'année (0 à 1 et plus). */
   part: number;
 }
 
-export interface SituationImpots {
+export interface SituationImpots extends RegimeFiscal {
   ca: Montant;
-  regime: 'micro' | 'petite' | 'au_dela';
+  /** Années précédentes tenues dans Mbongo, puis l'année en cours. */
+  historique: AnneeCA[];
   seuils: SeuilFiscal[];
   parMois: { mois: string; ca: Montant }[];
   /** Dépenses rangées en « Impôts et taxes » cette année, annulations déduites. */
@@ -34,14 +31,17 @@ export interface SituationImpots {
 
 const FISCALES = new Set(['impotPremier', 'impotSolde', 'forfaitMicro', 'irppSalaries']);
 
-export function situationImpots(dossier: DossierExercice, date: DateISO): SituationImpots {
-  const ref = date > dossier.exercice.fin ? dossier.exercice.fin : date;
-  const ca = chiffreAffairesEstime(dossier, ref);
+export function situationImpots(dossier: DossierExercice, date: DateISO, anterieurs: AnneeCA[] = []): SituationImpots {
+  const { annee, fin } = dossier.exercice;
+  const ref = date > fin ? fin : date;
+  const caA = (jusquA: DateISO) => chiffreAffairesRealise(annee, dossier.operations, dossier.creances, jusquA);
+  const ca = caA(ref);
+  const historique = [...anterieurs, { annee, ca, ...(ref < fin ? { enCours: true } : {}) }].sort((a, b) => a.annee - b.annee);
+
   const parMois: SituationImpots['parMois'] = [];
   let avant = 0;
   for (const m of moisEntre(dossier.exercice.debut.slice(0, 7), ref.slice(0, 7))) {
-    const fin = m === ref.slice(0, 7) ? ref : finDuMois(m);
-    const cumul = chiffreAffairesEstime(dossier, fin);
+    const cumul = caA(m === ref.slice(0, 7) ? ref : finDuMois(m));
     parMois.push({ mois: m, ca: cumul - avant });
     avant = cumul;
   }
@@ -51,7 +51,8 @@ export function situationImpots(dossier: DossierExercice, date: DateISO): Situat
     .map((o) => ({ id: o.id, date: o.date, libelle: o.libelle, montant: o.montant, devise: o.devise, piece: o.piece }));
   return {
     ca,
-    regime: ca <= SEUIL_MICRO ? 'micro' : ca <= SEUIL_PETITE ? 'petite' : 'au_dela',
+    historique,
+    ...regimeFiscal(historique),
     seuils: [
       { cle: 'micro', montant: SEUIL_MICRO, part: ca / SEUIL_MICRO },
       { cle: 'tva', montant: SEUIL_TVA, part: ca / SEUIL_TVA },
@@ -59,7 +60,7 @@ export function situationImpots(dossier: DossierExercice, date: DateISO): Situat
     ],
     parMois,
     payes,
-    echeances: echeances(date, 366, profilEcheancier(dossier, date)).filter((e) => FISCALES.has(e.cle)),
+    echeances: echeances(date, 366, profilEcheancier(dossier, date, anterieurs)).filter((e) => FISCALES.has(e.cle)),
   };
 }
 

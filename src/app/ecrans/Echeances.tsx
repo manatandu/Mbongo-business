@@ -7,7 +7,7 @@ import { useDossier } from '../session';
 
 export function useEcheances(jours: number): Echeance[] {
   const { chargement, aujourdhui } = useDossier();
-  return useMemo(() => echeances(aujourdhui, jours, profilEcheancier(chargement.dossier, aujourdhui)), [chargement.dossier, aujourdhui, jours]);
+  return useMemo(() => echeances(aujourdhui, jours, profilEcheancier(chargement.dossier, aujourdhui, chargement.caAnterieurs)), [chargement.dossier, chargement.caAnterieurs, aujourdhui, jours]);
 }
 
 export function LigneEcheance({ e }: { e: Echeance }) {
