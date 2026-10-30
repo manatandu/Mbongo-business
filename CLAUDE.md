@@ -104,7 +104,7 @@ Mbongo est un petit logiciel. On le garde à cette taille.
 ## Références
 
 - `prototype/index.html` : prototype fonctionnel validé (un seul fichier, logique de calcul déjà juste, sert de référence visuelle et métier).
-- `design/logo-mbongo/` : logo de Mbongo Business (piste C « le compte au bâton », provisoire tant qu'elle n'est pas choisie), `construire.py` et planche des pistes.
+- `design/logo-mbongo/` : logo de Mbongo Business. Six pistes (planche-pistes.png) ; la piste C « le compte au bâton » est en place. Kit et guide (`kit/`, `GUIDE.md`) régénérés par `python3 kit.py <piste>`.
 - `design/logo-trk/` : logo de TRK Consulting (piste « Compte en T »), kit complet dans `kit/` et guide d'usage `kit/GUIDE.md` ; régénérer par `outils/construire_kit.py`.
 - `docs/regles-smt.md` : règles comptables détaillées.
 - `docs/cadre-juridique.md` : partage des rôles structure / expert-comptable.

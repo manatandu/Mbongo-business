@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" rx="58" fill="#0B2A52"/><g transform="translate(128 128) scale(1.18) translate(-128 -128)">
+  <!-- M en deux colonnes : recettes, dépenses, et le solde au milieu (le chevron) -->
+  
+  <rect x="56" y="66" width="40" height="124" rx="6" fill="#FFFFFF"/>
+  <rect x="160" y="66" width="40" height="124" rx="6" fill="#FFFFFF"/>
+  <polygon points="106,66 128,100 150,66 150,118 128,152 106,118" fill="#E0B21B"/>
+</g></svg>

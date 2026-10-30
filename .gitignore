@@ -7,3 +7,4 @@ soutenance/
 .firebase/
 skills-a-installer/
 dist-console/
+__pycache__/

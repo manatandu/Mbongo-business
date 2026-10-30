@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" rx="58" fill="#0B2A52"/><g transform="translate(128 128) scale(0.8) translate(-128 -128)">
+  <!-- La liasse : un paquet de billets serré par sa bande -->
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M50 52h156a26 26 0 0 1 26 26v76a26 26 0 0 1-26 26H50a26 26 0 0 1-26-26V78a26 26 0 0 1 26-26Z M82 52h52v128H82Z"/>
+  <rect x="94" y="52" width="28" height="128" fill="#E0B21B"/>
+  <rect x="36" y="194" width="184" height="12" rx="6" fill="#FFFFFF"/>
+  <rect x="52" y="216" width="152" height="12" rx="6" fill="#FFFFFF"/>
+</g></svg>
