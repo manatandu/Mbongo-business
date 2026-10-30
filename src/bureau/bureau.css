@@ -1,7 +1,9 @@
 /* ---------------------------------------------------------------------------
-   BUREAU DE MBONGO · trois écrans pour l'assistant et l'expert-comptable.
-   Habillage sobre : le bleu et le jaune de Mbongo, la police du système,
-   des tableaux lisibles. Contrastes mesurés (docs/architecture.md, § 8.4).
+   BUREAU DE MBONGO et CONSOLE DE TRK · « la caisse et le cahier », version ordinateur.
+   Même habillage que l'appli du commerçant (src/ui/styles.css) : bandeau bleu nuit en haut, page de
+   papier blanc posée sur un fond gris-bleu, une marge dorée à gauche, des lignes réglées au lieu de
+   cartes, les montants à droite. Police Archivo : large et grasse pour les titres et les totaux.
+   La console de TRK importe cette feuille (src/console/main.tsx).
    --------------------------------------------------------------------------- */
 
 @import '../ui/marque.css';
@@ -10,229 +12,489 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Archivo, la police de l'appli (même fichier, mis en cache une fois). Licence OFL. */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('../ui/polices/archivo-latin-wdth-normal.woff2') format('woff2');
+}
+
 :root {
-  --n-50: #f5f7fa;
-  --n-100: #e9eef4;
-  --n-150: #dfe5ec;
-  /* Bord des champs et des boutons : 3,47:1 sur blanc, assez pour être vu. */
-  --n-400: #7d8b9d;
-  --n-500: #536275;
-  --n-900: #121a24;
+  /* Le bleu nuit et l'or de TRK Consulting ; les mêmes valeurs que l'appli. */
+  --nuit: #0b2a52;
+  --nuit-2: #14396a;
+  --nuit-dim: #9fb3cf;
+  --or: #e0b21b;
+  --papier: #ffffff;
+  --fond: #e9eef5;
+  --regle: #dde6f1;
+  --regle-forte: #b9c8db;
+  --accent-soft: #edf4fc;
+  --bandeau: var(--nuit);
 
-  /* Le bleu de Mbongo et l'étoile jaune (en filet seulement, jamais en fond de texte). */
-  --a-50: #edf4fc;
-  --a-200: #bcd5f2;
-  --a-500: #2472cf;
-  --a-600: #0b5fb8;
-  --a-700: #0a4d96;
-  --a-900: #0b2a52;
-  --etoile: #f2c200;
-  --bandeau: var(--a-900);
-
-  --chrome-text: #e9f1fb;
-  --chrome-text-dim: #a8c0de;
-  --surface: #ffffff;
-  --surface-alt: var(--n-50);
-  --border: var(--n-150);
-  --border-dark: var(--n-400);
-  --text: var(--n-900);
-  --text-dim: var(--n-500);
-  --sel: var(--a-600);
-  --sel-soft: var(--a-50);
+  /* Noms lus par les utilitaires Tailwind (tailwind.config.js). */
+  --chrome-text: #e8eef7;
+  --chrome-text-dim: var(--nuit-dim);
+  --surface: var(--papier);
+  --surface-alt: #f5f8fb;
+  --border: var(--regle);
+  --border-dark: var(--regle-forte);
+  --text: #13202f;
+  --text-dim: #556579;
+  --sel: #0b5fb8;
+  --sel-soft: var(--accent-soft);
 
   /* Vert, ocre, rouge ne servent qu'à dire quelque chose. */
-  --positive: #0e7049;
-  --positive-soft: #e4f6ed;
+  --positive: #0e7a4f;
+  --positive-soft: #e3f4eb;
   --warning: #8e5406;
-  --warning-soft: #fdf0da;
-  --danger: #b52e26;
-  --danger-soft: #fde9e7;
+  --warning-soft: #fdf1dc;
+  --danger: #c23a2b;
+  --danger-soft: #fce9e6;
 
   /* Canaux des couleurs, pour l'opacité des utilitaires (`border-danger/30`). */
-  --chrome-text-rgb: 233 241 251;
-  --chrome-text-dim-rgb: 168 192 222;
+  --chrome-text-rgb: 232 238 247;
+  --chrome-text-dim-rgb: 159 179 207;
   --surface-rgb: 255 255 255;
-  --surface-alt-rgb: 245 247 250;
-  --border-rgb: 223 229 236;
-  --border-dark-rgb: 125 139 157;
-  --text-rgb: 18 26 36;
-  --text-dim-rgb: 83 98 117;
+  --surface-alt-rgb: 245 248 251;
+  --border-rgb: 221 230 241;
+  --border-dark-rgb: 185 200 219;
+  --text-rgb: 19 32 47;
+  --text-dim-rgb: 85 101 121;
   --sel-rgb: 11 95 184;
   --sel-soft-rgb: 237 244 252;
-  --positive-rgb: 14 112 73;
-  --positive-soft-rgb: 228 246 237;
+  --positive-rgb: 14 122 79;
+  --positive-soft-rgb: 227 244 235;
   --warning-rgb: 142 84 6;
-  --warning-soft-rgb: 253 240 218;
-  --danger-rgb: 181 46 38;
-  --danger-soft-rgb: 253 233 231;
+  --warning-soft-rgb: 253 241 220;
+  --danger-rgb: 194 58 43;
+  --danger-soft-rgb: 252 233 230;
 
-  --ombre-plate: 0 1px 1px rgba(11, 42, 82, 0.05);
-  --ombre-posee: 0 0 0 1px rgba(11, 42, 82, 0.05), 0 1px 2px rgba(11, 42, 82, 0.06), 0 4px 12px -4px rgba(11, 42, 82, 0.1);
-  --fenetre: #f5f7fa;
   --t-sortie: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-doux: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-ressort: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --police: 'Archivo', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color-scheme: light;
 }
 
 html {
-  background: var(--n-100);
+  background: var(--fond);
 }
 body {
   margin: 0;
-  /* La police du système : rien à télécharger. */
-  font-family: 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Roboto, Arial, sans-serif;
-  font-size: 14px;
+  font-family: var(--police);
+  font-size: 15px;
   line-height: 1.45;
   color: var(--text);
-  background: linear-gradient(178deg, var(--n-50) 0%, var(--n-100) 100%) fixed;
+  background: var(--fond);
   /* Les chiffres s'alignent colonne par colonne. */
   font-variant-numeric: tabular-nums;
 }
 
 button,
 input,
-select {
+select,
+textarea {
   font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--sel);
+  outline-offset: 2px;
   border-radius: 4px;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 1px;
+input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--nuit);
 }
 
 .nom-marque {
-  font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
-  font-weight: 600;
+  font-family: var(--police);
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Le bandeau du haut ---------- */
+.entete {
+  background: var(--nuit);
+  color: var(--chrome-text);
+  position: relative;
+  z-index: 2;
+}
+.entete .nom-marque {
+  font-size: 17px;
+  color: #fff;
+}
+/* Les champs et boutons du bandeau, sur le bleu nuit */
+.entete .champ {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+.entete .champ:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  border-bottom-color: var(--or);
+}
+.entete option {
+  color: var(--text);
+  background: var(--papier);
+}
+.entete .btn-neutre {
+  background: transparent;
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.3);
+}
+.entete .btn-neutre:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Le logo de Mbongo : le compte au bâton (composant Marque) ---------- */
+.marque {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: block;
+}
+.marque .tuile {
+  fill: rgba(255, 255, 255, 0.08);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 4;
+}
+.marque .traits rect {
+  fill: #fff;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: trait-pousse 0.42s var(--t-ressort) both;
+}
+.marque .traits .b1 {
+  animation-delay: 0.08s;
+}
+.marque .traits .b2 {
+  animation-delay: 0.16s;
+}
+.marque .traits .b3 {
+  animation-delay: 0.24s;
+}
+.marque .travers {
+  fill: var(--or);
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+  animation: trait-barre 0.4s var(--t-sortie) 0.42s both;
 }
 
 @layer components {
-  /* La fenêtre du kit : barre de titre à l'encre, corps sur fond de fenêtre. */
+  /* La page : papier blanc, marge dorée du cahier, titre large. Une par écran. */
   .fenetre {
-    background: var(--fenetre);
-    border-radius: 8px;
-    box-shadow: var(--ombre-posee);
+    position: relative;
+    background: var(--papier);
+    border-radius: 20px;
+    box-shadow:
+      0 1px 2px rgba(11, 42, 82, 0.06),
+      0 20px 40px -24px rgba(11, 42, 82, 0.25);
     overflow: hidden;
-    animation: fenetre-in 0.28s var(--t-sortie) both;
+    animation: fenetre-in 0.32s var(--t-sortie) both;
+  }
+  .fenetre::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 18px;
+    width: 2px;
+    background: var(--or);
+    opacity: 0.55;
+    pointer-events: none;
   }
   .fenetre-titre {
-    @apply px-4 py-2 flex items-center justify-between gap-3;
-    background: var(--bandeau);
-    color: #fff;
+    /* Ce qui était écrit sur le bandeau s'écrit maintenant sur le papier. */
+    --chrome-text-dim: var(--text-dim);
+    padding: 26px 32px 2px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 16px;
+    color: var(--text-dim);
+  }
+  .fenetre-titre h1 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.05;
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.02em;
+    color: var(--nuit);
+    text-wrap: balance;
   }
   .fenetre-corps {
-    @apply p-4 flex flex-col gap-4;
+    padding: 18px 32px 32px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
   }
 
+  /* Boutons : plein bleu nuit qui s'enfonce, ou contour */
   .btn {
-    @apply inline-flex items-center justify-center gap-1.5 px-3 h-[34px] text-[14px] font-semibold;
-    border-radius: 6px;
-    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 6px 18px;
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    border: 0;
+    border-radius: 14px;
     white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform 0.14s var(--t-ressort),
+      background 0.14s var(--t-doux),
+      box-shadow 0.14s var(--t-doux);
   }
   .btn:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
   }
-  /* Le geste principal de l'écran, en pilule. */
   .btn-principal {
-    background: linear-gradient(180deg, var(--a-500), var(--a-600));
+    background: var(--nuit);
     color: #fff;
-    border-radius: 999px;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 1px 2px rgba(11, 42, 82, 0.18);
+    box-shadow: 0 2px 0 #061a35;
   }
   .btn-principal:hover:not(:disabled) {
-    background: linear-gradient(180deg, var(--a-600), var(--a-700));
+    background: var(--nuit-2);
+  }
+  .btn-principal:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 #061a35;
   }
   .btn-neutre {
-    background: var(--surface);
-    border-color: var(--border-dark);
-    color: var(--text);
+    background: var(--papier);
+    color: var(--nuit);
+    box-shadow: inset 0 0 0 1.5px var(--regle-forte);
   }
   .btn-neutre:hover:not(:disabled) {
     background: var(--surface-alt);
   }
+  .btn-neutre:active:not(:disabled) {
+    transform: scale(0.98);
+  }
 
+  /* Onglets : un segment sur fond pâle, l'onglet choisi en blanc */
+  .segment {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-self: flex-start;
+    gap: 4px;
+    padding: 4px;
+    background: var(--surface-alt);
+    border-radius: 14px;
+  }
   .onglet {
-    @apply px-3 py-2 text-[14px] font-semibold;
+    padding: 8px 16px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 14.5px;
+    font-weight: 700;
     color: var(--text-dim);
     background: none;
     border: 0;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    border-radius: 10px;
     cursor: pointer;
+    transition:
+      background 0.2s var(--t-doux),
+      color 0.2s var(--t-doux);
   }
   .onglet:hover {
-    color: var(--text);
+    color: var(--nuit);
   }
   .onglet-actif {
-    color: var(--sel);
-    border-bottom-color: var(--sel);
+    color: var(--nuit);
+    background: var(--papier);
+    box-shadow:
+      0 1px 2px rgba(11, 42, 82, 0.12),
+      0 0 0 1px rgba(11, 42, 82, 0.05);
   }
 
-  /* Tableaux : blancs, en-tête bleu, filets entre les lignes. */
+  /* Tableaux : en-tête bleu nuit, lignes réglées, montants à droite */
   .grille {
-    @apply w-full text-left text-[14px];
-    background: var(--surface);
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    background: var(--papier);
     border-collapse: collapse;
   }
   .grille th {
-    @apply px-2 py-1.5 whitespace-nowrap font-semibold;
-    background: var(--a-700);
+    padding: 8px 10px;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--nuit);
     color: #fff;
+  }
+  .grille th + th {
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
   .grille td {
-    @apply px-2 py-1 align-top;
-    border-bottom: 1px solid var(--border);
+    padding: 6px 10px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--regle);
   }
-  .grille tbody tr:hover {
-    background: var(--a-50);
+  .grille tbody tr.cursor-pointer {
+    transition: background 0.15s var(--t-doux);
+  }
+  .grille tbody tr.cursor-pointer:hover {
+    background: var(--accent-soft);
+  }
+  /* Les boutons d'une ligne de tableau, plus petits */
+  .grille .btn {
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 13.5px;
+    border-radius: 12px;
   }
   .grille .m {
-    @apply text-right whitespace-nowrap;
+    text-align: right;
+    white-space: nowrap;
   }
   .grille tr.total td {
-    font-weight: 600;
-    color: var(--a-900);
-    background: var(--a-50);
-    border-top: 1px solid var(--a-200);
+    font-weight: 700;
+    color: var(--nuit);
+    background: var(--accent-soft);
+    border-top: 1.5px solid var(--nuit);
   }
   .grille tr.resultat td {
-    font-weight: 600;
+    font-weight: 800;
+    font-stretch: 108%;
     color: #fff;
-    background: var(--a-700);
+    background: var(--nuit);
   }
 
-  /* Champ : filet clair, filet sombre dessous, trait d'accent au focus. */
+  /* Champ : comme une ligne du cahier qu'on remplit */
   .champ {
-    @apply border px-2 h-[34px] text-[14px];
-    background: var(--surface);
-    border-color: var(--border);
-    border-bottom-color: var(--border-dark);
+    min-height: 40px;
+    padding: 6px 10px;
+    font-size: 14.5px;
+    color: var(--text);
+    background: var(--surface-alt);
+    border: 0;
+    border-bottom: 2px solid var(--regle-forte);
+    border-radius: 10px 10px 2px 2px;
+    transition:
+      border-color 0.16s var(--t-doux),
+      background 0.16s var(--t-doux);
   }
   .champ:focus-visible {
     outline: none;
-    border-bottom-color: var(--sel);
-    box-shadow: inset 0 -1px 0 var(--sel);
+    border-bottom-color: var(--nuit);
+    background: var(--accent-soft);
   }
   .libelle {
-    @apply block text-[14px] mb-1;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-dim);
   }
+
+  /* Pastilles en pilule, sans bordure */
   .pastille {
-    @apply inline-block px-1.5 py-px rounded text-[13px] font-semibold border whitespace-nowrap;
+    display: inline-block;
+    padding: 1px 9px;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: 0;
+    border-radius: 999px;
+    white-space: nowrap;
   }
+
+  /* Messages : un trait de couleur à gauche, le texte dans la même couleur */
+  .message {
+    position: relative;
+    padding: 6px 0 6px 16px;
+    font-weight: 600;
+  }
+  .message::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 4px;
+    background: currentColor;
+  }
+  .message.avert::before {
+    background: var(--or);
+  }
+
+  /* Un bloc à titre dans la page : pas de carte, un titre et un filet bleu nuit */
   .encart {
-    @apply border rounded-lg;
-    background: var(--surface);
-    border-color: var(--border);
-    box-shadow: var(--ombre-plate);
+    min-width: 0;
+    overflow-x: auto;
   }
   .encart-titre {
-    @apply px-3 py-2 flex items-center justify-between gap-2 border-b;
-    border-color: var(--border);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 0 8px;
+    font-size: 17px;
+    font-weight: 800;
+    font-stretch: 112%;
+    letter-spacing: -0.01em;
+    color: var(--nuit);
+  }
+  .encart-titre h2 {
+    margin: 0;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+  .encart-titre .pastille {
+    letter-spacing: 0;
+  }
+  .encart-corps {
+    padding: 12px 0 0;
+    border-top: 2px solid var(--nuit);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Chiffres de la console : la caisse, en bleu nuit, montants en grand */
+  .chiffres {
+    --text-dim: var(--nuit-dim);
+    background: var(--nuit);
+    color: #fff;
+    border-radius: 20px;
+    padding: 20px 24px;
+    gap: 0;
+    animation: fenetre-in 0.32s var(--t-sortie) both;
+  }
+  .chiffre {
+    padding: 4px 20px;
+    min-width: 0;
+  }
+  .chiffre + .chiffre {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .chiffre-valeur {
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: 800;
+    font-stretch: 118%;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
   }
 }
 
@@ -240,13 +502,54 @@ select:focus-visible {
 @keyframes fenetre-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.995);
+    transform: translate3d(0, 12px, 0);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
+@keyframes trait-pousse {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes trait-barre {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Écran étroit : la page garde sa marge, en plus serré */
+@media (max-width: 640px) {
+  .fenetre {
+    border-radius: 16px;
+  }
+  .fenetre::before {
+    left: 10px;
+  }
+  .fenetre-titre {
+    padding: 20px 16px 2px 24px;
+  }
+  .fenetre-titre h1 {
+    font-size: 26px;
+  }
+  .fenetre-corps {
+    padding: 14px 16px 20px 24px;
+  }
+}
+@media (max-width: 767px) {
+  .chiffre:nth-child(odd) {
+    border-left: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -256,30 +559,55 @@ select:focus-visible {
   }
 }
 
-/* Impression : seuls les états partent sur le papier. */
+/* Impression : seuls les états partent sur le papier. Fond blanc, ni bandeau ni marge dorée. */
 @media print {
   @page {
     size: A4;
     margin: 12mm;
   }
+  html,
   body {
     background: #fff;
   }
   .ecran-seul,
   button,
+  .segment,
   [role='tablist'] {
     display: none !important;
   }
   main {
     padding: 0 !important;
   }
-  .encart,
   .fenetre {
+    border-radius: 0;
     box-shadow: none !important;
+    overflow: visible;
+    animation: none;
+  }
+  .fenetre::before {
+    display: none;
   }
   .fenetre-titre {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    padding: 0 0 4px;
+  }
+  .fenetre-titre h1 {
+    font-size: 20pt;
+  }
+  .fenetre-corps {
+    padding: 8px 0 0;
+  }
+  .encart {
+    overflow: visible;
+  }
+  .encart-titre {
+    font-size: 13pt;
+  }
+  .grille {
+    font-size: 9.5pt;
+  }
+  .grille th,
+  .grille td {
+    padding: 3px 6px;
   }
   .grille th,
   .grille tr.total td,

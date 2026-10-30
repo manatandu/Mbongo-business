@@ -10,9 +10,9 @@ import { sb, useLecture, type ClientVue, type Paiement, type Sms } from './supab
 
 function Chiffre({ titre, valeur, detail }: { titre: string; valeur: string; detail?: string }) {
   return (
-    <div className="encart p-3 flex flex-col gap-0.5">
+    <div className="chiffre flex flex-col gap-0.5">
       <span className="text-text-dim text-[13px]">{titre}</span>
-      <span className="text-[22px] font-semibold">{valeur}</span>
+      <span className="chiffre-valeur">{valeur}</span>
       {detail && <span className="text-text-dim text-[12px]">{detail}</span>}
     </div>
   );
@@ -34,7 +34,7 @@ export function TableauDeBord() {
   return (
     <>
       {clients.erreur && <Message ton="danger">{clients.erreur}</Message>}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+      <div className="chiffres grid gap-y-4 grid-cols-2 md:grid-cols-4">
         <Chiffre titre="Clients actifs" valeur={String(actifs.length)} detail={`${liste.filter((c) => c.statut === 'prospect').length} prospect(s)`} />
         <Chiffre titre="À relancer" valeur={String(aRelancer.length)} detail="échéance dans 10 jours ou dépassée" />
         <Chiffre titre="Encaissé ce mois" valeur={`${fmt(encaisse)} CDF`} detail={`${(paiements.donnees ?? []).length} paiement(s)`} />

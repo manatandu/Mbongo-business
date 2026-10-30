@@ -133,9 +133,9 @@ function Onglet({ vers, children }: { vers: string; children: ReactNode }) {
 function Coquille({ session, role }: { session: Session; role: RoleEquipe | 'aucun' | null }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="ecran-seul text-chrome-text" style={{ background: 'var(--bandeau)' }}>
-        <div className="max-w-[1100px] mx-auto h-12 px-4 flex items-center gap-3">
-          <img src={symboleTrk} alt="" className="w-7 h-7" />
+      <header className="entete ecran-seul">
+        <div className="max-w-[1100px] mx-auto h-16 px-4 flex items-center gap-3">
+          <img src={symboleTrk} alt="" className="w-9 h-9" />
           <a href="#/" className="text-[15px] text-white no-underline">
             <span className="nom-marque">TRK Consulting</span> <span className="text-chrome-text-dim">· Console</span>
           </a>
@@ -148,17 +148,16 @@ function Coquille({ session, role }: { session: Session; role: RoleEquipe | 'auc
             Se déconnecter
           </button>
         </div>
-        <div className="h-[3px]" style={{ background: '#e0b21b' }} aria-hidden="true" />
       </header>
 
-      <main className="flex-1 w-full max-w-[1100px] mx-auto p-4 flex flex-col gap-4">
+      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-6 flex flex-col gap-4">
         {role === null ? null : role === 'aucun' ? (
           <Fenetre titre="Accès en attente">
             <Message ton="avert">Ce compte n'a pas encore accès à la console. Demandez à un administrateur de TRK Consulting d'autoriser {session.user.email}.</Message>
           </Fenetre>
         ) : (
           <RoleContexte.Provider value={role}>
-            <nav className="flex gap-1 border-b" style={{ borderColor: 'var(--border)' }} aria-label="Console">
+            <nav className="segment" aria-label="Console">
               <Onglet vers="/">Tableau de bord</Onglet>
               <Onglet vers="/clients">Clients</Onglet>
               <Onglet vers="/rappels">Rappels SMS</Onglet>

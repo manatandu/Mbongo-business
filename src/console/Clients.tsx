@@ -462,7 +462,7 @@ export function FicheClient({ id }: { id: string }) {
 
         <Liaison client={id} />
 
-        <nav className="flex flex-wrap gap-1 border-b" style={{ borderColor: 'var(--border)' }}>
+        <nav className="segment">
           {ongletBouton('abonnements', 'Abonnements')}
           {ongletBouton('paiements', 'Paiements')}
           {ongletBouton('suivi', 'Suivi')}

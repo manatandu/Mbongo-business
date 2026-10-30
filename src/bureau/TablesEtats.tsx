@@ -7,7 +7,7 @@ import { Pastille } from './ui';
 const L = ({ l, n, v, p, c }: { l: string; n?: string; v: Montant; p: Montant | undefined; c?: string }) => (
   <tr className={c}>
     <td>{l}</td>
-    <td className="font-mono text-text-dim">{n ?? ''}</td>
+    <td className="text-text-dim">{n ?? ''}</td>
     <td className="m">{fmt(v)}</td>
     <td className="m text-text-dim">{p === undefined ? '—' : fmt(p)}</td>
   </tr>

@@ -73,7 +73,7 @@ export function Client() {
         )}
       </div>
 
-      <div className="flex border-b border-border" role="tablist">
+      <div className="segment" role="tablist">
         <button role="tab" aria-selected={!etats} className={`onglet ${!etats ? 'onglet-actif' : ''}`} onClick={() => aller(`/client/${id}`)}>
           Contrôles
         </button>
