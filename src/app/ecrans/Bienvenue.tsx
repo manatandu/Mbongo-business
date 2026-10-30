@@ -83,7 +83,7 @@ export function CreerEntreprise() {
   const { t } = useLangue();
   const { aujourdhui } = useSession();
   const [, aller] = useLocation();
-  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: '', telephone: '', nif: '', stock: '', taux: '' });
+  const [champs, setChamps] = useState({ nom: '', responsable: '', activite: '', commune: '', telephone: '', nif: '', rccm: '', stock: '', taux: '' });
   const [secteur, setSecteur] = useState<SecteurSMT>('negoce');
   const [comptes, setComptes] = useState(COMPTES_PROPOSES);
   const [erreurs, setErreurs] = useState<string[]>([]);
@@ -111,6 +111,7 @@ export function CreerEntreprise() {
         commune: champs.commune,
         telephone: champs.telephone,
         nif: champs.nif,
+        rccm: champs.rccm,
         secteur,
         annee: Number(aujourdhui.slice(0, 4)),
         comptes: choisis.map((c, i) => ({ type: c.type, devise: c.devise, libelle: c.nom ?? t(c.cle), solde: soldes[i] ?? 0 })),
@@ -213,6 +214,10 @@ export function CreerEntreprise() {
           <label className="champ">
             {t('creer.nif')}
             <input {...champ('nif')} />
+          </label>
+          <label className="champ">
+            {t('creer.rccm')}
+            <input {...champ('rccm')} />
           </label>
 
         </div>

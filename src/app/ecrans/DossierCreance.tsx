@@ -3,17 +3,21 @@
  * le délai pour agir, et une reconnaissance de dette à faire signer par le client.
  * Ce sont les éléments qu'exige une injonction de payer (AUPSRVE, art. 4). Le commerçant ou son avocat la dépose.
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'wouter';
 import { dossierCreance } from '../../moteur';
+import { ErreurSaisie, noterReconnaissance } from '../../donnees/saisie';
 import { useLangue } from '../../i18n';
 import { fmtDate, fmtMontant } from '../../ui/format';
-import { useDossier } from '../session';
+import { Erreurs } from '../composants';
+import { db, useDossier } from '../session';
 
 export function DossierCreance() {
-  const { chargement, dateRef, entreprise } = useDossier();
+  const { chargement, dateRef, aujourdhui, entreprise, annoncer } = useDossier();
   const { t } = useLangue();
   const { id } = useParams<{ id: string }>();
+  const [signeLe, setSigneLe] = useState(dateRef);
+  const [erreurs, setErreurs] = useState<string[]>([]);
   const x = useMemo(() => {
     try {
       return dossierCreance(chargement.dossier, id, dateRef);
@@ -25,6 +29,19 @@ export function DossierCreance() {
   if (!x) return <p className="aide">{t('dossier.introuvable')}</p>;
   const l = x.ligne;
   const d = l.devise;
+  const { exercice } = chargement;
+  const modifiable = exercice.statut !== 'arrete' && exercice.statut !== 'clos' && x.reste > 0 && !l.perdueLe;
+
+  // Le client a signé la reconnaissance : le délai pour réclamer repart de ce jour (AUDCG, art. 22 et 23).
+  async function noter() {
+    try {
+      await noterReconnaissance(db, exercice.id, l.id, signeLe, aujourdhui);
+      setErreurs([]);
+      annoncer(t('dossier.reconnueOk'));
+    } catch (e) {
+      setErreurs(e instanceof ErreurSaisie ? e.messages : [(e as Error).message]);
+    }
+  }
 
   return (
     <>
@@ -115,6 +132,22 @@ export function DossierCreance() {
           <span>{t('dossier.signatureClient')}</span>
         </div>
         <p className="aide">{t('dossier.mention')}</p>
+      </div>
+
+      <div className="pas-imprime">
+        {l.reconnueLe && <p>{t('dossier.reconnueLe', { date: fmtDate(l.reconnueLe), fin: fmtDate(x.prescription) })}</p>}
+        {modifiable && (
+          <>
+            <label className="champ">
+              {t('dossier.signeLe')}
+              <input type="date" value={signeLe} min={l.date > exercice.debut ? l.date : exercice.debut} max={dateRef < exercice.fin ? dateRef : exercice.fin} onChange={(e) => setSigneLe(e.target.value)} />
+            </label>
+            <Erreurs messages={erreurs} />
+            <button className="bouton discret" onClick={() => void noter()}>
+              {t('dossier.noterReconnaissance')}
+            </button>
+          </>
+        )}
       </div>
     </>
   );

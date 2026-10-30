@@ -19,6 +19,7 @@ export interface DonneesEntreprise {
   secteur: SecteurSMT;
   commune: string;
   nif: string;
+  rccm?: string;
   responsable: string;
   telephone: string;
   annee: number;
@@ -44,6 +45,7 @@ export async function creerEntreprise(db: BaseMbongo, d: DonneesEntreprise): Pro
       secteur: d.secteur,
       commune: d.commune.trim(),
       nif: d.nif.trim(),
+      ...(d.rccm?.trim() ? { rccm: d.rccm.trim() } : {}),
       responsable: d.responsable.trim(),
       telephone: d.telephone.trim(),
       demo: d.demo ?? false,
@@ -115,6 +117,11 @@ export async function ajouterCompte(db: BaseMbongo, entrepriseId: string, exerci
 }
 
 /** Retire de l'appareil une entreprise et toutes ses données. Réservé aux données de démonstration. */
+/** N° RCCM ajouté ou corrigé après la création ; vide pour l'effacer. */
+export async function enregistrerRccm(db: BaseMbongo, entrepriseId: string, rccm: string): Promise<void> {
+  await db.entreprises.update(entrepriseId, { rccm: rccm.trim() || undefined });
+}
+
 export async function retirerEntreprise(db: BaseMbongo, entrepriseId: string): Promise<void> {
   const e = await db.entreprises.get(entrepriseId);
   if (!e) return;

@@ -122,7 +122,9 @@ export function situationDepuisContexte(ctx: Contexte, genre: GenreTiers, date: 
  */
 export function prescription(l: PieceTiers, secteur: SecteurSMT = 'negoce'): DateISO {
   const ans = l.client !== 'commercant' ? 1 : secteur === 'services' ? 5 : 2;
-  const [a, m, j] = l.date.split('-');
+  // Reconnaissance par le débiteur : nouveau délai de même durée (AUDCG, art. 22 et 23).
+  const depart = l.reconnueLe && l.reconnueLe > l.date ? l.reconnueLe : l.date;
+  const [a, m, j] = depart.split('-');
   return `${Number(a) + ans}-${m}-${m === '02' && j === '29' ? '28' : j}`;
 }
 

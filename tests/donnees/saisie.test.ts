@@ -214,3 +214,30 @@ describe('créance perdue (AUDCIF, art. 43 et 46)', () => {
     await expect(declarerCreancePerdue(db, r.exerciceId, f, '2026-11-01')).rejects.toThrow('déjà déclarée perdue');
   });
 });
+
+describe('reconnaissance de dette (AUDCG, art. 22 et 23)', () => {
+  it('fait repartir le délai du jour de la signature, pour la même durée, sans toucher aux montants', async () => {
+    const { BaseMbongo } = await import('../../src/donnees/base');
+    const { creerEntreprise } = await import('../../src/donnees/entreprise');
+    const { chargerDossier } = await import('../../src/donnees/dossier');
+    const { enregistrerFacture, noterReconnaissance } = await import('../../src/donnees/saisie');
+    const { calculerEtats, prescription } = await import('../../src/moteur');
+    const db = new BaseMbongo(`reconnue-${Math.random()}`);
+    const r = await creerEntreprise(db, {
+      nom: 'Boutique (fictif)', activite: '', secteur: 'negoce', commune: '', nif: '', responsable: '', telephone: '', annee: 2026,
+      comptes: [{ type: 'caisse', libelle: 'Caisse', devise: 'CDF', solde: 0 }], stockInitial: 0, tauxOuverture: null,
+    });
+    const f = await enregistrerFacture(db, r.exerciceId, 'creance', { date: '2026-02-01', facture: 'V-10', nom: 'Voisine (fictif)', nature: 'ventes', montant: 150_000, devise: 'CDF', taux: null, client: 'particulier' });
+    await expect(noterReconnaissance(db, r.exerciceId, f, '2026-11-15', '2026-10-30')).rejects.toThrow('futur');
+    await expect(noterReconnaissance(db, r.exerciceId, f, '2026-01-15', '2026-10-30')).rejects.toThrow('précéder');
+    await noterReconnaissance(db, r.exerciceId, f, '2026-06-10', '2026-10-30');
+    await noterReconnaissance(db, r.exerciceId, f, '2026-09-20', '2026-10-30');
+    const { dossier } = await chargerDossier(db, r.exerciceId);
+    expect(dossier.creances).toHaveLength(1);
+    expect(dossier.creances[0]!.reconnueLe).toBe('2026-09-20');
+    expect(prescription(dossier.creances[0]!, 'negoce')).toBe('2027-09-20');
+    const e = calculerEtats(dossier, { auDate: '2026-12-31' });
+    expect(e.bilan.actif.creances).toBe(150_000);
+    expect(e.bilan.equilibre).toBe(true);
+  });
+});

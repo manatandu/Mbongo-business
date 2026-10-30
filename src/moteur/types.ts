@@ -20,6 +20,8 @@ export interface Entreprise {
   nom: string;
   secteur: SecteurSMT;
   nif?: string;
+  /** N° d'immatriculation au RCCM, s'il y en a un (AUDCG, art. 14). */
+  rccm?: string;
 }
 
 export interface Exercice {
@@ -86,6 +88,8 @@ export interface PieceTiers {
    * dans la variation des créances (AUDCIF, art. 43 et 46 : l'amoindrissement de valeur est constaté).
    */
   perdueLe?: DateISO;
+  /** Dernière reconnaissance de dette signée par le client : le délai pour réclamer repart de cette date (AUDCG, art. 22 et 23). */
+  reconnueLe?: DateISO;
 }
 
 export interface SortieImmobilisation {

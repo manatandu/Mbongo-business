@@ -19,6 +19,7 @@ import {
   obstaclesArrete,
   resumeDossier,
   rouvrirInventaire,
+  versionsInventaire,
   type IdentiteExpert,
 } from '../donnees/bureau';
 import { etatsPrecedents } from '../donnees/dossier';
@@ -64,6 +65,7 @@ export function Client() {
   const precedent = useLiveQuery(() => (exId ? etatsPrecedents(db, exId) : Promise.resolve(null)), [exId]);
   const methodeStock = useLiveQuery(() => (entId ? mentionMethodeStock(db, entId) : Promise.resolve('')), [entId]);
   const identite = useLiveQuery(() => lireIdentiteExpert(db), []);
+  const versions = useLiveQuery(() => (exId ? versionsInventaire(db, exId) : Promise.resolve([])), [exId]) ?? [];
   const trace = useLiveQuery(() => (exId ? lireTraceArrete(db, exId) : Promise.resolve(null)), [exId, c?.exercice.statut]);
   const estimation = useLiveQuery(() => (entId ? activationEstimation(db, entId) : Promise.resolve(null)), [entId]);
   const regime = useLiveQuery(() => (entId && c ? regimeConfirme(db, entId, c.exercice.annee) : Promise.resolve(null)), [entId, c?.exercice.annee]);
@@ -250,11 +252,16 @@ export function Client() {
                         Arrêter les états {c.exercice.annee}
                       </button>
                       {c.exercice.stockFinal !== null && (
-                        <button className="btn btn-neutre" onClick={() => window.confirm("Rouvrir l'inventaire ? Le commerçant pourra le corriger puis le valider à nouveau.") && void agir(() => rouvrirInventaire(db, c.exercice.id))}>
+                        <button className="btn btn-neutre" onClick={() => window.confirm("Rouvrir l'inventaire ? Le commerçant pourra le corriger puis le valider à nouveau.") && void agir(() => rouvrirInventaire(db, c.exercice.id, aujourdhui))}>
                           Rouvrir l'inventaire
                         </button>
                       )}
                     </div>
+                    {versions.map((v, i) => (
+                      <p key={i} className="text-sm">
+                        Inventaire validé à {fmt(v.valideTotal)} FC, rouvert le {fmtDate(v.rouvertLe)} ({v.lignes.length} ligne{v.lignes.length > 1 ? 's' : ''}, copie gardée).
+                      </p>
+                    ))}
                   </>
                 )}
                 {arrete && (

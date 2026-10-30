@@ -197,6 +197,8 @@ function Inventaire() {
           <button className="bouton discret" onClick={() => setLignes((ls) => [...(ls ?? []), { designation: '', quantite: '', prix: '' }])}>
             {t('stock.ajouter')}
           </button>
+          {/* AUDCIF, art. 43 : valeur actuelle plus basse que le coût d'entrée. */}
+          <p className="aide">{t('stock.aideAbime')}</p>
 
           <h2 className="titre-section">{t('stock.travaux')}</h2>
           <p className="aide">{t('stock.aideTravaux')}</p>

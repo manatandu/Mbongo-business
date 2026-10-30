@@ -170,6 +170,33 @@ export async function declarerCreancePerdue(db: BaseMbongo, exerciceId: string, 
 }
 
 /**
+ * Reconnaissance de dette signée par le client (modèle du dossier de créance) : le commerçant note sa date.
+ * Le délai pour réclamer repart de ce jour, pour la même durée (AUDCG, art. 22 et 23).
+ */
+export async function noterReconnaissance(db: BaseMbongo, exerciceId: string, ligneId: string, date: DateISO, aujourdhui: DateISO): Promise<string> {
+  const { dossier, entreprise, exercice } = await chargerDossier(db, exerciceId);
+  if (exercice.statut === 'arrete' || exercice.statut === 'clos') {
+    throw new ErreurSaisie([`Les états ${exercice.annee} sont arrêtés par l'expert-comptable : plus de saisie sur cet exercice.`]);
+  }
+  if (date > aujourdhui) throw new ErreurSaisie(['La date de signature ne peut pas être dans le futur.']);
+  if (date < exercice.debut || date > exercice.fin) throw new ErreurSaisie(["Date hors de l'exercice."]);
+  const ligne = await db.tiers.get(ligneId);
+  if (!ligne || ligne.genre !== 'creance') throw new ErreurSaisie(['Créance introuvable.']);
+  if (date < ligne.date) throw new ErreurSaisie(['La reconnaissance ne peut pas précéder la facture.']);
+  const situation = situationTiers(dossier, 'creance', date).find((x) => x.ligne.id === ligneId);
+  if (!situation) throw new ErreurSaisie(['Créance introuvable.']);
+  if (situation.ligne.perdueLe) throw new ErreurSaisie(['Cette créance est déclarée perdue.']);
+  if (situation.encours <= 0) throw new ErreurSaisie(['Cette créance est déjà réglée.']);
+  const trace: Trace = { entrepriseId: entreprise.id, auteur: await identifiantAppareil(db), creeLe: new Date().toISOString(), envoi: 'local' };
+  const id = nouvelId();
+  await db.transaction('rw', [db.tiers, db.fileEnvoi], async () => {
+    await db.tiers.add({ ...ligne, ...trace, id, date, reconnaissance: ligneId });
+    await db.fileEnvoi.add({ table: 'tiers', ligne: id, creeLe: trace.creeLe, tentatives: 0 });
+  });
+  return id;
+}
+
+/**
  * Une saisie annulée emporte ses mouvements de stock : chaque mouvement lié reçoit son inverse (correction).
  * Une vente annulée fait revenir la marchandise au coût moyen du moment.
  */

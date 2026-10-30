@@ -34,6 +34,7 @@ export function champsEntete(e: Etats, m: Mentions): [string, string][] {
   const champs: [string, string][] = [
     ['Entité', e.entreprise.nom],
     ["N° d'identification", e.entreprise.nif || 'néant'],
+    ...(e.entreprise.rccm ? ([['N° RCCM', e.entreprise.rccm]] as [string, string][]) : []),
     ['Exercice', `du ${jj(debut)} au ${jj(fin)}`],
     ['Durée', `${dureeMois(debut, fin)} mois`],
     ['Situation', e.provisoire ? `provisoire au ${jj(e.auDate)}` : 'définitive'],

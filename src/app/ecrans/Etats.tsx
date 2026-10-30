@@ -37,6 +37,11 @@ function Entete({ e, titre }: { e: EtatsSMT; titre: string }) {
         <span>
           N° d'identification : <b>{e.entreprise.nif || 'néant'}</b>
         </span>
+        {e.entreprise.rccm && (
+          <span>
+            N° RCCM : <b>{e.entreprise.rccm}</b>
+          </span>
+        )}
         <span>
           Durée : <b>12 mois</b>
         </span>

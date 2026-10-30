@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BaseMbongo } from '../../src/donnees/base';
-import { arreterEtats, definirTauxCloture, obstaclesArrete, rouvrirInventaire } from '../../src/donnees/bureau';
+import { arreterEtats, definirTauxCloture, obstaclesArrete, rouvrirInventaire, versionsInventaire } from '../../src/donnees/bureau';
 import { chargerDemo } from '../../src/donnees/demo';
 import { chargerDossier } from '../../src/donnees/dossier';
 import { creerEntreprise, exerciceCourant } from '../../src/donnees/entreprise';
@@ -141,10 +141,13 @@ describe('inventaire : quand le valider, comment le rouvrir', () => {
     await enregistrerInventaire(db, exerciceId, [{ reference: 'S1', designation: 'Riz', quantite: 2, prixUnitaire: 1000, montant: 2000 }]);
     await expect(validerInventaire(db, exerciceId, '2026-06-15')).rejects.toThrow('1er décembre');
     expect(await validerInventaire(db, exerciceId, '2026-12-02')).toBe(2000);
-    await rouvrirInventaire(db, exerciceId);
+    await rouvrirInventaire(db, exerciceId, '2026-12-05');
     const ex = await db.exercices.get(exerciceId);
     expect(ex?.stockFinal).toBeNull();
     expect(ex?.statut).toBe('ouvert');
+    // L'inventaire validé reste lisible après correction (AUDCIF, art. 16).
+    await enregistrerInventaire(db, exerciceId, [{ reference: 'S1', designation: 'Riz', quantite: 3, prixUnitaire: 1000, montant: 3000 }]);
+    expect(await versionsInventaire(db, exerciceId)).toEqual([{ valideTotal: 2000, rouvertLe: '2026-12-05', lignes: [{ designation: 'Riz', quantite: 2, prixUnitaire: 1000, montant: 2000 }] }]);
   });
 });
 

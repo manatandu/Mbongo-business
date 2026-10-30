@@ -56,9 +56,10 @@ function versOperation(l: LigneOperation, avecPhoto: Set<string>): Operation {
   return o;
 }
 
-function versPiece(l: LigneTiers, regleAvant: number, perdueLe?: DateISO): PieceTiers {
+function versPiece(l: LigneTiers, regleAvant: number, perdueLe?: DateISO, reconnueLe?: DateISO): PieceTiers {
   const p: PieceTiers = { id: l.id, date: l.date, facture: l.facture, nom: l.nom, nature: l.nature, montant: l.montant, devise: l.devise, taux: l.taux };
   if (perdueLe) p.perdueLe = perdueLe;
+  if (reconnueLe) p.reconnueLe = reconnueLe;
   if (regleAvant > 0) p.regleAvant = regleAvant;
   if (l.client) p.client = l.client;
   if (l.adresse) p.adresse = l.adresse;
@@ -105,14 +106,17 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
   const annulees = new Set(lignesTiers.flatMap((l) => (l.annule ? [l.annule] : [])));
   // Créances déclarées perdues, avec la date de la déclaration (jusqu'à la clôture de l'exercice).
   const perdues = new Map(lignesTiers.flatMap((l) => (l.perte && l.date <= fin ? [[l.perte, l.date] as const] : [])));
+  // Reconnaissances de dette : la plus récente compte.
+  const reconnues = new Map<string, DateISO>();
+  for (const l of lignesTiers) if (l.reconnaissance && l.date <= fin && l.date > (reconnues.get(l.reconnaissance) ?? '')) reconnues.set(l.reconnaissance, l.date);
   const tiers = (genre: 'creance' | 'dette'): PieceTiers[] =>
     lignesTiers
-      .filter((l) => l.genre === genre && l.date <= fin && !l.annule && !l.perte && !annulees.has(l.id))
+      .filter((l) => l.genre === genre && l.date <= fin && !l.annule && !l.perte && !l.reconnaissance && !annulees.has(l.id))
       .flatMap((l) => {
         const avant = l.date < debut ? (regleAvant.get(l.id) ?? 0) : 0;
         const perdueLe = perdues.get(l.id);
         if (l.date < debut && (l.montant - avant <= 0 || (perdueLe && perdueLe < debut))) return [];
-        return [versPiece(l, avant, perdueLe)];
+        return [versPiece(l, avant, perdueLe, reconnues.get(l.id))];
       })
       .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
@@ -134,7 +138,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   const dossier: DossierExercice = {
-    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif },
+    entreprise: { nom: entreprise.nom, secteur: entreprise.secteur, nif: entreprise.nif, ...(entreprise.rccm ? { rccm: entreprise.rccm } : {}) },
     exercice: { annee: exercice.annee, debut, fin },
     comptes: comptes.map((c) => ({ id: c.id, type: c.type, libelle: c.libelle, devise: c.devise })),
     soldesOuverture: { ...exercice.soldesOuverture },
@@ -161,7 +165,7 @@ export async function chargerDossier(db: BaseMbongo, exerciceId: string): Promis
     }));
   }
   // Les trois années précédentes, si elles ont été tenues dans Mbongo.
-  const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !l.perte && !annulees.has(l.id));
+  const facturesValides = lignesTiers.filter((l) => l.genre === 'creance' && !l.annule && !l.perte && !l.reconnaissance && !annulees.has(l.id));
   const caAnterieurs = exercicesTenus
     .filter((e) => e.annee < exercice.annee && e.annee >= exercice.annee - 3)
     .map((e) => ({ annee: e.annee, ca: chiffreAffairesRealise(e.annee, lignesOps, facturesValides) }));

@@ -157,16 +157,37 @@ export function bilanOuverture(d: DossierExercice, e: Etats): Bilan | null {
   };
 }
 
+/** Inventaire validé puis rouvert : copie gardée telle quelle (AUDCIF, art. 16 : enregistrement définitif). */
+export interface VersionInventaire {
+  valideTotal: number;
+  rouvertLe: DateISO;
+  lignes: { designation: string; quantite: number; prixUnitaire: number; montant: number; travauxEnCours?: boolean }[];
+}
+
+const cleVersions = (exerciceId: string) => `inventaireVersions:${exerciceId}`;
+
+export const versionsInventaire = (db: BaseMbongo, exerciceId: string): Promise<VersionInventaire[]> => lireReglage<VersionInventaire[]>(db, cleVersions(exerciceId), []);
+
 /**
  * L'expert-comptable rouvre un inventaire validé (erreur de comptage, validation trop tôt).
  * Impossible une fois les états arrêtés, ou si l'année suivante est déjà ouverte : son stock initial en dépend.
+ * L'inventaire validé est d'abord copié : le commerçant corrige ensuite ses lignes, la version d'avant reste lisible.
  */
-export async function rouvrirInventaire(db: BaseMbongo, exerciceId: string): Promise<void> {
+export async function rouvrirInventaire(db: BaseMbongo, exerciceId: string, le: DateISO = new Date().toISOString().slice(0, 10)): Promise<void> {
   const ex = await db.exercices.get(exerciceId);
   if (!ex) throw new ErreurSaisie(['Exercice introuvable.']);
   if (ex.statut === 'arrete') throw new ErreurSaisie(["Les états sont arrêtés : annulez d'abord l'arrêté."]);
   if (ex.stockFinal === null) return;
   const suivant = await db.exercices.where('[entrepriseId+annee]').equals([ex.entrepriseId, ex.annee + 1]).first();
   if (suivant) throw new ErreurSaisie([`L'année ${ex.annee + 1} est déjà commencée sur son stock : l'inventaire ne se rouvre plus.`]);
+  const lignes = (await db.inventaires.where('exerciceId').equals(exerciceId).sortBy('ordre')).map((l) => ({
+    designation: l.designation,
+    quantite: l.quantite,
+    prixUnitaire: l.prixUnitaire,
+    montant: l.montant,
+    ...(l.travauxEnCours ? { travauxEnCours: true } : {}),
+  }));
+  const versions = await versionsInventaire(db, exerciceId);
+  await ecrireReglage(db, cleVersions(exerciceId), [...versions, { valideTotal: ex.stockFinal, rouvertLe: le, lignes }]);
   await db.exercices.update(exerciceId, { stockFinal: null, statut: 'ouvert' });
 }

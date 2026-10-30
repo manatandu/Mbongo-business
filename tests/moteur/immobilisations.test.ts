@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculerEtats, cumulAmortissements, dotationAnnuelle, valider, type Immobilisation } from '../../src/moteur';
+import { calculerEtats, cumulAmortissements, dotationAnnuelle, tableauAmortissement, valider, type Immobilisation } from '../../src/moteur';
 import { dossierDeBase, op } from './outils';
 
 const immo = (p: Partial<Immobilisation>): Immobilisation => ({
@@ -32,6 +32,22 @@ describe('amortissement linéaire sans prorata temporis', () => {
     const i = immo({ date: '2026-05-01', montant: 1_000_000, duree: 3 });
     expect([2026, 2027, 2028, 2029].map((a) => dotationAnnuelle(i, i.montant, a))).toEqual([333_333, 333_333, 333_334, 0]);
     expect(cumulAmortissements(i, i.montant, 2030)).toBe(1_000_000);
+  });
+
+  it('donne un tableau par bien qui finit à zéro, ou à la sortie', () => {
+    const i = immo({ date: '2026-05-01', montant: 1_000_000, duree: 3 });
+    expect(tableauAmortissement(i, i.montant)).toEqual([
+      { annee: 2026, dotation: 333_333, cumul: 333_333, valeurNette: 666_667 },
+      { annee: 2027, dotation: 333_333, cumul: 666_666, valeurNette: 333_334 },
+      { annee: 2028, dotation: 333_334, cumul: 1_000_000, valeurNette: 0 },
+    ]);
+    // Sorti en 2027 : pas de dotation l'année de la sortie (D1).
+    const vendu = immo({ date: '2026-05-01', montant: 900_000, duree: 3, sortie: { date: '2027-03-01', prixCession: 500_000 } });
+    expect(tableauAmortissement(vendu, vendu.montant).map((l) => [l.annee, l.dotation, l.valeurNette])).toEqual([
+      [2026, 300_000, 600_000],
+      [2027, 0, 600_000],
+    ]);
+    expect(tableauAmortissement(immo({ categorie: 'caution' }), 1_000_000)).toEqual([]);
   });
 
   it("n'amortit plus un bien arrivé au bout de sa durée, mais le garde au registre", () => {

@@ -34,6 +34,8 @@ export interface LigneEntreprise {
   secteur: SecteurSMT;
   commune: string;
   nif: string;
+  /** N° RCCM, facultatif (AUDCG, art. 14). */
+  rccm?: string;
   responsable: string;
   telephone: string;
   /** Données fictives de démonstration. */
@@ -70,9 +72,10 @@ export type LigneOperation = Operation & Trace;
 /**
  * `annule` : identifiant de la facture que cette ligne retire (erreur de saisie).
  * `perte` : identifiant de la créance déclarée perdue à la date de cette ligne (AUDCIF, art. 43 et 46).
+ * `reconnaissance` : identifiant de la créance dont le client a signé la reconnaissance à cette date (AUDCG, art. 23).
  * Les lignes restent en base : ajout seulement.
  */
-export type LigneTiers = PieceTiers & Trace & { genre: GenreTiers; annule?: string; perte?: string };
+export type LigneTiers = PieceTiers & Trace & { genre: GenreTiers; annule?: string; perte?: string; reconnaissance?: string };
 
 export type LigneImmobilisation = Omit<Immobilisation, 'sortie'> & Trace;
 

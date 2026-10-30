@@ -2,18 +2,20 @@
  * Livre des recettes et des dépenses, mois par mois ; registre des achats de l'année, récapitulé par mois.
  * Tirés des saisies : rien de plus à noter.
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import { livreRecettesDepenses, registreAchats } from '../../moteur';
 import { moisEntre } from '../../moteur/dates';
 import { useLangue } from '../../i18n';
 import { fmt, fmtDate } from '../../ui/format';
 import { Montant, Pastille } from '../composants';
-import { useDossier } from '../session';
+import { enregistrerRccm } from '../../donnees/entreprise';
+import { db, useDossier } from '../session';
 
 export function Livre() {
-  const { chargement, dateRef } = useDossier();
+  const { chargement, dateRef, entreprise, annoncer } = useDossier();
   const { t, mois: nomMois } = useLangue();
+  const [rccm, setRccm] = useState(entreprise.rccm ?? '');
   const params = useParams<{ mois?: string }>();
   const [, aller] = useLocation();
   const { dossier, exercice } = chargement;
@@ -68,6 +70,16 @@ export function Livre() {
           </div>
         )}
       </div>
+      {/* AUDCG, art. 14 : les livres mentionnent le n° RCCM. Facultatif : beaucoup de petits commerçants n'en ont pas. */}
+      {!entreprise.demo && (
+        <div>
+          <label className="champ">
+            {t('livre.rccm')}
+            <input value={rccm} onChange={(e) => setRccm(e.target.value)} onBlur={() => rccm.trim() !== (entreprise.rccm ?? '') && void enregistrerRccm(db, entreprise.id, rccm).then(() => annoncer(t('livre.rccmOk')))} />
+          </label>
+          <p className="aide">{t('livre.rccmAide')}</p>
+        </div>
+      )}
     </>
   );
 }
