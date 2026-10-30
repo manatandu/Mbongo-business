@@ -37,9 +37,9 @@ export const options = {
       : { executor: 'constant-vus', vus: 3, duration: '20s' },
   },
   thresholds: {
-    // Aucune erreur tolérée, et des pages rapides.
+    // Aucune erreur tolérée, et des pages rapides (temps mesuré sur les réponses réussies).
     http_req_failed: ['rate<0.01'],
-    http_req_duration: ['p(95)<800'],
+    'http_req_duration{expected_response:true}': ['p(95)<800'],
     checks: ['rate>0.99'],
   },
 };
@@ -54,6 +54,17 @@ const PAGES = [
   { nom: 'console', url: `${CONSOLE}/` },
 ];
 
+/** Résout « ./ » et « ../ » comme le navigateur (k6 envoie l'adresse telle quelle). */
+function normaliser(url) {
+  const [, origine, chemin] = url.match(/^(https?:\/\/[^/]+)(.*)$/);
+  const parts = [];
+  for (const p of chemin.split('/').slice(1)) {
+    if (p === '..') parts.pop();
+    else if (p !== '.') parts.push(p);
+  }
+  return `${origine}/${parts.join('/')}`;
+}
+
 /** Fichiers appelés par une page HTML (src et href relatifs), résolus par rapport à la page. */
 function ressources(html, base) {
   const liens = new Set();
@@ -63,7 +74,7 @@ function ressources(html, base) {
     const lien = m[1];
     if (/^(https?:|mailto:|tel:|data:)/.test(lien)) continue;
     const dossier = base.endsWith('/') ? base : base.slice(0, base.lastIndexOf('/') + 1);
-    liens.add(lien.startsWith('/') ? base.replace(/^(https?:\/\/[^/]+).*$/, '$1') + lien : dossier + lien.replace(/^\.\//, ''));
+    liens.add(lien.startsWith('/') ? base.replace(/^(https?:\/\/[^/]+).*$/, '$1') + lien : normaliser(dossier + lien));
   }
   return [...liens].filter((u) => /\.(js|css|svg|png|ico|woff2|webmanifest)$/.test(u));
 }
