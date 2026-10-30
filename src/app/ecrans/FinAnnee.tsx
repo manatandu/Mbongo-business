@@ -29,7 +29,10 @@ export function FinAnnee() {
 
   // Les trois autres éléments de l'inventaire, à la clôture.
   const cle = `inventaireQuatre:${exercice.id}`;
-  const confirmes = useLiveQuery(() => lireReglage<Record<string, string>>(db, cle, {}), [cle]) ?? {};
+  const enBase = useLiveQuery(() => lireReglage<Record<string, string>>(db, cle, {}), [cle]);
+  // Copie locale : la case suit le doigt tout de suite, et deux appuis rapides ne s'écrasent pas.
+  const [local, setLocal] = useState<Record<string, string> | null>(null);
+  const confirmes = local ?? enBase ?? {};
   const elements = useMemo(() => {
     const d = chargement.dossier;
     const e = calculerEtats(d, { auDate: exercice.fin });
@@ -47,6 +50,7 @@ export function FinAnnee() {
     const n = { ...confirmes };
     if (oui) n[k] = aujourdhui;
     else delete n[k];
+    setLocal(n);
     void ecrireReglage(db, cle, n);
   };
 

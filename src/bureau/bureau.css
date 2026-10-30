@@ -471,6 +471,84 @@ input[type='checkbox'] {
     gap: 12px;
   }
 
+  /* En-tête des états (Titre X, ch. 2) : six champs sur deux lignes, le statut en entier */
+  .entete-etats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--surface-alt);
+    border-left: 4px solid var(--nuit);
+    border-radius: 4px 12px 12px 4px;
+  }
+  .entete-etats-titre {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--nuit);
+  }
+  .entete-etats dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 4px 16px;
+    margin: 0;
+  }
+  .entete-etats dl > div.large {
+    grid-column: 1 / -1;
+  }
+  .entete-etats dt {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+  .entete-etats dd {
+    margin: 0;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Journal de trésorerie : beaucoup de colonnes, plus serré */
+  .grille.journal {
+    font-size: 13px;
+  }
+  .grille.journal th,
+  .grille.journal td {
+    padding: 5px 7px;
+  }
+  .grille.journal th {
+    white-space: normal;
+    vertical-align: bottom;
+    min-width: 72px;
+  }
+  .grille.journal th.groupe {
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .grille.journal td:first-child {
+    white-space: nowrap;
+  }
+  .grille.journal td:nth-child(2) {
+    min-width: 220px;
+  }
+  .grille tr.report td {
+    font-style: italic;
+    color: var(--nuit);
+  }
+
+  /* Décisions réservées à l'expert-comptable partenaire */
+  .reserve-expert {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--regle);
+  }
+  .reserve-expert h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--nuit);
+  }
+
   /* Chiffres de la console : la caisse, en bleu nuit, montants en grand */
   .chiffres {
     --text-dim: var(--nuit-dim);
@@ -618,4 +696,30 @@ input[type='checkbox'] {
   tr {
     break-inside: avoid;
   }
+  /* Le journal de trésorerie sort en paysage : toutes les colonnes de ventilation tiennent sur la page. */
+  .journal-paysage {
+    page: paysage;
+  }
+  .grille.journal {
+    font-size: 7.5pt;
+  }
+  .grille.journal th,
+  .grille.journal td {
+    padding: 2px 3px;
+    min-width: 0;
+  }
+  .grille.journal td:nth-child(2) {
+    min-width: 0;
+  }
+  .encart .overflow-auto {
+    overflow: visible;
+  }
+  .entete-etats {
+    background: #fff;
+    border: 1px solid #000;
+  }
+}
+@page paysage {
+  size: A4 landscape;
+  margin: 10mm;
 }

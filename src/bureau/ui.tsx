@@ -2,9 +2,9 @@
 import type { ReactNode } from 'react';
 
 /** La page : papier blanc à marge dorée, titre large en bleu nuit. Une par écran. */
-export function Fenetre({ titre, droite, children }: { titre: string; droite?: ReactNode; children: ReactNode }) {
+export function Fenetre({ titre, droite, classe, children }: { titre: string; droite?: ReactNode; classe?: string; children: ReactNode }) {
   return (
-    <section className="fenetre">
+    <section className={classe ? `fenetre ${classe}` : 'fenetre'}>
       <div className="fenetre-titre">
         <h1>{titre}</h1>
         {droite}
