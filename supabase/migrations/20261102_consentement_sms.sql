@@ -45,17 +45,21 @@ create trigger clients_consentement_sms
   for each row execute function prive.dater_consentement_sms();
 
 -- La vue de la console reprend les nouvelles colonnes (c.* est figé à la création d'une vue).
-drop view public.vue_clients;
-create view public.vue_clients with (security_invoker = true) as
+-- Sans la supprimer : « create or replace » garde les colonnes d'origine, dans le même ordre, et ajoute les deux
+-- nouvelles à la fin. Les droits sur la vue restent en place.
+create or replace view public.vue_clients with (security_invoker = true) as
 select
-  c.*,
+  c.id, c.nom, c.responsable, c.telephone, c.commune, c.activite, c.secteur, c.langue,
+  c.sms_accepte, c.statut, c.note, c.cree_le,
   a.id as abonnement_id,
   a.formule,
   a.debut,
   a.fin,
   a.montant as montant_abonnement,
   (a.fin - (now() at time zone 'Africa/Kinshasa')::date) as jours_restants,
-  coalesce((select sum(p.montant) from public.paiements p where p.abonnement_id = a.id and p.devise = 'CDF'), 0) as paye_cdf
+  coalesce((select sum(p.montant) from public.paiements p where p.abonnement_id = a.id and p.devise = 'CDF'), 0) as paye_cdf,
+  c.sms_consentement_le,
+  c.sms_consentement_forme
 from public.clients c
 left join lateral (
   select * from public.abonnements a where a.client_id = c.id order by a.fin desc limit 1
