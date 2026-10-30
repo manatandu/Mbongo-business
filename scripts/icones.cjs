@@ -15,7 +15,7 @@ const path = require('node:path');
   for (const [nom, taille, masquable] of tailles) {
     // Une icône masquable garde son motif dans la zone sûre (80 %) ; le fond déborde jusqu'aux bords.
     const contenu = masquable
-      ? `<div style="width:${taille}px;height:${taille}px;background:#0a6fd6;display:grid;place-items:center"><div style="width:${taille * 0.8}px;height:${taille * 0.8}px">${svg.replace('rx="112"', 'rx="0"')}</div></div>`
+      ? `<div style="width:${taille}px;height:${taille}px;background:#0B2A52;display:grid;place-items:center"><div style="width:${taille * 0.8}px;height:${taille * 0.8}px">${svg.replace('rx="112"', 'rx="0"')}</div></div>`
       : `<div style="width:${taille}px;height:${taille}px">${svg}</div>`;
     await page.setViewportSize({ width: taille, height: taille });
     await page.setContent(`<html><body style="margin:0;background:transparent">${contenu}</body></html>`);

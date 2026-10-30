@@ -63,7 +63,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       await tel.waitForSelector('text=Argent disponible');
     });
     await etape(tel, 'vente-du-jour', async () => {
-      await tap('+ Recette');
+      await tel.click('a.grand-bouton.in');
       await tel.fill('input.montant', '85000');
     });
     await etape(tel, 'vente-enregistree', async () => {
@@ -106,7 +106,7 @@ const PAUSE = process.env.LENT ? 1800 : 400;
       await tel.goto(`${BASE}#/reglages`);
       await tap('Lingala');
       await tel.goto(`${BASE}#/`);
-      await tel.waitForSelector('.hero');
+      await tel.waitForSelector('.caisse');
     });
     await tel.goto(`${BASE}#/reglages`);
     await tap('Français');

@@ -1,5 +1,5 @@
 /** Accueil du commerçant : combien j'ai, noter une entrée ou une sortie, ce qui demande mon attention. */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'wouter';
 import { calculerEtats, centimesEnFrancs, controler, soldesTresorerie, type CodeAnomalie } from '../../moteur';
 import { PARAMETRES_CONTROLE } from '../../donnees/parametres';
@@ -26,6 +26,27 @@ const ALERTES: Partial<Record<CodeAnomalie, { cle: Cle; ecran: string }>> = {
   creance_prescrite: { cle: 'alerte.creance_prescrite', ecran: '/clients' },
 };
 
+/** Le solde se compte jusqu'à sa valeur : à l'ouverture, puis à chaque changement. Rien sous « mouvement réduit ». */
+function useCompte(cible: number): number {
+  const [affiche, setAffiche] = useState(() => (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? cible : 0));
+  const depart = useRef(affiche);
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return setAffiche(cible);
+    const de = depart.current;
+    const debut = performance.now();
+    let image = 0;
+    const pas = (maintenant: number) => {
+      const p = Math.min(1, (maintenant - debut) / 750);
+      const v = Math.round(de + (cible - de) * (1 - Math.pow(1 - p, 4)));
+      depart.current = v;
+      setAffiche(v);
+      if (p < 1) image = requestAnimationFrame(pas);
+    };
+    image = requestAnimationFrame(pas);
+    return () => cancelAnimationFrame(image);
+  }, [cible]);
+  return affiche;
+}
 
 export function Accueil() {
   const { chargement, dateRef, taux, aujourdhui, entreprise } = useDossier();
@@ -49,63 +70,94 @@ export function Accueil() {
   }, [dossier, dateRef]);
 
   const totalFC = vue.soldes.reduce((s, x) => s + (x.compte.devise === 'CDF' ? x.natif : taux ? centimesEnFrancs(x.natif, taux) : x.fcHistorique), 0);
+  const compte = useCompte(totalFC);
+  const nomMois = mois(Number(dateRef.slice(5, 7)));
 
   return (
     <>
-      {aujourdhui > chargement.exercice.fin && <FinAnnee />}
-      {/* Le total seulement : le détail par compte est au Journal, d'un toucher. */}
-      <Link href="/journal" className="hero lien-carte">
-        <div className="lbl">{t('accueil.disponible')}</div>
-        <div className="big">{fmtMontant(totalFC, 'CDF')}</div>
-        <div className="sub">{t('accueil.au', { date: fmtDate(dateRef) })}</div>
-      </Link>
+      {/* La caisse : combien j'ai, d'un coup d'œil. Le détail par compte est au Journal, d'un toucher. */}
+      <div className="caisse">
+        <div className="lbl">
+          <span>{t('accueil.disponible')}</span>
+          <span>{fmtDate(dateRef)}</span>
+        </div>
+        {/* Plus le nombre est long, plus il se serre : il tient toujours sur une ligne. */}
+        <Link href="/journal" className="big num" style={{ fontSize: `min(64px, calc((100vw - 56px) / ${(0.58 * fmt(totalFC).length + 0.9).toFixed(2)}))` }} aria-label={fmtMontant(totalFC, 'CDF')}>
+          {fmt(compte)}
+          <small>CDF</small>
+        </Link>
+        <div className="taux">
+          <TauxDuJour />
+        </div>
+      </div>
 
-      <div className="duo">
+      <div className="mouvements">
         <Link href="/saisir/recette" className="grand-bouton in">
-          <strong>{t('accueil.recette')}</strong>
+          <span className="signe" aria-hidden="true">
+            +
+          </span>
+          {t('accueil.recette')}
         </Link>
         <Link href="/saisir/depense" className="grand-bouton out">
-          <strong>{t('accueil.depense')}</strong>
+          <span className="signe" aria-hidden="true">
+            −
+          </span>
+          {t('accueil.depense')}
         </Link>
       </div>
 
-      <TauxDuJour />
+      {aujourdhui > chargement.exercice.fin && <FinAnnee />}
 
-      {vue.anomalies.map((a) => {
-        const alerte = ALERTES[a.code];
-        return alerte ? (
-          <Link key={a.code} href={alerte.ecran} className={`alerte ${a.niveau}`}>
-            <span className="point" aria-hidden="true" />
-            <span>{t(alerte.cle, { n: a.references.length })}</span>
-          </Link>
-        ) : null;
-      })}
-
-      {prochaine && (
-        <Link href="/echeances" className="alerte information">
-          <span className="point" aria-hidden="true" />
-          <span>
-            <b className="num">{fmtDate(prochaine.date).slice(0, 5)}</b> · {t(`echeance.${prochaine.cle}` as Cle)}
-          </span>
-        </Link>
+      {(vue.anomalies.length > 0 || prochaine) && (
+        <div>
+          {vue.anomalies.map((a) => {
+            const alerte = ALERTES[a.code];
+            return alerte ? (
+              <Link key={a.code} href={alerte.ecran} className={`alerte ${a.niveau}`}>
+                <span className="point" aria-hidden="true" />
+                <span>{t(alerte.cle, { n: a.references.length })}</span>
+              </Link>
+            ) : null;
+          })}
+          {prochaine && (
+            <Link href="/echeances" className="alerte information">
+              <span className="point" aria-hidden="true" />
+              <span>
+                <b className="num">{fmtDate(prochaine.date).slice(0, 5)}</b> · {t(`echeance.${prochaine.cle}` as Cle)}
+              </span>
+            </Link>
+          )}
+        </div>
       )}
 
-      <div className="comptes">
-        <Link href="/journal" className="kpi lien-carte">
-          <div className="n">{t('accueil.entre', { mois: mois(Number(dateRef.slice(5, 7))) })}</div>
-          <div className="v amt-in">{fmt(vue.entre)}</div>
+      <div className="registre">
+        <Link href="/journal">
+          <span className="n">{t('accueil.entre', { mois: nomMois })}</span>
+          <span className="v num amt-in">{fmt(vue.entre)}</span>
+          <span className="fl" aria-hidden="true">
+            ›
+          </span>
         </Link>
-        <Link href="/journal" className="kpi lien-carte">
-          <div className="n">{t('accueil.sorti', { mois: mois(Number(dateRef.slice(5, 7))) })}</div>
-          <div className="v amt-out">{fmt(vue.sorti)}</div>
+        <Link href="/journal">
+          <span className="n">{t('accueil.sorti', { mois: nomMois })}</span>
+          <span className="v num amt-out">{fmt(vue.sorti)}</span>
+          <span className="fl" aria-hidden="true">
+            ›
+          </span>
         </Link>
-        <Link href="/clients" className="kpi lien-carte">
-          <div className="n">{t('accueil.onMeDoit')}</div>
-          <div className="v">{fmt(vue.etats.bilan.actif.creances)}</div>
+        <Link href="/clients">
+          <span className="n">{t('accueil.onMeDoit')}</span>
+          <span className="v num">{fmt(vue.etats.bilan.actif.creances)}</span>
+          <span className="fl" aria-hidden="true">
+            ›
+          </span>
         </Link>
-        <Link href="/clients/dettes" className="kpi lien-carte">
-          <div className="n">{t('accueil.jeDois')}</div>
-          <div className="v">{fmt(vue.etats.bilan.passif.dettes)}</div>
+        <Link href="/clients/dettes">
+          <span className="n">{t('accueil.jeDois')}</span>
+          <span className="v num">{fmt(vue.etats.bilan.passif.dettes)}</span>
+          <span className="fl" aria-hidden="true">
+            ›
+          </span>
         </Link>
       </div>
 

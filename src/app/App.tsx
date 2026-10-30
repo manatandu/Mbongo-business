@@ -25,9 +25,10 @@ import { Tiers } from './ecrans/Tiers';
 import { db, FournisseurSession, useDossier, useSession } from './session';
 
 const ONGLETS: { href: string; icone: string; cle: Cle; actif: (chemin: string) => boolean }[] = [
-  { href: '/', icone: 'accueil', cle: 'nav.accueil', actif: (c) => c === '/' },
-  { href: '/saisir', icone: 'saisir', cle: 'nav.saisir', actif: (c) => c.startsWith('/saisir') },
+  { href: '/', icone: 'accueil', cle: 'nav.accueil', actif: (c) => c === '/' || c === '/journee' },
   { href: '/journal', icone: 'journal', cle: 'nav.journal', actif: (c) => c.startsWith('/journal') },
+  // Au milieu, sous le pouce : le geste le plus fréquent.
+  { href: '/saisir', icone: 'saisir', cle: 'nav.saisir', actif: (c) => c.startsWith('/saisir') },
   { href: '/clients', icone: 'clients', cle: 'nav.clients', actif: (c) => c.startsWith('/clients') || c.startsWith('/creance') },
   { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats', '/echeances'].some((p) => c.startsWith(p)) },
 ];
@@ -54,6 +55,7 @@ function Coque() {
   const { t } = useLangue();
   const [chemin] = useLocation();
   const titre = TITRES.find(([p]) => chemin.startsWith(p))?.[1] ?? 'fenetre.accueil';
+  const accueil = titre === 'fenetre.accueil';
   // Chaque écran s'ouvre en haut, pas à la hauteur où l'on avait laissé le précédent.
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,14 +83,15 @@ function Coque() {
         <Marque />
         <div className="txt">
           <span className="nom-marque">Mbongo</span>
-          <span className="dossier">· {entreprise.nom}</span>
+          <span className="dossier">{entreprise.nom}</span>
         </div>
         {entreprise.demo && <span className="fictif">{t('app.fictif')}</span>}
       </header>
-      <main className="ecran">
+      <main className={accueil ? 'ecran accueil' : 'ecran'}>
         {/* La clé rejoue l'entrée de la fenêtre à chaque changement d'écran. */}
         <section className="fenetre" key={titre}>
-          <h1 className="fenetre-titre">
+          {/* Sur l'accueil, la caisse tient lieu de titre. */}
+          <h1 className={accueil ? 'fenetre-titre visuellement-cache' : 'fenetre-titre'}>
             {t(titre)}
             <small>{t('fenetre.exercice', { annee: chargement.exercice.annee })}</small>
           </h1>
@@ -118,7 +121,7 @@ function Coque() {
       </main>
       <nav className="onglets" aria-label="Navigation">
         {ONGLETS.map((o) => (
-          <Link key={o.href} href={o.href} className={o.href === '/plus' ? 'etroit-seul' : undefined} aria-current={o.actif(chemin) ? 'page' : undefined}>
+          <Link key={o.href} href={o.href} className={o.href === '/plus' ? 'etroit-seul' : o.href === '/saisir' ? 'saisir' : undefined} aria-current={o.actif(chemin) ? 'page' : undefined}>
             <Icone nom={o.icone} />
             {t(o.cle)}
           </Link>
