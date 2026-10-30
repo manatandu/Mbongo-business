@@ -12,6 +12,7 @@ const TRACES: Record<string, string> = {
   echeances: 'M5 6h14v14H5zM5 10h14M9 3.5v4M15 3.5v4M9 14h2M13 14h2M9 17h2',
   livre: 'M12 6.5C10 5 7 4.5 4 5v14c3-.5 6 0 8 1.5c2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v14',
   achats: 'M5 8h14l-1.2 12H6.2zM9 8V6.5a3 3 0 0 1 6 0V8',
+  impots: 'M6 3.5h12v17l-3-2l-3 2l-3-2l-3 2zM9 8h6M9 11.5h6M9 15h3',
   deconnexion: 'M10 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M15 8l4 4l-4 4M19 12H9',
   etats: 'M5 20V10M10 20V4M15 20v-7M20 20V8',
   materiel: 'M4 8h16v11H4zM8 8V5h8v3M4 13h16',

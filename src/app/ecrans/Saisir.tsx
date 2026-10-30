@@ -69,9 +69,10 @@ export function Saisir() {
   const { comptes, exercice } = chargement;
 
   const depart = params.type ?? 'recette';
-  const [type, setType] = useState<TypeOperation>(depart === 'depense' || depart === 'achat-credit' ? 'depense' : depart === 'transfert' ? 'transfert' : 'recette');
+  // « impot » : depuis Mes impôts, une dépense déjà rangée en « Impôts et taxes ».
+  const [type, setType] = useState<TypeOperation>(depart === 'depense' || depart === 'achat-credit' || depart === 'impot' ? 'depense' : depart === 'transfert' ? 'transfert' : 'recette');
   const [credit, setCredit] = useState(depart.endsWith('credit'));
-  const [nature, setNature] = useState<Nature>(type === 'depense' ? 'achats_marchandises' : type === 'transfert' ? 'transfert' : 'ventes');
+  const [nature, setNature] = useState<Nature>(depart === 'impot' ? 'impots_taxes' : type === 'depense' ? 'achats_marchandises' : type === 'transfert' ? 'transfert' : 'ventes');
   const [montant, setMontant] = useState('');
   const [deviseCredit, setDeviseCredit] = useState<Devise>('CDF');
   const [compteId, setCompteId] = useState(comptes[0]?.id ?? '');

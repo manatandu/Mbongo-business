@@ -8,6 +8,7 @@ import { db, useDossier } from '../session';
 
 export const ENTREES: { href: string; icone: string; titre: Cle }[] = [
   { href: '/etats', icone: 'etats', titre: 'plus.etats' },
+  { href: '/impots', icone: 'impots', titre: 'plus.impots' },
   { href: '/echeances', icone: 'echeances', titre: 'plus.echeances' },
   { href: '/livre', icone: 'livre', titre: 'plus.livre' },
   { href: '/achats', icone: 'achats', titre: 'plus.achats' },

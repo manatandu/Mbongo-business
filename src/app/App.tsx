@@ -14,6 +14,7 @@ import { Livre, RegistreAchats } from './ecrans/Livres';
 import { DossierCreance } from './ecrans/DossierCreance';
 import { Echeances } from './ecrans/Echeances';
 import { Etats } from './ecrans/Etats';
+import { Impots } from './ecrans/Impots';
 import { FinJournee } from './ecrans/FinJournee';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
@@ -30,7 +31,7 @@ const ONGLETS: { href: string; icone: string; cle: Cle; actif: (chemin: string) 
   // Au milieu, sous le pouce : le geste le plus fréquent.
   { href: '/saisir', icone: 'saisir', cle: 'nav.saisir', actif: (c) => c.startsWith('/saisir') },
   { href: '/clients', icone: 'clients', cle: 'nav.clients', actif: (c) => c.startsWith('/clients') || c.startsWith('/creance') },
-  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats', '/echeances'].some((p) => c.startsWith(p)) },
+  { href: '/plus', icone: 'plus', cle: 'nav.plus', actif: (c) => ['/plus', '/etats', '/materiel', '/stock', '/reglages', '/livre', '/achats', '/echeances', '/impots'].some((p) => c.startsWith(p)) },
 ];
 
 /** Titre de la fenêtre selon l'écran : la barre de titre nomme l'écran, aucun titre de page ne le répète. */
@@ -47,6 +48,7 @@ const TITRES: [string, Cle][] = [
   ['/livre', 'fenetre.livre'],
   ['/achats', 'fenetre.achats'],
   ['/echeances', 'fenetre.echeances'],
+  ['/impots', 'fenetre.impots'],
   ['/journee', 'fenetre.journee'],
 ];
 
@@ -111,6 +113,7 @@ function Coque() {
               <Route path="/achats" component={RegistreAchats} />
               <Route path="/creance/:id" component={DossierCreance} />
               <Route path="/echeances" component={Echeances} />
+              <Route path="/impots" component={Impots} />
               <Route path="/journee" component={FinJournee} />
               <Route>
                 <Accueil />

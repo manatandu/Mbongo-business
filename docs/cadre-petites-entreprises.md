@@ -265,7 +265,7 @@ Classées par rapport entre l'utilité et le travail. Rien de cela n'est fait ; 
 2. **Créances : client particulier ou commerçant.** Pour un particulier, alertes à 6, 9 et 11 mois, et créance « en danger » à un an (CC, art. 653). Aujourd'hui l'alerte est à 30 jours seulement.
 3. **Fiche créance complète** : adresse du client, détail vendu, chaque paiement, et un « dossier de créance » imprimable avec le décompte (AUPSRVE, art. 4).
 4. **Ventilation d'un salaire** : à partir du brut, part CNSS du salarié (5 %), charges patronales (13 % + 3,5 % + 0,5 %), et alerte si le salaire est sous le minimum. Indicatif, sans faire la paie.
-5. **Seuils fiscaux** : alertes à 25 M FC, 80 M FC (TVA) et 300 M FC, avec une estimation de l'impôt (1 % ou 2 %) marquée « estimation, pas une déclaration ».
+5. **Seuils fiscaux** : fait dans « Mes impôts », sans montant d'impôt (chiffre d'affaires, régime, seuils de 25 M, 80 M et 300 M FC, impôts payés). L'estimation de l'impôt (1 % ou 2 %) attend l'avis de l'expert partenaire.
 6. **Deux contrôles de blanchiment** : espèces d'au moins 10 000 USD, salaire ou impôt payé en caisse.
 
 **Plus lourdes**
