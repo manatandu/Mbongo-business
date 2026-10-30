@@ -16,7 +16,7 @@ function Coquille() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="entete ecran-seul">
-        <div className="max-w-[1100px] mx-auto h-16 px-4 flex items-center gap-3">
+        <div className="max-w-[1100px] mx-auto h-14 px-4 flex items-center gap-3">
           <Marque />
           <a href="#/" className="text-[15px] text-white no-underline">
             <span className="nom-marque">Mbongo</span> <span className="text-chrome-text-dim">· Bureau</span>
@@ -32,7 +32,7 @@ function Coquille() {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-6 flex flex-col gap-4">
+      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-4 flex flex-col gap-3">
         <Switch>
           <Route path="/client/:id/:onglet?" component={Client} />
           <Route>

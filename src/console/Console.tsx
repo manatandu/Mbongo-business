@@ -134,7 +134,7 @@ function Coquille({ session, role }: { session: Session; role: RoleEquipe | 'auc
   return (
     <div className="min-h-screen flex flex-col">
       <header className="entete ecran-seul">
-        <div className="max-w-[1100px] mx-auto h-16 px-4 flex items-center gap-3">
+        <div className="max-w-[1100px] mx-auto h-14 px-4 flex items-center gap-3">
           <img src={symboleTrk} alt="" className="w-9 h-9" />
           <a href="#/" className="text-[15px] text-white no-underline">
             <span className="nom-marque">TRK Consulting</span> <span className="text-chrome-text-dim">· Console</span>
@@ -150,7 +150,7 @@ function Coquille({ session, role }: { session: Session; role: RoleEquipe | 'auc
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-6 flex flex-col gap-4">
+      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 py-4 flex flex-col gap-3">
         {role === null ? null : role === 'aucun' ? (
           <Fenetre titre="Accès en attente">
             <Message ton="avert">Ce compte n'a pas encore accès à la console. Demandez à un administrateur de TRK Consulting d'autoriser {session.user.email}.</Message>

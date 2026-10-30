@@ -1,8 +1,8 @@
 /* ---------------------------------------------------------------------------
    BUREAU DE MBONGO et CONSOLE DE TRK · « la caisse et le cahier », version ordinateur.
    Même habillage que l'appli du commerçant (src/ui/styles.css) : bandeau bleu nuit en haut, page de
-   papier blanc posée sur un fond gris-bleu, une marge dorée à gauche, des lignes réglées au lieu de
-   cartes, les montants à droite. Police Archivo : large et grasse pour les titres et les totaux.
+   papier blanc posée sur un fond gris-bleu, des lignes réglées au lieu de cartes, les montants à droite.
+   Format serré, comme le téléphone : titres 24 px, boutons 36 px, champs 36 px. Police Archivo : large et grasse pour les titres et les totaux.
    La console de TRK importe cette feuille (src/console/main.tsx).
    --------------------------------------------------------------------------- */
 
@@ -86,8 +86,8 @@ html {
 body {
   margin: 0;
   font-family: var(--police);
-  font-size: 15px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.4;
   color: var(--text);
   background: var(--fond);
   /* Les chiffres s'alignent colonne par colonne. */
@@ -128,7 +128,7 @@ input[type='checkbox'] {
   z-index: 2;
 }
 .entete .nom-marque {
-  font-size: 17px;
+  font-size: 15px;
   color: #fff;
 }
 /* Les champs et boutons du bandeau, sur le bleu nuit */
@@ -156,8 +156,8 @@ input[type='checkbox'] {
 
 /* ---------- Le logo de Mbongo : le compte au bâton (composant Marque) ---------- */
 .marque {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   flex: none;
   display: block;
 }
@@ -189,32 +189,21 @@ input[type='checkbox'] {
 }
 
 @layer components {
-  /* La page : papier blanc, marge dorée du cahier, titre large. Une par écran. */
+  /* La page : papier blanc, titre net. Une par écran. */
   .fenetre {
     position: relative;
     background: var(--papier);
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow:
       0 1px 2px rgba(11, 42, 82, 0.06),
-      0 20px 40px -24px rgba(11, 42, 82, 0.25);
+      0 16px 32px -24px rgba(11, 42, 82, 0.25);
     overflow: hidden;
     animation: fenetre-in 0.32s var(--t-sortie) both;
-  }
-  .fenetre::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 18px;
-    width: 2px;
-    background: var(--or);
-    opacity: 0.55;
-    pointer-events: none;
   }
   .fenetre-titre {
     /* Ce qui était écrit sur le bandeau s'écrit maintenant sur le papier. */
     --chrome-text-dim: var(--text-dim);
-    padding: 26px 32px 2px 40px;
+    padding: 18px 24px 2px;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -224,19 +213,19 @@ input[type='checkbox'] {
   }
   .fenetre-titre h1 {
     margin: 0;
-    font-size: 32px;
-    line-height: 1.05;
+    font-size: 24px;
+    line-height: 1.1;
     font-weight: 800;
-    font-stretch: 118%;
+    font-stretch: 112%;
     letter-spacing: -0.02em;
     color: var(--nuit);
     text-wrap: balance;
   }
   .fenetre-corps {
-    padding: 18px 32px 32px 40px;
+    padding: 12px 24px 24px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 14px;
     min-width: 0;
   }
 
@@ -246,13 +235,13 @@ input[type='checkbox'] {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 42px;
-    padding: 6px 18px;
-    font-size: 14.5px;
+    min-height: 36px;
+    padding: 5px 14px;
+    font-size: 13.5px;
     font-weight: 700;
     line-height: 1.2;
     border: 0;
-    border-radius: 14px;
+    border-radius: 10px;
     white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
@@ -294,17 +283,17 @@ input[type='checkbox'] {
     display: inline-flex;
     flex-wrap: wrap;
     align-self: flex-start;
-    gap: 4px;
-    padding: 4px;
+    gap: 3px;
+    padding: 3px;
     background: var(--surface-alt);
-    border-radius: 14px;
+    border-radius: 12px;
   }
   .onglet {
-    padding: 8px 16px;
-    min-height: 40px;
+    padding: 5px 12px;
+    min-height: 32px;
     display: inline-flex;
     align-items: center;
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--text-dim);
     background: none;
@@ -330,14 +319,14 @@ input[type='checkbox'] {
   .grille {
     width: 100%;
     text-align: left;
-    font-size: 14px;
+    font-size: 13.5px;
     background: var(--papier);
     border-collapse: collapse;
   }
   .grille th {
-    padding: 8px 10px;
+    padding: 6px 9px;
     white-space: nowrap;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
     background: var(--nuit);
     color: #fff;
@@ -346,7 +335,7 @@ input[type='checkbox'] {
     border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
   .grille td {
-    padding: 6px 10px;
+    padding: 5px 9px;
     vertical-align: top;
     border-bottom: 1px solid var(--regle);
   }
@@ -358,10 +347,10 @@ input[type='checkbox'] {
   }
   /* Les boutons d'une ligne de tableau, plus petits */
   .grille .btn {
-    min-height: 34px;
-    padding: 4px 12px;
-    font-size: 13.5px;
-    border-radius: 12px;
+    min-height: 30px;
+    padding: 3px 10px;
+    font-size: 13px;
+    border-radius: 9px;
   }
   .grille .m {
     text-align: right;
@@ -382,9 +371,9 @@ input[type='checkbox'] {
 
   /* Champ : comme une ligne du cahier qu'on remplit */
   .champ {
-    min-height: 40px;
-    padding: 6px 10px;
-    font-size: 14.5px;
+    min-height: 36px;
+    padding: 5px 9px;
+    font-size: 14px;
     color: var(--text);
     background: var(--surface-alt);
     border: 0;
@@ -401,8 +390,8 @@ input[type='checkbox'] {
   }
   .libelle {
     display: block;
-    margin-bottom: 6px;
-    font-size: 13.5px;
+    margin-bottom: 4px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--text-dim);
   }
@@ -410,8 +399,8 @@ input[type='checkbox'] {
   /* Pastilles en pilule, sans bordure */
   .pastille {
     display: inline-block;
-    padding: 1px 9px;
-    font-size: 12.5px;
+    padding: 1px 8px;
+    font-size: 11.5px;
     font-weight: 700;
     border: 0;
     border-radius: 999px;
@@ -448,10 +437,10 @@ input[type='checkbox'] {
     align-items: baseline;
     justify-content: space-between;
     gap: 8px;
-    padding: 0 0 8px;
-    font-size: 17px;
+    padding: 0 0 6px;
+    font-size: 15px;
     font-weight: 800;
-    font-stretch: 112%;
+    font-stretch: 108%;
     letter-spacing: -0.01em;
     color: var(--nuit);
   }
@@ -464,11 +453,11 @@ input[type='checkbox'] {
     letter-spacing: 0;
   }
   .encart-corps {
-    padding: 12px 0 0;
+    padding: 10px 0 0;
     border-top: 2px solid var(--nuit);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   /* En-tête des états (Titre X, ch. 2) : six champs sur deux lignes, le statut en entier */
@@ -482,7 +471,7 @@ input[type='checkbox'] {
     border-radius: 4px 12px 12px 4px;
   }
   .entete-etats-titre {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--nuit);
   }
@@ -554,23 +543,23 @@ input[type='checkbox'] {
     --text-dim: var(--nuit-dim);
     background: var(--nuit);
     color: #fff;
-    border-radius: 20px;
-    padding: 20px 24px;
+    border-radius: 16px;
+    padding: 14px 18px;
     gap: 0;
     animation: fenetre-in 0.32s var(--t-sortie) both;
   }
   .chiffre {
-    padding: 4px 20px;
+    padding: 2px 16px;
     min-width: 0;
   }
   .chiffre + .chiffre {
     border-left: 1px solid rgba(255, 255, 255, 0.12);
   }
   .chiffre-valeur {
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1.1;
     font-weight: 800;
-    font-stretch: 118%;
+    font-stretch: 110%;
     letter-spacing: -0.025em;
     white-space: nowrap;
   }
@@ -604,22 +593,19 @@ input[type='checkbox'] {
   }
 }
 
-/* Écran étroit : la page garde sa marge, en plus serré */
+/* Écran étroit : en plus serré */
 @media (max-width: 640px) {
   .fenetre {
-    border-radius: 16px;
-  }
-  .fenetre::before {
-    left: 10px;
+    border-radius: 12px;
   }
   .fenetre-titre {
-    padding: 20px 16px 2px 24px;
+    padding: 14px 14px 2px;
   }
   .fenetre-titre h1 {
-    font-size: 26px;
+    font-size: 21px;
   }
   .fenetre-corps {
-    padding: 14px 16px 20px 24px;
+    padding: 10px 14px 18px;
   }
 }
 @media (max-width: 767px) {
@@ -637,7 +623,7 @@ input[type='checkbox'] {
   }
 }
 
-/* Impression : seuls les états partent sur le papier. Fond blanc, ni bandeau ni marge dorée. */
+/* Impression : seuls les états partent sur le papier. Fond blanc, sans bandeau. */
 @media print {
   @page {
     size: A4;
@@ -661,9 +647,6 @@ input[type='checkbox'] {
     box-shadow: none !important;
     overflow: visible;
     animation: none;
-  }
-  .fenetre::before {
-    display: none;
   }
   .fenetre-titre {
     padding: 0 0 4px;
