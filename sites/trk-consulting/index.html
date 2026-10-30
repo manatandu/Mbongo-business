@@ -9,270 +9,268 @@
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="polices/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 /*
  * Site de TRK Consulting, qui détient les droits du logiciel Mbongo Business.
- * Bleu nuit et or, titres en serif, texte en sans-serif du téléphone : rien à télécharger.
- * Animations légères (apparition au défilement, tracé du graphique), coupées si l'appareil demande moins de mouvement.
+ * Même style que l'appli, « la caisse et le cahier » : grands aplats bleu nuit, pages en papier blanc,
+ * lignes réglées au lieu de cartes, une fine marge dorée à gauche comme dans un cahier.
+ * Police : Archivo variable (licence OFL, polices/OFL-archivo.txt), large et grasse pour les titres.
+ * Mouvement : un seul moment orchestré (l'entrée du haut de page, la feuille du journal qui se règle),
+ * puis des réponses aux gestes. Tout se coupe sous « mouvement réduit ».
  */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('polices/archivo-latin-wdth-normal.woff2') format('woff2');
+}
 :root {
-  --nuit: #0b2a52;
-  --nuit-2: #10366a;
-  --nuit-3: #1a4785;
-  --or: #c99a06;
-  --or-vif: #e0b21b;
-  --or-pale: #f3e6b8;
-  --fond: #ffffff;
-  --creme: #f7f5f0;
-  --surface: #f2f5f9;
-  --trait: #dfe4eb;
-  --texte: #10233f;
-  --texte-dim: #5a6a7f;
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
-  --large: 1120px;
-  --ease: cubic-bezier(.2, .7, .2, 1);
+  --nuit: #0b2a52; --nuit-2: #14396a; --nuit-fonce: #081f3e; --nuit-texte: #e8eef7; --nuit-dim: #9fb3cf;
+  --or: #e0b21b; --or-texte: #8a6500; --or-pale: #fbf3d6;
+  --papier: #ffffff; --papier-2: #f5f8fb; --regle: #dde6f1; --regle-forte: #b9c8db;
+  --fg: #13202f; --muted: #556579;
+  --in: #0e7a4f; --out: #c23a2b;
+  --police: 'Archivo', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --large: 1180px;
+  /* La marge du cahier : le trait doré, puis le texte */
+  --pg: 30px; --pd: 16px; --marge: 12px;
+  --t-sortie: cubic-bezier(0.16, 1, 0.3, 1); --t-doux: cubic-bezier(0.4, 0, 0.2, 1); --t-ressort: cubic-bezier(0.34, 1.4, 0.64, 1);
   color-scheme: light;
 }
+@media (min-width: 720px) { :root { --pg: 56px; --pd: 32px; --marge: 26px; } }
+
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
-.cadre { max-width: var(--large); margin-inline: auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
-h1, h2, h3 { margin: 0; text-wrap: balance; }
-h1, h2 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.005em; line-height: 1.15; }
-h1 { font-size: clamp(2rem, 5.2vw, 3.35rem); }
-h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); }
-h3 { font-size: 1.06rem; font-weight: 650; line-height: 1.3; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; background: var(--nuit); }
+body { margin: 0; background: var(--papier); color: var(--fg); font: 16.5px/1.55 var(--police); -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+.cadre { max-width: var(--large); margin-inline: auto; padding-inline: max(var(--pg), env(safe-area-inset-left, 0px)) max(var(--pd), env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; text-wrap: balance; color: inherit; }
+h1 { font-size: clamp(2.05rem, 6.4vw, 3.6rem); line-height: 1.02; font-weight: 800; font-stretch: 118%; letter-spacing: -.03em; }
+h2 { font-size: clamp(1.75rem, 4.6vw, 2.7rem); line-height: 1.05; font-weight: 800; font-stretch: 116%; letter-spacing: -.025em; color: var(--nuit); }
+h3 { font-size: 1.15rem; line-height: 1.25; font-weight: 750; font-stretch: 108%; letter-spacing: -.01em; color: var(--nuit); }
 p { margin: 0; text-wrap: pretty; }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--or-vif); outline-offset: 3px; border-radius: 4px; }
-.surtitre { display: inline-flex; align-items: center; gap: 10px; font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
-.surtitre::before { content: ""; width: 28px; height: 1px; background: currentColor; }
-.dim { color: var(--texte-dim); }
+:focus-visible { outline: 2.5px solid var(--or); outline-offset: 3px; border-radius: 4px; }
+.papier :focus-visible, .entete-menu :focus-visible { outline-color: var(--nuit); }
+.muted { color: var(--muted); }
+.visuellement-cache { position: absolute !important; width: 1px; height: 1px; padding: 0 !important; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
-/* Bandeau */
-.prepa { background: var(--creme); color: #6b5410; border-bottom: 1px solid #ece3c8; font-size: .82rem; }
-.prepa .cadre { padding-block: 7px; }
+/* Bandeau de préparation */
+.prepa { background: var(--or-pale); color: #6b5410; font-size: .86rem; border-bottom: 1px solid #efe1ad; }
+.prepa .cadre { padding-block: 8px; }
 
-/* En-tête */
-.entete { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: saturate(1.4) blur(10px); -webkit-backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid transparent; transition: border-color .3s, box-shadow .3s; }
-.entete.defile { border-bottom-color: var(--trait); box-shadow: 0 6px 24px -18px rgba(11,42,82,.5); }
-.entete .cadre { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 68px; }
-.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.logo .nom { font-family: var(--serif); font-size: 1.18rem; font-weight: 600; line-height: 1.1; }
-.logo .nom small { display: block; font: 400 .72rem var(--sans); color: var(--texte-dim); letter-spacing: .01em; }
-.nav { display: none; gap: 28px; font-size: .93rem; }
-.nav a { text-decoration: none; color: var(--texte-dim); position: relative; padding-block: 6px; }
-.nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: var(--or); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
-.nav a:hover, .nav a.actif { color: var(--texte); }
+/* En-tête : la barre bleu nuit de la caisse */
+.entete { position: sticky; top: 0; z-index: 20; background: var(--nuit); color: var(--nuit-texte); padding-top: env(safe-area-inset-top, 0px); box-shadow: 0 1px 0 rgba(255,255,255,.08); }
+.entete .cadre { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+.logo { display: flex; align-items: center; min-height: 44px; text-decoration: none; flex: none; }
+.logo img { height: 36px; width: auto; display: block; }
+.nav { display: none; gap: 4px; font-size: .95rem; font-weight: 600; }
+.nav a { text-decoration: none; color: var(--nuit-dim); position: relative; padding: 12px 12px; transition: color .15s var(--t-doux); }
+.nav a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--or); transform: scaleX(0); transform-origin: left; transition: transform .25s var(--t-sortie); }
+.nav a:hover, .nav a.actif { color: #fff; }
 .nav a:hover::after, .nav a.actif::after { transform: scaleX(1); }
 .entete-actions { display: flex; align-items: center; gap: 8px; }
-@media (min-width: 940px) { .nav { display: flex; } .menu { display: none; } }
+@media (min-width: 1000px) { .nav { display: flex; } .menu { display: none; } }
 
 /* Menu du téléphone */
 .menu { position: relative; }
-.menu summary { list-style: none; cursor: pointer; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--trait); display: grid; place-items: center; }
+.menu summary { list-style: none; cursor: pointer; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.22); }
 .menu summary::-webkit-details-marker { display: none; }
-.menu summary span, .menu summary span::before, .menu summary span::after { display: block; width: 18px; height: 1.5px; background: var(--texte); position: relative; transition: transform .3s var(--ease), background .2s; }
+.menu summary span, .menu summary span::before, .menu summary span::after { display: block; width: 18px; height: 2px; border-radius: 2px; background: #fff; position: relative; transition: transform .25s var(--t-sortie), background .15s; }
 .menu summary span::before, .menu summary span::after { content: ""; position: absolute; left: 0; }
 .menu summary span::before { top: -6px; } .menu summary span::after { top: 6px; }
 .menu[open] summary span { background: transparent; }
 .menu[open] summary span::before { transform: translateY(6px) rotate(45deg); }
 .menu[open] summary span::after { transform: translateY(-6px) rotate(-45deg); }
-.menu nav { position: absolute; right: 0; top: 52px; width: min(280px, calc(100vw - 40px)); background: #fff; border: 1px solid var(--trait); border-radius: 14px; box-shadow: 0 24px 48px -24px rgba(11,42,82,.45); padding: 8px; display: grid; animation: deroule .25s var(--ease); }
-.menu nav a { padding: 12px 14px; border-radius: 9px; text-decoration: none; }
-.menu nav a:hover { background: var(--surface); }
-@keyframes deroule { from { opacity: 0; transform: translateY(-6px); } }
+.entete-menu { position: absolute; right: 0; top: 54px; width: min(300px, calc(100vw - 32px)); background: var(--papier); color: var(--fg); border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(6,22,46,.55); padding: 6px 16px; display: grid; animation: deplie .22s var(--t-sortie) both; transform-origin: top right; }
+.entete-menu a { display: flex; align-items: center; min-height: 48px; text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--regle); }
+.entete-menu a:last-child { border-bottom: 0; }
+.entete-menu a:hover { color: var(--nuit); }
 
-/* Boutons */
-.bouton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 11px 22px; border-radius: 999px; font: 600 .95rem var(--sans); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .25s var(--ease), background-color .25s, box-shadow .25s, border-color .25s; }
-.bouton:hover { transform: translateY(-1px); }
-.bouton .fleche { transition: transform .25s var(--ease); }
-.bouton:hover .fleche { transform: translateX(3px); }
-.bouton-or { background: var(--or-vif); color: var(--nuit); box-shadow: 0 10px 24px -14px rgba(224,178,27,.9); }
-.bouton-or:hover { background: #ebbf2e; }
-.bouton-nuit { background: var(--nuit); color: #fff; }
-.bouton-nuit:hover { background: var(--nuit-3); }
-.bouton-clair { color: #fff; border-color: rgba(255,255,255,.35); }
-.bouton-clair:hover { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.06); }
-.entete .bouton { min-height: 40px; padding: 8px 18px; font-size: .88rem; display: none; }
+/* Boutons : plein, qui s'enfonce sous le doigt */
+.bouton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 22px; border: 0; border-radius: 14px; font: 700 1rem/1.2 var(--police); text-decoration: none; text-align: center; cursor: pointer; background: var(--nuit); color: #fff; box-shadow: 0 2px 0 #061a35; transition: transform .14s var(--t-ressort), background-color .14s var(--t-doux), box-shadow .14s var(--t-doux); }
+.bouton:hover { background: var(--nuit-2); }
+.bouton:active { transform: translateY(2px); box-shadow: 0 0 0 #061a35; }
+.bouton-or { background: var(--or); color: var(--nuit); box-shadow: 0 2px 0 #a07e0c; }
+.bouton-or:hover { background: #ecc13a; }
+.bouton-or:active { box-shadow: 0 0 0 #a07e0c; }
+.bouton-clair { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); }
+.bouton-clair:hover { background: rgba(255,255,255,.08); }
+.bouton-clair:active { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); transform: scale(.98); }
+.entete .bouton { min-height: 44px; padding: 8px 16px; font-size: .92rem; display: none; }
 @media (min-width: 560px) { .entete .bouton { display: inline-flex; } }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
-section { padding-block: clamp(64px, 10vw, 112px); }
-.tete { display: grid; gap: 14px; max-width: 680px; margin-bottom: clamp(32px, 5vw, 52px); }
-.tete p { font-size: 1.04rem; color: var(--texte-dim); }
+/* La page de cahier : papier blanc, trait doré dans la marge */
+.papier { position: relative; }
+.papier::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc(max(0px, (100% - var(--large)) / 2) + var(--marge)); width: 2px; background: var(--or); opacity: .55; pointer-events: none; z-index: 2; }
+.aplat { position: relative; z-index: 3; background: var(--nuit); color: var(--nuit-texte); }
+.aplat h2, .aplat h3 { color: #fff; }
+section { padding-block: clamp(56px, 9vw, 104px); }
+.tete { display: grid; gap: 14px; max-width: 40rem; margin-bottom: clamp(28px, 4.5vw, 48px); }
+.tete p { font-size: 1.06rem; color: var(--muted); max-width: 60ch; }
+.aplat .tete p { color: var(--nuit-dim); }
+/* Deux colonnes sur grand écran : le titre à gauche, la matière à droite, comme une page de registre */
+.registre-page { display: grid; gap: 28px; }
+@media (min-width: 960px) { .registre-page { grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); gap: 72px; align-items: start; } .registre-page .tete { margin-bottom: 0; position: sticky; top: 96px; } }
+/* Une liste réglée : un trait sous chaque ligne */
+.regle { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--nuit); }
+.regle > * { padding-block: 18px; border-bottom: 1px solid var(--regle); display: grid; gap: 6px; }
+.regle p { color: var(--muted); max-width: 62ch; }
 
-/* Ouverture */
-.ouverture { position: relative; overflow: hidden; background: radial-gradient(1200px 520px at 85% -10%, var(--nuit-3) 0%, transparent 60%), var(--nuit); color: #fff; padding-block: clamp(64px, 11vw, 128px); }
-.ouverture::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(180deg, #000 0%, transparent 90%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%); pointer-events: none; }
-.ouverture .cadre { position: relative; display: grid; gap: 48px; }
-@media (min-width: 900px) { .ouverture .cadre { grid-template-columns: 1.1fr .9fr; align-items: center; } }
-.ouverture .surtitre { color: var(--or-vif); }
+/* Ouverture : la caisse */
+.ouverture { padding-block: clamp(44px, 8vw, 96px) clamp(56px, 9vw, 104px); overflow: hidden; }
+.ouverture .cadre { display: grid; gap: 44px; }
+@media (min-width: 960px) { .ouverture .cadre { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: 64px; } }
 .ouverture-texte { display: grid; gap: 22px; min-width: 0; }
-.ouverture-texte .chapo { font-size: clamp(1.02rem, 1.6vw, 1.14rem); color: #c3cfe0; max-width: 36em; }
-.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
-.reperes { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 10px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.12); font-size: .86rem; color: #aebdd2; }
-.reperes b { color: #fff; font-weight: 600; }
+.ouverture h1 { color: #fff; }
+.ouverture h1 em { font-style: normal; color: var(--or); }
+.lieu { color: var(--nuit-dim); font-weight: 600; font-size: .98rem; }
+.chapo { font-size: clamp(1.05rem, 1.7vw, 1.18rem); color: #c9d6e8; max-width: 36em; }
+.reperes { list-style: none; margin: 6px 0 0; padding: 0; display: grid; border-top: 1px solid rgba(255,255,255,.14); }
+@media (min-width: 560px) { .reperes { grid-template-columns: repeat(3, auto); justify-content: start; column-gap: 36px; } }
+.reperes li { padding-block: 12px; border-bottom: 1px solid rgba(255,255,255,.14); font-size: .92rem; color: var(--nuit-dim); display: flex; gap: 8px; flex-wrap: wrap; }
+@media (min-width: 560px) { .reperes li { border-bottom: 0; } }
+.reperes b { color: #fff; font-weight: 700; }
 
-/* Graphique de l'ouverture : un journal de caisse qui se remplit */
-.tableau { background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 22px; box-shadow: 0 40px 80px -40px rgba(0,0,0,.6); min-width: 0; }
-.tableau-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: .78rem; color: #aebdd2; letter-spacing: .04em; text-transform: uppercase; }
-.tableau-tete b { color: #fff; font: 600 1rem var(--sans); letter-spacing: 0; text-transform: none; }
-.tableau svg { display: block; width: 100%; height: auto; margin-top: 14px; }
-.tableau .barre { fill: rgba(255,255,255,.14); transform-box: fill-box; transform-origin: bottom; }
-.tableau .barre.or { fill: var(--or-vif); }
-.tableau .courbe { fill: none; stroke: var(--or-vif); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 600; stroke-dashoffset: 0; }
-.tableau .grille-l { stroke: rgba(255,255,255,.08); stroke-width: 1; }
-.tableau .point { fill: var(--nuit); stroke: var(--or-vif); stroke-width: 2.2; }
-.lignes { list-style: none; margin: 16px 0 0; padding: 0; display: grid; font-size: .86rem; }
-.lignes li { display: flex; justify-content: space-between; gap: 12px; padding-block: 9px; border-top: 1px solid rgba(255,255,255,.1); color: #c3cfe0; }
-.lignes li span:last-child { font-variant-numeric: tabular-nums; color: #fff; }
-.lignes .statut { font-size: .75rem; padding: 2px 9px; border-radius: 999px; background: rgba(224,178,27,.16); color: var(--or-pale) !important; }
+/* La feuille du journal posée sur la caisse */
+.feuille { position: relative; min-width: 0; background: var(--papier); color: var(--fg); border-radius: 6px 6px 14px 14px; padding: 20px 18px 10px 34px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+.feuille::before { content: ""; position: absolute; top: 0; bottom: 0; left: 18px; width: 2px; background: var(--or); opacity: .7; transform-origin: top; }
+.feuille-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 2px solid var(--nuit); }
+.feuille-tete strong { font-size: 1.3rem; font-weight: 800; font-stretch: 116%; letter-spacing: -.02em; color: var(--nuit); line-height: 1.1; }
+.feuille-tete span { font-size: .86rem; color: var(--muted); }
+.feuille ul { list-style: none; margin: 0; padding: 0; }
+.feuille li { position: relative; display: grid; gap: 2px; padding: 14px 0; }
+.feuille li::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--regle); transform-origin: left; }
+.feuille li:last-child::after { display: none; }
+.feuille li b { font-weight: 700; color: var(--nuit); }
+.feuille li span { font-size: .92rem; color: var(--muted); }
+.feuille .entree { color: var(--in); }
+.feuille .statut { justify-self: start; margin-top: 4px; font-size: .82rem; font-weight: 700; color: var(--or-texte); border: 1.5px dashed currentColor; border-radius: 8px; padding: 3px 9px; transform: rotate(-.8deg); }
 
-/* Présentation */
-.presentation .cadre { display: grid; gap: 36px; }
-@media (min-width: 900px) { .presentation .cadre { grid-template-columns: .95fr 1.05fr; gap: 72px; align-items: start; } }
-.presentation .texte { display: grid; gap: 16px; color: var(--texte-dim); font-size: 1.02rem; }
-.presentation .texte strong { color: var(--texte); font-weight: 600; }
-.fiche { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--trait); }
-.fiche div { padding: 16px 0; border-bottom: 1px solid var(--trait); display: grid; gap: 2px; }
-.fiche div:nth-child(odd) { padding-right: 16px; }
-.fiche dt { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--texte-dim); }
-.fiche dd { margin: 0; font-weight: 600; color: var(--texte); }
+/* La société */
+.presentation .texte { display: grid; gap: 16px; font-size: 1.04rem; max-width: 62ch; }
+.presentation .texte p { color: var(--muted); }
+.presentation .texte strong { color: var(--fg); font-weight: 700; }
+.fiche { margin: 28px 0 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; border-top: 2px solid var(--nuit); }
+.fiche div { padding: 14px 0; border-bottom: 1px solid var(--regle); display: grid; gap: 2px; min-width: 0; }
+.fiche dt { font-size: .88rem; color: var(--muted); }
+.fiche dd { margin: 0; font-weight: 700; color: var(--nuit); }
 
 /* Vision */
-.vision { background: var(--creme); }
-.vision .cadre { display: grid; gap: 40px; }
-@media (min-width: 900px) { .vision .cadre { grid-template-columns: 1.1fr .9fr; gap: 72px; align-items: center; } }
-.citation { margin: 0; font-family: var(--serif); font-size: clamp(1.45rem, 3.2vw, 2.1rem); line-height: 1.32; color: var(--nuit); position: relative; padding-top: 34px; }
-.citation::before { content: "\201C"; position: absolute; top: -18px; left: -4px; font-size: 5.5rem; line-height: 1; color: var(--or); opacity: .5; }
-.valeurs { display: grid; gap: 0; border-top: 1px solid #e4dccb; }
-.valeurs div { padding: 18px 0; border-bottom: 1px solid #e4dccb; display: grid; gap: 4px; }
-.valeurs p { color: var(--texte-dim); font-size: .95rem; }
+.vision { border-top: 1px solid var(--regle); }
+.vision .cadre { display: grid; gap: 36px; }
+@media (min-width: 960px) { .vision .cadre { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 72px; align-items: start; } }
+.vision h2 { margin-bottom: 18px; }
+.citation { margin: 0; padding-left: 18px; border-left: 4px solid var(--or); font-size: clamp(1.3rem, 2.8vw, 1.8rem); line-height: 1.32; font-weight: 600; font-stretch: 104%; letter-spacing: -.01em; color: var(--nuit); max-width: 34ch; }
 
-/* Missions */
-.missions-liste { display: grid; gap: 18px; counter-reset: m; }
-@media (min-width: 720px) { .missions-liste { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1040px) { .missions-liste { grid-template-columns: repeat(4, 1fr); } }
-.mission { counter-increment: m; position: relative; border: 1px solid var(--trait); border-radius: 16px; padding: 26px 22px 24px; display: grid; gap: 10px; align-content: start; background: #fff; transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s; }
-.mission::before { content: counter(m, decimal-leading-zero); font: 600 .82rem var(--sans); color: var(--or); letter-spacing: .06em; }
-.mission::after { content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 2px; background: var(--or-vif); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
-.mission:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -28px rgba(11,42,82,.45); border-color: #cfd7e2; }
-.mission:hover::after { transform: scaleX(1); }
-.mission p { color: var(--texte-dim); font-size: .95rem; }
+/* Missions : une ligne par mission */
+@media (min-width: 720px) { .missions > * { grid-template-columns: 11rem 1fr; gap: 20px; align-items: baseline; } }
 
-/* Démarche */
-.demarche { background: var(--surface); }
-.etapes { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; position: relative; }
-@media (min-width: 900px) { .etapes { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
-.etapes li { display: grid; gap: 10px; align-content: start; position: relative; }
-.etapes .rond { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 1px solid var(--trait); display: grid; place-items: center; font: 600 .9rem var(--sans); color: var(--nuit); position: relative; z-index: 1; }
-@media (min-width: 900px) {
-  .etapes::before { content: ""; position: absolute; top: 22px; left: 22px; right: 22px; height: 1px; background: var(--trait); }
-  .etapes::after { content: ""; position: absolute; top: 22px; left: 22px; right: 22px; height: 1px; background: var(--or); transform: scaleX(var(--progres, 1)); transform-origin: left; transition: transform 1.6s var(--ease); }
-}
-.etapes p { color: var(--texte-dim); font-size: .95rem; }
+/* Démarche : une suite, d'où les numéros */
+.demarche { background: var(--papier-2); border-block: 1px solid var(--regle); }
+.etapes { list-style: none; margin: 0; padding: 0; display: grid; border-top: 2px solid var(--nuit); }
+@media (min-width: 900px) { .etapes { grid-template-columns: repeat(4, 1fr); } }
+.etapes li { display: grid; grid-template-columns: 2.6rem 1fr; gap: 4px 12px; padding: 18px 0; border-bottom: 1px solid var(--regle); align-content: start; }
+@media (min-width: 900px) { .etapes li { grid-template-columns: 1fr; padding: 20px 24px 22px 0; border-bottom: 0; } .etapes li + li { padding-left: 24px; border-left: 1px solid var(--regle); } }
+.etapes .n { grid-row: span 2; font-size: 2rem; line-height: 1; font-weight: 800; font-stretch: 122%; color: var(--or-texte); }
+.etapes p { color: var(--muted); }
 
 /* Objectifs */
-.objectifs { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--trait); }
-@media (min-width: 820px) { .objectifs { grid-template-columns: 1fr 1fr; column-gap: 56px; } }
-.objectifs li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding-block: 22px; border-bottom: 1px solid var(--trait); }
-.objectifs .n { font-family: var(--serif); font-size: 1.5rem; line-height: 1; color: var(--or); }
-.objectifs p { color: var(--texte-dim); font-size: .95rem; margin-top: 4px; }
+.objectifs { border-top: 2px solid var(--nuit); }
+@media (min-width: 820px) { .objectifs { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; } }
 
 /* Prestations */
-.prestations { display: grid; gap: 18px; }
+.prestations { display: grid; gap: 0 40px; }
 @media (min-width: 820px) { .prestations { grid-template-columns: 1fr 1fr; } }
-.prestation { border: 1px solid var(--trait); border-radius: 16px; padding: 26px; display: grid; gap: 14px; align-content: start; transition: border-color .3s, box-shadow .3s; }
-.prestation:hover { border-color: #cfd7e2; box-shadow: 0 20px 40px -32px rgba(11,42,82,.5); }
-.prestation .sous { font-size: .9rem; color: var(--texte-dim); }
-.prestation ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: .95rem; }
-.prestation li { padding-left: 22px; position: relative; color: var(--texte); }
-.prestation li::before { content: ""; position: absolute; left: 0; top: .72em; width: 10px; height: 1.5px; background: var(--or); }
-.prestation.partenaire { background: var(--creme); border-color: #ece3c8; }
-.prestation .note { font-size: .84rem; color: #7a6420; border-top: 1px solid #e4dccb; padding-top: 12px; }
+.prestation { padding: 20px 0 26px; border-top: 2px solid var(--nuit); display: grid; gap: 10px; align-content: start; }
+.prestation .sous { color: var(--muted); }
+.prestation ul { margin: 4px 0 0; padding: 0; list-style: none; }
+.prestation li { padding: 10px 0 10px 20px; border-bottom: 1px solid var(--regle); position: relative; }
+.prestation li::before { content: ""; position: absolute; left: 2px; top: 1.15em; width: 8px; height: 2px; border-radius: 2px; background: var(--or); }
+.prestation.partenaire { border-top-color: var(--or); }
+.prestation .note { font-size: .92rem; color: var(--or-texte); font-weight: 600; }
 
-.produits-tete { margin: clamp(56px, 8vw, 84px) 0 26px; display: grid; gap: 12px; }
-.produit { position: relative; overflow: hidden; border-radius: 22px; background: linear-gradient(135deg, #0b5fb8 0%, #0b2a52 70%); color: #fff; padding: clamp(26px, 4.5vw, 44px); display: grid; gap: 32px; }
-.produit::after { content: ""; position: absolute; width: 420px; height: 420px; right: -140px; top: -180px; border-radius: 50%; background: radial-gradient(circle, rgba(242,194,0,.22), transparent 65%); pointer-events: none; }
-@media (min-width: 900px) { .produit { grid-template-columns: 1.15fr .85fr; align-items: center; } }
+/* Le produit : un aplat de caisse dans la page */
+.produit { margin-top: clamp(48px, 7vw, 80px); border-radius: 18px; padding: clamp(24px, 4.5vw, 44px); display: grid; gap: 28px; }
+@media (min-width: 900px) { .produit { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: 48px; } }
+.produit-texte { display: grid; gap: 18px; min-width: 0; }
 .produit-marque { display: flex; align-items: center; gap: 14px; }
-.produit .m { width: 48px; height: 48px; border-radius: 12px; background: #fff; color: #0b5fb8; display: grid; place-items: center; font-weight: 800; font-size: 23px; position: relative; overflow: hidden; flex: none; }
-.produit .m::after { content: ""; position: absolute; width: 64px; height: 9px; background: #f2c200; transform: rotate(-35deg); top: 28px; }
-.produit .m b { position: relative; z-index: 1; }
-.produit h3 { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; }
-.produit p { color: #d3e0f2; max-width: 34em; }
-.produit dl { margin: 0; display: grid; gap: 0; position: relative; z-index: 1; }
-.produit dl div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding-block: 11px; border-top: 1px solid rgba(255,255,255,.14); font-size: .92rem; }
-.produit dt { color: #9fb5d3; }
-.produit dd { margin: 0; color: #fff; }
+.produit-marque svg { width: 52px; height: 52px; flex: none; }
+.produit-marque h2 { color: #fff; font-size: clamp(1.7rem, 4vw, 2.3rem); }
+.produit p { color: #c9d6e8; max-width: 34em; }
+.produit dl { margin: 0; border-top: 1px solid rgba(255,255,255,.2); }
+.produit dl div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding-block: 12px; border-bottom: 1px solid rgba(255,255,255,.14); font-size: .96rem; }
+.produit dt { color: var(--nuit-dim); }
+.produit dd { margin: 0; color: #fff; font-weight: 600; }
 
-/* Cadre */
-.cadre-legal { background: var(--nuit); color: #fff; }
-.cadre-legal .surtitre { color: var(--or-vif); }
-.cadre-legal .tete p { color: #b9c6d8; }
-.partage { display: grid; gap: 18px; }
+/* Le partage des rôles */
+.partage { display: grid; border-top: 1px solid rgba(255,255,255,.2); }
 @media (min-width: 820px) { .partage { grid-template-columns: repeat(3, 1fr); } }
-.partage div { border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 24px; display: grid; gap: 10px; align-content: start; background: rgba(255,255,255,.03); }
-.partage .qui { font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--or-vif); font-weight: 600; }
-.partage ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: #c3cfe0; font-size: .95rem; }
-.loi { margin-top: 30px; font-size: .9rem; color: #9fb0c8; max-width: 72ch; border-left: 2px solid var(--or); padding-left: 16px; }
+.partage > div { padding: 20px 0 22px; border-bottom: 1px solid rgba(255,255,255,.14); display: grid; gap: 8px; align-content: start; }
+@media (min-width: 820px) { .partage > div { border-bottom: 0; padding-right: 24px; } .partage > div + div { padding-left: 24px; border-left: 1px solid rgba(255,255,255,.14); } }
+.partage .qui { color: var(--or); font-weight: 700; }
+.partage ul { margin: 4px 0 0; padding-left: 1.1em; display: grid; gap: 4px; color: #c9d6e8; }
+.loi { margin-top: 32px; font-size: .95rem; color: var(--nuit-dim); max-width: 70ch; border-left: 4px solid var(--or); padding-left: 16px; }
 
 /* Contact */
-.contact .cadre { display: grid; gap: 36px; }
-@media (min-width: 900px) { .contact .cadre { grid-template-columns: 1fr 1fr; align-items: start; gap: 72px; } }
-.coordonnees { border: 1px solid var(--trait); border-radius: 18px; overflow: hidden; }
-.coordonnees div { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--trait); font-size: .95rem; }
-.coordonnees div:last-of-type { border-bottom: 0; }
-.coordonnees dt { color: var(--texte-dim); }
-.coordonnees dd { margin: 0; font-weight: 500; }
-.a-venir { color: var(--texte-dim); font-weight: 400; font-style: italic; }
-.coordonnees .pied-carte { padding: 18px 22px; background: var(--surface); display: flex; flex-wrap: wrap; gap: 10px; }
-.inactif { opacity: .5; pointer-events: none; }
+.coordonnees { margin: 0; border-top: 2px solid var(--nuit); }
+.coordonnees div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--regle); }
+.coordonnees dt { color: var(--muted); }
+.coordonnees dd { margin: 0; font-weight: 600; }
+.coordonnees dd a { text-decoration: none; color: var(--nuit); font-weight: 700; font-stretch: 108%; }
+.coordonnees dd a:hover { text-decoration: underline; text-decoration-color: var(--or); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.a-venir { color: var(--muted); font-weight: 400; font-style: italic; }
+.coordonnees .pied-carte { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px 0 0; border-bottom: 0; grid-template-columns: none; }
 
 /* Pied */
-footer { background: #081f3e; color: #9fb0c8; padding-block: 44px calc(36px + env(safe-area-inset-bottom, 0px)); font-size: .88rem; }
+footer { background: var(--nuit-fonce); color: var(--nuit-dim); padding-block: 44px calc(36px + env(safe-area-inset-bottom, 0px)); font-size: .92rem; }
 footer .cadre { display: grid; gap: 28px; }
 @media (min-width: 820px) { footer .cadre { grid-template-columns: 1.4fr 1fr 1fr; } }
-footer .nom { font-family: var(--serif); color: #fff; font-size: 1.2rem; }
-footer h4 { margin: 0 0 10px; color: #fff; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; }
-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-footer a { text-decoration: none; }
+footer img { height: 44px; width: auto; display: block; }
+footer h4 { margin: 0 0 6px; color: #fff; font-size: 1rem; font-weight: 750; font-stretch: 108%; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; }
+footer li a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
 footer a:hover { color: #fff; }
-.mentions { grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; font-size: .8rem; }
+.mentions { grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.12); padding-top: 20px; font-size: .84rem; }
 
-/* Animations */
+/* Mouvement : l'entrée du haut de page, une seule fois */
 @media (prefers-reduced-motion: no-preference) {
-  .js .apparait { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--i, 0) * 90ms); }
-  .js .apparait.vu { opacity: 1; transform: none; }
-  .js .etapes:not(.vu)::after { --progres: 0; }
-  .ouverture-texte > * { animation: monte .9s var(--ease) both; }
-  .ouverture-texte > :nth-child(2) { animation-delay: .08s; }
-  .ouverture-texte > :nth-child(3) { animation-delay: .16s; }
-  .ouverture-texte > :nth-child(4) { animation-delay: .24s; }
-  .ouverture-texte > :nth-child(5) { animation-delay: .32s; }
-  .tableau { animation: monte 1s .2s var(--ease) both; }
-  .tableau .barre { animation: pousse .9s var(--ease) both; animation-delay: calc(.45s + var(--b) * 70ms); }
-  .tableau .courbe { stroke-dashoffset: 600; animation: trace 1.8s 1s var(--ease) forwards; }
-  .tableau .point { animation: point .5s 2.5s var(--ease) both; transform-box: fill-box; transform-origin: center; }
-  .lignes li { animation: monte .6s var(--ease) both; animation-delay: calc(1.2s + var(--l) * 120ms); }
-  @keyframes monte { from { opacity: 0; transform: translateY(16px); } }
-  @keyframes pousse { from { transform: scaleY(0); } }
-  @keyframes trace { to { stroke-dashoffset: 0; } }
-  @keyframes point { from { transform: scale(0); } }
+  .ouverture-texte > * { animation: monte .7s var(--t-sortie) both; }
+  .ouverture-texte > :nth-child(2) { animation-delay: .06s; }
+  .ouverture-texte > :nth-child(3) { animation-delay: .12s; }
+  .ouverture-texte > :nth-child(4) { animation-delay: .18s; }
+  .ouverture-texte > :nth-child(5) { animation-delay: .24s; }
+  .feuille { animation: pose .8s .2s var(--t-sortie) both; }
+  .feuille::before { animation: descend .7s .55s var(--t-sortie) both; }
+  .feuille-tete { animation: apparait .4s .6s var(--t-doux) both; }
+  .feuille li { animation: apparait .4s var(--t-doux) both; animation-delay: calc(.8s + var(--l) * .18s); }
+  .feuille li::after { animation: regle .5s var(--t-sortie) both; animation-delay: calc(.85s + var(--l) * .18s); }
+  .feuille .statut { animation: tampon .35s 1.45s var(--t-ressort) both; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+@keyframes monte { from { opacity: 0; transform: translate3d(0, 14px, 0); } }
+@keyframes pose { from { opacity: 0; transform: translate3d(0, 24px, 0) rotate(1.2deg); } }
+@keyframes descend { from { transform: scaleY(0); } }
+@keyframes regle { from { transform: scaleX(0); } }
+@keyframes apparait { from { opacity: 0; } }
+@keyframes tampon { from { opacity: 0; transform: scale(1.3) rotate(-.8deg); } }
+@keyframes deplie { from { opacity: 0; transform: scale(.96); } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js');</script>
 
 <div class="prepa" role="note"><div class="cadre">Site en cours de finalisation : adresse et immatriculation seront publiées prochainement.</div></div>
 
 <header class="entete" id="entete">
   <div class="cadre">
     <a class="logo" href="#haut" aria-label="TRK Consulting, accueil">
-      <img src="logo/trk-horizontal-couleur.svg" alt="TRK Consulting" height="42" style="height:42px;width:auto;display:block">
+      <img src="logo/trk-horizontal-negatif.svg" alt="TRK Consulting" width="99" height="36">
     </a>
     <nav class="nav" aria-label="Sections">
       <a href="#societe">La société</a>
@@ -282,10 +280,10 @@ footer a:hover { color: #fff; }
       <a href="mbongo-business/">Mbongo Business</a>
     </nav>
     <div class="entete-actions">
-      <a class="bouton bouton-nuit" href="#contact">Nous contacter</a>
+      <a class="bouton bouton-or" href="#contact">Nous contacter</a>
       <details class="menu">
         <summary aria-label="Menu"><span></span></summary>
-        <nav aria-label="Menu">
+        <nav class="entete-menu" aria-label="Menu">
           <a href="#societe">La société</a>
           <a href="#missions">Missions</a>
           <a href="#objectifs">Objectifs</a>
@@ -298,60 +296,47 @@ footer a:hover { color: #fff; }
   </div>
 </header>
 
-<main id="haut">
-  <section class="ouverture">
+<main id="haut" class="papier">
+  <section class="ouverture aplat">
     <div class="cadre">
       <div class="ouverture-texte">
-        <p class="surtitre">Kinshasa · Micro et petites entreprises</p>
-        <h1>Assistance comptable et de gestion pour les micro et petites entreprises</h1>
+        <p class="lieu">Kinshasa · Micro et petites entreprises</p>
+        <h1>Assistance comptable et de gestion pour les <em>micro et petites entreprises</em></h1>
         <p class="chapo">TRK Consulting accompagne les commerçants, artisans et prestataires de services dans l'organisation et la tenue de leur comptabilité selon le Système minimal de trésorerie de l'OHADA.</p>
         <div class="actions">
-          <a class="bouton bouton-or" href="#prestations">Nos prestations <span class="fleche" aria-hidden="true">→</span></a>
+          <a class="bouton bouton-or" href="#prestations">Nos prestations</a>
           <a class="bouton bouton-clair" href="#contact">Prendre rendez-vous</a>
         </div>
-        <p class="reperes"><span><b>Référentiel</b> AUDCIF révisé, OHADA</span><span><b>Outil</b> Mbongo Business</span><span><b>Langues</b> français, lingala</span></p>
+        <ul class="reperes">
+          <li><b>Référentiel</b> AUDCIF révisé, OHADA</li>
+          <li><b>Outil</b> Mbongo Business</li>
+          <li><b>Langues</b> français, lingala</li>
+        </ul>
       </div>
 
-      <aside class="tableau" aria-label="Illustration : journal de trésorerie d'un commerce">
-        <div class="tableau-tete"><span>Journal de trésorerie</span><b>Exercice en cours</b></div>
-        <svg viewBox="0 0 320 150" role="img" aria-label="Recettes mensuelles et solde de trésorerie">
-          <line class="grille-l" x1="0" y1="30" x2="320" y2="30"/>
-          <line class="grille-l" x1="0" y1="70" x2="320" y2="70"/>
-          <line class="grille-l" x1="0" y1="110" x2="320" y2="110"/>
-          <line class="grille-l" x1="0" y1="149" x2="320" y2="149"/>
-          <rect class="barre" style="--b:0" x="10"  y="92"  width="22" height="57" rx="3"/>
-          <rect class="barre" style="--b:1" x="50"  y="80"  width="22" height="69" rx="3"/>
-          <rect class="barre" style="--b:2" x="90"  y="98"  width="22" height="51" rx="3"/>
-          <rect class="barre" style="--b:3" x="130" y="70"  width="22" height="79" rx="3"/>
-          <rect class="barre" style="--b:4" x="170" y="62"  width="22" height="87" rx="3"/>
-          <rect class="barre" style="--b:5" x="210" y="74"  width="22" height="75" rx="3"/>
-          <rect class="barre" style="--b:6" x="250" y="52"  width="22" height="97" rx="3"/>
-          <rect class="barre or" style="--b:7" x="290" y="40" width="22" height="109" rx="3"/>
-          <path class="courbe" d="M21 112 C 45 106, 55 100, 61 98 S 90 110, 101 108 S 130 86, 141 84 S 170 74, 181 72 S 210 82, 221 78 S 250 58, 261 56 S 290 38, 301 30"/>
-          <circle class="point" cx="301" cy="30" r="5"/>
-        </svg>
-        <ul class="lignes">
-          <li style="--l:0"><span>Recettes encaissées</span><span>suivies au jour le jour</span></li>
-          <li style="--l:1"><span>Créances clients</span><span>relances à 30 jours</span></li>
-          <li style="--l:2"><span>États de fin d'exercice</span><span class="statut">arrêtés par l'expert-comptable</span></li>
+      <aside class="feuille" aria-label="Illustration : journal de trésorerie d'un commerce">
+        <div class="feuille-tete"><strong>Journal de trésorerie</strong><span>Exercice en cours</span></div>
+        <ul>
+          <li style="--l:0"><b>Recettes encaissées</b><span class="entree">suivies au jour le jour</span></li>
+          <li style="--l:1"><b>Créances clients</b><span>relances à 30 jours</span></li>
+          <li style="--l:2"><b>États de fin d'exercice</b><span class="statut">arrêtés par l'expert-comptable</span></li>
         </ul>
       </aside>
     </div>
   </section>
 
   <section class="presentation" id="societe">
-    <div class="cadre">
-      <div class="tete apparait" style="margin-bottom:0">
-        <p class="surtitre">La société</p>
+    <div class="cadre registre-page">
+      <div class="tete">
         <h2>Une structure dédiée aux entreprises de petite taille</h2>
       </div>
       <div>
-        <div class="texte apparait" style="--i:1">
+        <div class="texte">
           <p><strong>TRK Consulting</strong> est une société d'assistance comptable et de gestion établie à Kinshasa. Elle s'adresse aux micro et petites entreprises dont le chiffre d'affaires relève du Système minimal de trésorerie prévu par l'Acte uniforme relatif au droit comptable et à l'information financière (AUDCIF).</p>
           <p>Ces entreprises tiennent souvent leurs comptes dans un cahier, parfois sans support du tout. TRK Consulting leur fournit une méthode, un outil adapté au téléphone et un suivi régulier, afin que la comptabilité devienne un instrument de gestion et non une contrainte.</p>
           <p>La société détient les droits du logiciel <strong>Mbongo Business</strong>, qu'elle met à la disposition de ses clients.</p>
         </div>
-        <dl class="fiche apparait" style="--i:2">
+        <dl class="fiche">
           <div><dt>Siège</dt><dd>Kinshasa, RDC</dd></div>
           <div><dt>Clientèle</dt><dd>Micro et petites entreprises</dd></div>
           <div><dt>Référentiel</dt><dd>SMT, AUDCIF révisé</dd></div>
@@ -363,11 +348,11 @@ footer a:hover { color: #fff; }
 
   <section class="vision" id="vision">
     <div class="cadre">
-      <div class="apparait">
-        <p class="surtitre" style="margin-bottom:22px">Vision</p>
+      <div>
+        <h2>Vision</h2>
         <blockquote class="citation">Faire de la comptabilité un outil de gestion à la portée de chaque petite entreprise, et donner à ses comptes la fiabilité qu'attendent les banques et les partenaires.</blockquote>
       </div>
-      <div class="valeurs apparait" style="--i:1">
+      <div class="regle">
         <div><h3>Rigueur</h3><p>Des comptes conformes au référentiel OHADA, vérifiés à chaque étape.</p></div>
         <div><h3>Proximité</h3><p>Un accompagnement sur le lieu d'activité, en français ou en lingala.</p></div>
         <div><h3>Transparence</h3><p>Un partage des rôles clair entre le client, TRK Consulting et l'expert-comptable.</p></div>
@@ -375,62 +360,59 @@ footer a:hover { color: #fff; }
     </div>
   </section>
 
-  <section id="missions">
-    <div class="cadre">
-      <div class="tete apparait">
-        <p class="surtitre">Missions</p>
+  <section id="missions" style="padding-top:0">
+    <div class="cadre registre-page">
+      <div class="tete">
         <h2>Nos missions</h2>
         <p>Le client tient lui-même sa comptabilité. TRK Consulting lui en donne les moyens et en assure le suivi.</p>
       </div>
-      <div class="missions-liste">
-        <article class="mission apparait" style="--i:0"><h3>Former</h3><p>Initier le dirigeant à l'enregistrement des recettes et des dépenses, à la conservation des pièces justificatives et à l'inventaire de fin d'exercice.</p></article>
-        <article class="mission apparait" style="--i:1"><h3>Équiper</h3><p>Mettre à disposition Mbongo Business, qui produit les journaux et les états financiers du Système minimal de trésorerie.</p></article>
-        <article class="mission apparait" style="--i:2"><h3>Contrôler</h3><p>Examiner périodiquement les enregistrements : pièces manquantes, soldes anormaux, périodes non saisies, créances anciennes.</p></article>
-        <article class="mission apparait" style="--i:3"><h3>Orienter</h3><p>Mettre le client en relation avec l'expert-comptable partenaire pour les missions que la loi lui réserve.</p></article>
+      <div class="regle missions">
+        <article><h3>Former</h3><p>Initier le dirigeant à l'enregistrement des recettes et des dépenses, à la conservation des pièces justificatives et à l'inventaire de fin d'exercice.</p></article>
+        <article><h3>Équiper</h3><p>Mettre à disposition Mbongo Business, qui produit les journaux et les états financiers du Système minimal de trésorerie.</p></article>
+        <article><h3>Contrôler</h3><p>Examiner périodiquement les enregistrements : pièces manquantes, soldes anormaux, périodes non saisies, créances anciennes.</p></article>
+        <article><h3>Orienter</h3><p>Mettre le client en relation avec l'expert-comptable partenaire pour les missions que la loi lui réserve.</p></article>
       </div>
     </div>
   </section>
 
   <section class="demarche">
     <div class="cadre">
-      <div class="tete apparait">
-        <p class="surtitre">Démarche</p>
+      <div class="tete">
         <h2>Le déroulement d'une mission</h2>
       </div>
-      <ol class="etapes apparait">
-        <li><span class="rond">1</span><h3>Diagnostic</h3><p>Visite de l'entreprise, revue des supports existants, choix des comptes de trésorerie à suivre.</p></li>
-        <li><span class="rond">2</span><h3>Mise en place</h3><p>Installation de l'outil, reprise des soldes d'ouverture et formation du dirigeant.</p></li>
-        <li><span class="rond">3</span><h3>Suivi mensuel</h3><p>Contrôle des enregistrements et des pièces, point sur les créances et les échéances.</p></li>
-        <li><span class="rond">4</span><h3>Clôture</h3><p>Inventaire extra-comptable avec le client, puis arrêté des états par l'expert-comptable partenaire.</p></li>
+      <ol class="etapes">
+        <li><span class="n">1</span><h3>Diagnostic</h3><p>Visite de l'entreprise, revue des supports existants, choix des comptes de trésorerie à suivre.</p></li>
+        <li><span class="n">2</span><h3>Mise en place</h3><p>Installation de l'outil, reprise des soldes d'ouverture et formation du dirigeant.</p></li>
+        <li><span class="n">3</span><h3>Suivi mensuel</h3><p>Contrôle des enregistrements et des pièces, point sur les créances et les échéances.</p></li>
+        <li><span class="n">4</span><h3>Clôture</h3><p>Inventaire extra-comptable avec le client, puis arrêté des états par l'expert-comptable partenaire.</p></li>
       </ol>
     </div>
   </section>
 
   <section id="objectifs">
     <div class="cadre">
-      <div class="tete apparait">
-        <p class="surtitre">Objectifs</p>
+      <div class="tete">
         <h2>Nos objectifs</h2>
       </div>
-      <ol class="objectifs">
-        <li class="apparait"><span class="n">01</span><div><h3>Généraliser une comptabilité régulière</h3><p>Amener les micro et petites entreprises à tenir une comptabilité conforme au Système minimal de trésorerie.</p></div></li>
-        <li class="apparait" style="--i:1"><span class="n">02</span><div><h3>Fiabiliser l'information financière</h3><p>Produire des états lisibles par une banque, une institution de microfinance ou un fournisseur.</p></div></li>
-        <li class="apparait"><span class="n">03</span><div><h3>Maîtriser le crédit client</h3><p>Suivre chaque créance jusqu'à son règlement et réduire les pertes sur ventes à crédit.</p></div></li>
-        <li class="apparait" style="--i:1"><span class="n">04</span><div><h3>Anticiper les obligations</h3><p>Rappeler les échéances fiscales et sociales applicables, dont l'IRPP des micro et petites entreprises.</p></div></li>
-        <li class="apparait"><span class="n">05</span><div><h3>Accompagner la croissance</h3><p>Signaler à temps l'approche des seuils du SMT et préparer le passage au Système normal.</p></div></li>
-        <li class="apparait" style="--i:1"><span class="n">06</span><div><h3>Respecter le cadre professionnel</h3><p>Exercer dans le strict respect des attributions réservées aux experts-comptables.</p></div></li>
-      </ol>
+      <ul class="regle objectifs">
+        <li><h3>Généraliser une comptabilité régulière</h3><p>Amener les micro et petites entreprises à tenir une comptabilité conforme au Système minimal de trésorerie.</p></li>
+        <li><h3>Fiabiliser l'information financière</h3><p>Produire des états lisibles par une banque, une institution de microfinance ou un fournisseur.</p></li>
+        <li><h3>Maîtriser le crédit client</h3><p>Suivre chaque créance jusqu'à son règlement et réduire les pertes sur ventes à crédit.</p></li>
+        <li><h3>Anticiper les obligations</h3><p>Rappeler les échéances fiscales et sociales applicables, dont l'IRPP des micro et petites entreprises.</p></li>
+        <li><h3>Accompagner la croissance</h3><p>Signaler à temps l'approche des seuils du SMT et préparer le passage au Système normal.</p></li>
+        <li><h3>Respecter le cadre professionnel</h3><p>Exercer dans le strict respect des attributions réservées aux experts-comptables.</p></li>
+      </ul>
     </div>
   </section>
 
   <section id="prestations" style="padding-top:0">
     <div class="cadre">
-      <div class="tete apparait">
-        <p class="surtitre">Offres et produits</p>
+      <div class="tete">
         <h2>Nos prestations</h2>
+        <p>Offres et produits de TRK Consulting.</p>
       </div>
       <div class="prestations">
-        <article class="prestation apparait">
+        <article class="prestation">
           <h3>Assistance comptable</h3>
           <p class="sous">Pour l'entreprise qui tient ses comptes au quotidien.</p>
           <ul>
@@ -439,7 +421,7 @@ footer a:hover { color: #fff; }
             <li>Assistance à l'inventaire de fin d'exercice</li>
           </ul>
         </article>
-        <article class="prestation apparait" style="--i:1">
+        <article class="prestation">
           <h3>Accompagnement en gestion</h3>
           <p class="sous">Pour piloter l'activité à partir des chiffres.</p>
           <ul>
@@ -448,7 +430,7 @@ footer a:hover { color: #fff; }
             <li>Organisation de la caisse et des comptes de mobile money</li>
           </ul>
         </article>
-        <article class="prestation apparait">
+        <article class="prestation">
           <h3>Formation</h3>
           <p class="sous">Sessions collectives, en français ou en lingala.</p>
           <ul>
@@ -457,7 +439,7 @@ footer a:hover { color: #fff; }
             <li>Initiation au Système minimal de trésorerie</li>
           </ul>
         </article>
-        <article class="prestation partenaire apparait" style="--i:1">
+        <article class="prestation partenaire">
           <h3>Missions de l'expert-comptable partenaire</h3>
           <p class="sous">Pour les actes réservés à la profession.</p>
           <ul>
@@ -469,16 +451,24 @@ footer a:hover { color: #fff; }
         </article>
       </div>
 
-      <div class="produits-tete apparait">
-        <p class="surtitre">Produit</p>
-        <h2>Mbongo Business</h2>
-      </div>
-      <article class="produit apparait">
-        <div style="display:grid;gap:18px;position:relative;z-index:1">
-          <div class="produit-marque"><span class="m" aria-hidden="true"><b>M</b></span><h3>Mbongo Business</h3></div>
+      <article class="produit aplat" aria-labelledby="produit-titre">
+        <div class="produit-texte">
+          <div class="produit-marque">
+            <svg viewBox="0 0 512 512" aria-hidden="true">
+              <rect width="512" height="512" rx="112" fill="#14396a"/>
+              <g transform="translate(256 256) scale(1.48) translate(-126 -128)">
+                <rect x="54" y="48" width="24" height="77.4" rx="12" fill="#fff"/><rect x="54" y="165" width="24" height="43" rx="12" fill="#fff"/>
+                <rect x="94" y="48" width="24" height="66" rx="12" fill="#fff"/><rect x="94" y="153.5" width="24" height="54.5" rx="12" fill="#fff"/>
+                <rect x="134" y="48" width="24" height="54.5" rx="12" fill="#fff"/><rect x="134" y="142" width="24" height="66" rx="12" fill="#fff"/>
+                <rect x="174" y="48" width="24" height="43" rx="12" fill="#fff"/><rect x="174" y="130.6" width="24" height="77.4" rx="12" fill="#fff"/>
+                <rect x="18" y="116" width="216" height="24" rx="12" fill="#e0b21b" transform="rotate(-16 126 128)"/>
+              </g>
+            </svg>
+            <h2 id="produit-titre">Mbongo Business</h2>
+          </div>
           <p>Logiciel de tenue de la comptabilité de trésorerie, conçu pour le téléphone du commerçant. Il produit le journal de trésorerie, le compte de résultat, le bilan et les notes annexes du Système minimal de trésorerie.</p>
           <div class="actions">
-            <a class="bouton bouton-or" href="mbongo-business/">Présentation du logiciel <span class="fleche" aria-hidden="true">→</span></a>
+            <a class="bouton bouton-or" href="mbongo-business/">Présentation du logiciel</a>
             <a class="bouton bouton-clair" href="https://mbongo-business.web.app/">Ouvrir l'application</a>
           </div>
         </div>
@@ -493,35 +483,33 @@ footer a:hover { color: #fff; }
     </div>
   </section>
 
-  <section class="cadre-legal">
+  <section class="aplat cadre-legal">
     <div class="cadre">
-      <div class="tete apparait">
-        <p class="surtitre">Cadre d'intervention</p>
+      <div class="tete">
         <h2>Le partage des rôles</h2>
         <p>Chaque intervenant agit dans ses attributions. Ce partage protège le client et garantit la valeur de ses états.</p>
       </div>
       <div class="partage">
-        <div class="apparait"><span class="qui">Le client</span><h3>Tient sa comptabilité</h3><ul><li>enregistre ses opérations</li><li>conserve ses pièces</li><li>réalise son inventaire</li></ul></div>
-        <div class="apparait" style="--i:1"><span class="qui">TRK Consulting</span><h3>Assiste et contrôle</h3><ul><li>forme et équipe le client</li><li>contrôle les enregistrements</li><li>assiste à l'inventaire</li></ul></div>
-        <div class="apparait" style="--i:2"><span class="qui">L'expert-comptable</span><h3>Arrête et conseille</h3><ul><li>arrête et certifie les états</li><li>assure le conseil et le fiscal</li><li>tient les comptes qui lui sont confiés</li></ul></div>
+        <div><span class="qui">Le client</span><h3>Tient sa comptabilité</h3><ul><li>enregistre ses opérations</li><li>conserve ses pièces</li><li>réalise son inventaire</li></ul></div>
+        <div><span class="qui">TRK Consulting</span><h3>Assiste et contrôle</h3><ul><li>forme et équipe le client</li><li>contrôle les enregistrements</li><li>assiste à l'inventaire</li></ul></div>
+        <div><span class="qui">L'expert-comptable</span><h3>Arrête et conseille</h3><ul><li>arrête et certifie les états</li><li>assure le conseil et le fiscal</li><li>tient les comptes qui lui sont confiés</li></ul></div>
       </div>
-      <p class="loi apparait">TRK Consulting n'exerce pas la profession d'expert-comptable. Les missions réservées par la loi n° 15/002 du 12 février 2015, modifiée par la loi n° 18/017 du 9 juillet 2018, sont confiées à un expert-comptable inscrit au tableau de l'Ordre national des experts-comptables, lié à TRK Consulting par convention.</p>
+      <p class="loi">TRK Consulting n'exerce pas la profession d'expert-comptable. Les missions réservées par la loi n° 15/002 du 12 février 2015, modifiée par la loi n° 18/017 du 9 juillet 2018, sont confiées à un expert-comptable inscrit au tableau de l'Ordre national des experts-comptables, lié à TRK Consulting par convention.</p>
     </div>
   </section>
 
   <section class="contact" id="contact">
-    <div class="cadre">
-      <div class="tete apparait" style="margin-bottom:0">
-        <p class="surtitre">Contact</p>
+    <div class="cadre registre-page">
+      <div class="tete">
         <h2>Prendre rendez-vous</h2>
         <p>Le premier entretien se tient sur le lieu d'activité. Il permet d'établir un diagnostic et de proposer la formule adaptée.</p>
       </div>
-      <dl class="coordonnees apparait" style="--i:1">
-        <div><dt>WhatsApp</dt><dd><a href="https://wa.me/243983510725" class="mono" style="text-decoration:none">+243 983 510 725</a></dd></div>
+      <dl class="coordonnees">
+        <div><dt>WhatsApp</dt><dd><a href="https://wa.me/243983510725">+243 983 510 725</a></dd></div>
         <div><dt>Adresse</dt><dd>Kinshasa, <span class="a-venir">adresse à venir</span></dd></div>
         <div><dt>Horaires</dt><dd>Du lundi au samedi</dd></div>
         <div><dt>Langues</dt><dd>Français, lingala</dd></div>
-        <div class="pied-carte"><a class="bouton bouton-nuit" href="https://wa.me/243983510725">Écrire sur WhatsApp</a></div>
+        <div class="pied-carte"><a class="bouton" href="https://wa.me/243983510725">Écrire sur WhatsApp</a></div>
       </dl>
     </div>
   </section>
@@ -529,8 +517,8 @@ footer a:hover { color: #fff; }
 
 <footer>
   <div class="cadre">
-    <div style="display:grid;gap:10px">
-      <img src="logo/trk-horizontal-negatif.svg" alt="TRK Consulting" style="height:48px;width:auto;display:block">
+    <div style="display:grid;gap:12px">
+      <img src="logo/trk-horizontal-negatif.svg" alt="TRK Consulting" width="121" height="44">
       <p>Assistance comptable et de gestion aux micro et petites entreprises. Kinshasa, République démocratique du Congo.</p>
     </div>
     <div>
@@ -555,23 +543,13 @@ footer a:hover { color: #fff; }
 </footer>
 
 <script>
-  // En-tête : un filet apparaît dès qu'on défile.
-  var entete = document.getElementById('entete');
-  var surDefile = function () { entete.classList.toggle('defile', scrollY > 8); };
-  addEventListener('scroll', surDefile, { passive: true }); surDefile();
-
   // Le menu du téléphone se referme après un choix.
   document.querySelectorAll('.menu nav a').forEach(function (a) {
     a.addEventListener('click', function () { a.closest('details').open = false; });
   });
 
-  // Apparition au défilement, et lien actif dans la barre.
+  // Lien actif dans la barre, selon la section lue.
   if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entrees) {
-      entrees.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('vu'); io.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
-    document.querySelectorAll('.apparait').forEach(function (el) { io.observe(el); });
-
     var liens = document.querySelectorAll('.nav a[href^="#"]');
     var suivi = new IntersectionObserver(function (entrees) {
       entrees.forEach(function (e) {
@@ -580,8 +558,6 @@ footer a:hover { color: #fff; }
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     ['societe', 'missions', 'objectifs', 'prestations'].forEach(function (id) { var s = document.getElementById(id); if (s) suivi.observe(s); });
-  } else {
-    document.querySelectorAll('.apparait').forEach(function (el) { el.classList.add('vu'); });
   }
 </script>
 </body>
