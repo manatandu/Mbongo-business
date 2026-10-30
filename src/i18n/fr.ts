@@ -32,6 +32,8 @@ export const fr = {
   'nav.journal': 'Journal',
   'nav.clients': 'Clients',
   'nav.plus': 'Plus',
+  'nav.deconnexion': 'Se déconnecter',
+  'deconnexion.sansCode': "Choisissez d'abord un code à 4 chiffres : il servira à rouvrir Mbongo.",
 
   'bienvenue.titre': 'Tenez votre caisse, simplement',
   'bienvenue.demo': 'Voir la démonstration',

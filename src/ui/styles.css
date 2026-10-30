@@ -257,6 +257,9 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
 .menu a .ico { color: var(--nuit); width: 40px; height: 40px; padding: 9px; border-radius: 12px; background: var(--surface-2); }
 .menu a span { display: flex; flex-direction: column; font-size: 16px; font-weight: 700; }
 .menu a small { color: var(--muted); font-size: 13px; font-weight: 400; }
+/* Se déconnecter, en bas du menu « Plus » : un bouton qui a l'allure d'une ligne */
+.menu button { display: flex; gap: 14px; align-items: center; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid var(--regle); background: none; text-align: left; font-size: 16px; font-weight: 700; color: var(--out); }
+.menu button .ico { width: 40px; height: 40px; padding: 9px; border-radius: 12px; background: var(--out-soft); color: var(--out); }
 .verrou { padding: 72px 24px; display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center; flex: 1; background: var(--nuit); color: #fff; }
 .verrou h1 { color: #fff; }
 .verrou input { font-size: 32px; letter-spacing: .5em; text-align: center; width: 200px; padding: 12px; border-radius: 14px; border: 0; background: rgba(255, 255, 255, .1); color: #fff; }
@@ -340,18 +343,22 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
   .fenetre-corps { padding: 18px 32px 32px 40px; gap: 18px; }
   .caisse { margin: 0 -32px 0 -40px; padding: 28px 32px 64px 40px; }
   .mouvements { max-width: 560px; }
-  .onglets { grid-area: menu; position: sticky; top: 64px; align-self: start; display: flex; flex-direction: column; gap: 2px; border-top: 0; background: transparent; backdrop-filter: none; padding: 36px 12px 24px 16px; max-height: calc(100dvh - 64px); overflow-y: auto; }
-  .onglets a { flex-direction: row; justify-content: flex-start; min-height: 44px; padding: 8px 12px; gap: 12px; font-size: 15px; border-radius: 12px; }
+  .onglets { grid-area: menu; position: sticky; top: 64px; align-self: start; display: flex; flex-direction: column; gap: 2px; border-top: 0; background: transparent; backdrop-filter: none; padding: 28px 12px 16px 16px; max-height: calc(100dvh - 64px); overflow-y: auto; scrollbar-width: none; }
+  /* Menu serré : tout tient à l'écran, sans défiler, même sur un portable de 768 px de haut. */
+  .onglets a, .onglets button { flex-direction: row; justify-content: flex-start; align-items: center; min-height: 40px; padding: 7px 12px; gap: 12px; font-size: 14.5px; font-weight: 600; border-radius: 12px; line-height: 1.2; text-align: left; }
+  .onglets button { border: 0; background: none; color: var(--muted); font-family: inherit; text-align: left; width: 100%; cursor: pointer; }
+  .onglets button:hover { background: rgba(255, 255, 255, .7); color: var(--out); }
+  .onglets svg { width: 21px; height: 21px; }
   .onglets a:hover { background: rgba(255, 255, 255, .7); color: var(--nuit); }
   .onglets a[aria-current="page"] { background: var(--papier); box-shadow: 0 1px 2px rgba(11, 42, 82, .08); }
   .onglets a[aria-current="page"]::before { top: 10px; bottom: 10px; left: 0; right: auto; width: 3px; height: auto; border-radius: 0 3px 3px 0; }
-  .onglets a.saisir svg { width: 23px; height: 23px; padding: 0; margin: 0; border-radius: 0; background: none; color: inherit; box-shadow: none; stroke-width: 1.8; }
+  .onglets a.saisir svg { width: 21px; height: 21px; padding: 0; margin: 0; border-radius: 0; background: none; color: inherit; box-shadow: none; stroke-width: 1.8; }
   .onglets a.saisir { color: var(--muted); }
   .onglets a.saisir[aria-current="page"] { color: var(--nuit); }
   .onglets a.saisir[aria-current="page"]::before { display: block; }
   .onglets .etroit-seul { display: none; }
   .large-seul { display: flex !important; }
-  .onglets .separateur { display: block !important; height: 1px; background: var(--regle-forte); margin: 10px 12px; opacity: .6; }
+  .onglets .separateur { display: block !important; height: 1px; background: var(--regle-forte); margin: 8px 12px; opacity: .6; }
   .fenetre-corps > form { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
   .kpis { grid-template-columns: repeat(4, 1fr); }
   .comptes { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -359,6 +366,13 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
   .bienvenue { padding-inline: max(22px, calc(50% - 280px)); }
   .bienvenue .choix { margin-top: 0; }
   .toast { bottom: 32px; }
+}
+
+/* Écran d'ordinateur bas (moins de 720 px utiles) : le menu se serre encore. */
+@media (min-width: 900px) and (max-height: 720px) {
+  .onglets { padding-top: 16px; }
+  .onglets a, .onglets button { min-height: 34px; padding-block: 5px; font-size: 14px; }
+  .onglets .separateur { margin-block: 5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

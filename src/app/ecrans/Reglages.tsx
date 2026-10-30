@@ -1,7 +1,7 @@
 /** Langue, installation sur le téléphone, code d'accès, copie de sauvegarde, démonstration. */
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, useParams } from 'wouter';
 import { useLangue } from '../../i18n';
 import { chargerDemo } from '../../donnees/demo';
 import { retirerEntreprise } from '../../donnees/entreprise';
@@ -116,6 +116,7 @@ function LienTrk() {
 
 export function Reglages() {
   const { entreprise, aujourdhui, annoncer } = useDossier();
+  const versCode = useParams<{ section?: string }>().section === 'code';
   const { t, langue, changer } = useLangue();
   const [, aller] = useLocation();
   const [code, setCode] = useState('');
@@ -153,7 +154,7 @@ export function Reglages() {
         <div className="deux-col">
           <label className="champ">
             {t('reglages.codeNouveau')}
-            <input inputMode="numeric" type="password" maxLength={4} autoComplete="new-password" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
+            <input inputMode="numeric" type="password" maxLength={4} autoComplete="new-password" autoFocus={versCode} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} />
           </label>
           <button className="bouton" style={{ alignSelf: 'end' }} disabled={code.length !== 4} onClick={() => void enregistrerCode()}>
             {t('reglages.codeDefinir')}
@@ -241,7 +242,7 @@ export function Reglages() {
       )}
 
       {/* Le reste sert rarement : replié. */}
-      <details className="replie">
+      <details className="replie" open={versCode || undefined}>
         <summary>{t('reglages.autres')}</summary>
         <div className="replie-contenu">
           <p className="aide">{appli.installee ? t('reglages.installee') : appli.horsLignePret ? t('reglages.horsLigne') : t('reglages.horsLignePasEncore')}</p>

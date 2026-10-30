@@ -17,7 +17,7 @@ import { Etats } from './ecrans/Etats';
 import { FinJournee } from './ecrans/FinJournee';
 import { Journal } from './ecrans/Journal';
 import { Materiel } from './ecrans/Materiel';
-import { ENTREES, Plus } from './ecrans/Plus';
+import { Deconnexion, ENTREES, Plus } from './ecrans/Plus';
 import { Reglages } from './ecrans/Reglages';
 import { Saisir } from './ecrans/Saisir';
 import { Stock } from './ecrans/Stock';
@@ -106,7 +106,7 @@ function Coque() {
               <Route path="/etats" component={Etats} />
               <Route path="/materiel" component={Materiel} />
               <Route path="/stock/:onglet?" component={Stock} />
-              <Route path="/reglages" component={Reglages} />
+              <Route path="/reglages/:section?" component={Reglages} />
               <Route path="/livre/:mois?" component={Livre} />
               <Route path="/achats" component={RegistreAchats} />
               <Route path="/creance/:id" component={DossierCreance} />
@@ -134,6 +134,8 @@ function Coque() {
             {t(e.titre)}
           </Link>
         ))}
+        <span className="large-seul separateur" aria-hidden="true" />
+        <Deconnexion classe="large-seul" />
       </nav>
     </div>
   );
@@ -199,6 +201,16 @@ function Contenu() {
   const { t } = useLangue();
   const aCode = useLiveQuery(() => codeDefini(db), []);
   const [ouvert, setOuvert] = useState(false);
+  // Pas de code à l'ouverture : l'appli est ouverte. Choisir un code ensuite ne la referme pas d'un coup.
+  useEffect(() => {
+    if (aCode === false) setOuvert(true);
+  }, [aCode]);
+  // « Se déconnecter » : l'appli se referme derrière le code.
+  useEffect(() => {
+    const fermer = () => setOuvert(false);
+    window.addEventListener('mbongo:verrouiller', fermer);
+    return () => window.removeEventListener('mbongo:verrouiller', fermer);
+  }, []);
 
   if (enAttente || aCode === undefined) return <p className="ecran aide">{t('app.chargement')}</p>;
   if (aCode && !ouvert) return <Verrou ouvrir={() => setOuvert(true)} />;

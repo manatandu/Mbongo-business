@@ -39,6 +39,8 @@ export const ln: Record<Cle, string> = {
   'nav.journal': 'Kaye',
   'nav.clients': 'Bakiliya',
   'nav.plus': 'Mosusu',
+  'nav.deconnexion': 'Kobima',
+  'deconnexion.sansCode': 'Pona liboso code ya mituya 4 : ekosalisa yo kofungola Mbongo lisusu.',
 
   'bienvenue.titre': 'Kamba kesi na yo malamu',
   'bienvenue.demo': 'Tala ndakisa',
