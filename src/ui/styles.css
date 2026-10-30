@@ -330,21 +330,24 @@ tr.annulee td { color: var(--faint); text-decoration: line-through; }
   body { background: var(--fond); }
   .app { max-width: none; background: transparent; }
   .coque { display: grid; grid-template-columns: 248px minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: "entete entete" "menu ecran"; min-height: 100dvh; }
-  .entete { grid-area: entete; padding-inline: 24px; min-height: 64px; }
+  /* Le bandeau reste en haut ; le menu reste dessous, jamais collé au bord de l'écran. */
+  .entete { grid-area: entete; padding-inline: 24px; min-height: 64px; position: sticky; top: 0; z-index: 6; }
   .entete .txt { flex-direction: row; align-items: baseline; gap: 10px; }
-  .ecran { grid-area: ecran; padding: 24px 32px 48px 8px; max-width: 1120px; width: 100%; }
+  .ecran { grid-area: ecran; padding: 36px 32px 48px 8px; max-width: 1120px; width: 100%; }
   .fenetre { border-radius: 20px; overflow: hidden; box-shadow: 0 1px 2px rgba(11, 42, 82, .06), 0 20px 40px -24px rgba(11, 42, 82, .25); }
   .fenetre::before { left: 18px; }
   .fenetre-titre { padding: 28px 32px 4px 40px; font-size: 36px; }
   .fenetre-corps { padding: 18px 32px 32px 40px; gap: 18px; }
   .caisse { margin: 0 -32px 0 -40px; padding: 28px 32px 64px 40px; }
   .mouvements { max-width: 560px; }
-  .onglets { grid-area: menu; position: sticky; top: 0; align-self: start; display: flex; flex-direction: column; gap: 2px; border-top: 0; background: transparent; backdrop-filter: none; padding: 24px 12px 24px 16px; }
+  .onglets { grid-area: menu; position: sticky; top: 64px; align-self: start; display: flex; flex-direction: column; gap: 2px; border-top: 0; background: transparent; backdrop-filter: none; padding: 36px 12px 24px 16px; max-height: calc(100dvh - 64px); overflow-y: auto; }
   .onglets a { flex-direction: row; justify-content: flex-start; min-height: 44px; padding: 8px 12px; gap: 12px; font-size: 15px; border-radius: 12px; }
   .onglets a:hover { background: rgba(255, 255, 255, .7); color: var(--nuit); }
   .onglets a[aria-current="page"] { background: var(--papier); box-shadow: 0 1px 2px rgba(11, 42, 82, .08); }
   .onglets a[aria-current="page"]::before { top: 10px; bottom: 10px; left: 0; right: auto; width: 3px; height: auto; border-radius: 0 3px 3px 0; }
   .onglets a.saisir svg { width: 23px; height: 23px; padding: 0; margin: 0; border-radius: 0; background: none; color: inherit; box-shadow: none; stroke-width: 1.8; }
+  .onglets a.saisir { color: var(--muted); }
+  .onglets a.saisir[aria-current="page"] { color: var(--nuit); }
   .onglets a.saisir[aria-current="page"]::before { display: block; }
   .onglets .etroit-seul { display: none; }
   .large-seul { display: flex !important; }
